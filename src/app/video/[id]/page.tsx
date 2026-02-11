@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import SiteLogo from "@/components/SiteLogo";
 import { siteUrl } from "@/lib/site";
 import { formatIso8601Duration } from "@/lib/seo";
 
@@ -590,50 +589,63 @@ export default function VideoPage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
       />
+
       {/* Header */}
-      <header className="bg-gradient-to-r from-red-600 to-red-800 text-white py-8">
-        <div className="container mx-auto px-4">
-          <SiteLogo
-            href="/"
-            className="mb-4"
-            textClassName="text-xl md:text-2xl text-white"
-            iconSize={34}
-          />
-          <Link href="/" className="text-white hover:underline mb-4 inline-block">
-            ← Back to Videos
-          </Link>
-          <span className="inline-block bg-red-500 text-xs px-2 py-1 rounded-full mb-2">
-            {video.category}
-          </span>
-          <p className="text-sm opacity-90">{video.channel} • {video.views} views</p>
-          <h1 className="text-2xl md:text-3xl font-bold mt-1">{video.title}</h1>
-          <div className="flex gap-4 mt-2 text-sm opacity-90">
-            <span>{video.duration}</span>
-            <span>•</span>
-            <span>{video.publishDate}</span>
-            <span>•</span>
-            <span>Difficulty: {video.difficulty}</span>
-            <span>•</span>
-            <span>CPM: {video.cpm}</span>
+      <header className="bg-gradient-to-r from-red-600 to-red-800 text-white py-10 md:py-12">
+        <div className="container mx-auto px-4 pb-8 md:pb-10">
+          <div className="rounded-2xl border border-white/20 bg-black/10 p-5 md:p-7">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide">
+                {video.category}
+              </span>
+            </div>
+
+            <p className="mt-4 text-sm md:text-base text-white/90">
+              {video.channel} • {video.views} views
+            </p>
+
+            <h1 className="mt-2 max-w-5xl text-3xl md:text-5xl font-extrabold leading-tight">
+              {video.title}
+            </h1>
+
+            <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-wrap gap-2 text-sm md:text-base">
+                <span className="rounded-full bg-white/15 px-3 py-1.5">{video.duration}</span>
+                <span className="rounded-full bg-white/15 px-3 py-1.5">{video.publishDate}</span>
+                <span className="rounded-full bg-white/15 px-3 py-1.5">
+                  Difficulty: {video.difficulty}
+                </span>
+                <span className="rounded-full bg-white/15 px-3 py-1.5">CPM: {video.cpm}</span>
+              </div>
+
+              <a
+                href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full md:w-auto items-center justify-center rounded-xl bg-white px-5 py-3 text-base font-bold text-red-700 transition-colors hover:bg-red-50"
+              >
+                Watch on YouTube ↗
+              </a>
+            </div>
           </div>
-          <a
-            href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block mt-4 px-4 py-2 bg-white text-red-700 font-semibold rounded-lg hover:bg-red-50 transition-colors"
-          >
-            Watch on YouTube ↗
-          </a>
         </div>
       </header>
 
       {/* Video Player */}
       <main className="container mx-auto px-4 py-8">
+        <div className="mb-5">
+          <Link
+            href="/"
+            className="inline-flex items-center text-sm font-semibold text-gray-600 transition-colors hover:text-red-600"
+          >
+            ← Back to Videos
+          </Link>
+        </div>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
           <div className="aspect-video">
             <iframe
