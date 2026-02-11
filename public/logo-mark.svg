@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EF4444"/>
+      <stop offset="1" stop-color="#991B1B"/>
+    </linearGradient>
+    <linearGradient id="spark" x1="342" y1="123" x2="408" y2="189" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A5F3FC"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="48" y="48" width="416" height="416" rx="96" fill="url(#bg)"/>
+
+  <path d="M220 170C220 156.745 234.536 148.675 245.744 155.67L338.706 213.67C349.179 220.206 349.179 235.794 338.706 242.33L245.744 300.33C234.536 307.325 220 299.255 220 286V170Z" fill="white"/>
+
+  <circle cx="375" cy="156" r="34" fill="url(#spark)"/>
+  <path d="M375 122L382.715 148.285L409 156L382.715 163.715L375 190L367.285 163.715L341 156L367.285 148.285L375 122Z" fill="#0E7490"/>
+
+  <rect x="120" y="354" width="272" height="42" rx="21" fill="white" fill-opacity="0.14"/>
+  <text x="256" y="383" text-anchor="middle" fill="white" font-size="28" font-family="Arial, Helvetica, sans-serif" font-weight="700" letter-spacing="2">YT AI</text>
+</svg>

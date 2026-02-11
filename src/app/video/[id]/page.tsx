@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import SiteLogo from "@/components/SiteLogo";
+import { siteUrl } from "@/lib/site";
+import { formatIso8601Duration } from "@/lib/seo";
 
 // Detailed video pages with comprehensive information
 const videos: Record<string, {
@@ -505,28 +510,100 @@ YouTube Automation is not "set it and forget it." The real skill is building rep
   }
 };
 
+const videoIds = Object.keys(videos);
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return videoIds.map((id) => ({ id }));
+}
+
+export function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Metadata {
+  const video = videos[params.id];
+
+  if (!video) {
+    return {
+      title: "Video Not Found",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  return {
+    title: `${video.title} | ${video.channel}`,
+    description: video.description,
+    alternates: {
+      canonical: `/video/${video.id}/`,
+    },
+    openGraph: {
+      type: "video.other",
+      title: video.title,
+      description: video.description,
+      url: `/video/${video.id}/`,
+      images: [
+        {
+          url: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
+          alt: video.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: video.title,
+      description: video.description,
+      images: [`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`],
+    },
+  };
+}
+
 export default function VideoPage({ params }: { params: { id: string } }) {
   const video = videos[params.id];
   
   if (!video) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Video Not Found</h1>
-          <p className="text-gray-600 mb-4">Video ID: {params.id}</p>
-          <Link href="/" className="text-red-600 hover:underline">
-            ← Back to Home
-          </Link>
-        </div>
-      </div>
-    );
+    notFound();
   }
+
+  const videoJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: video.title,
+    description: video.description,
+    uploadDate: video.publishDate,
+    duration: formatIso8601Duration(video.duration),
+    thumbnailUrl: [`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`],
+    embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
+    contentUrl: `https://www.youtube.com/watch?v=${video.youtubeId}`,
+    publisher: {
+      "@type": "Organization",
+      name: "YouTube Automation AI",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/logo-512.png`,
+      },
+    },
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
+      />
       {/* Header */}
       <header className="bg-gradient-to-r from-red-600 to-red-800 text-white py-8">
         <div className="container mx-auto px-4">
+          <SiteLogo
+            href="/"
+            className="mb-4"
+            textClassName="text-xl md:text-2xl text-white"
+            iconSize={34}
+          />
           <Link href="/" className="text-white hover:underline mb-4 inline-block">
             ← Back to Videos
           </Link>
@@ -544,6 +621,14 @@ export default function VideoPage({ params }: { params: { id: string } }) {
             <span>•</span>
             <span>CPM: {video.cpm}</span>
           </div>
+          <a
+            href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-4 px-4 py-2 bg-white text-red-700 font-semibold rounded-lg hover:bg-red-50 transition-colors"
+          >
+            Watch on YouTube ↗
+          </a>
         </div>
       </header>
 

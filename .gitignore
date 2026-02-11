@@ -48,3 +48,6 @@ out/
 Thumbs.db # Windows
 # -------------------- 额外的日志文件 --------------------
 *.log
+
+# TypeScript incremental build info
+*.tsbuildinfo

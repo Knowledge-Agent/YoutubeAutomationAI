@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import SiteLogo from "@/components/SiteLogo";
+import { siteUrl } from "@/lib/site";
+import { formatIsoDate } from "@/lib/seo";
 
 // Comprehensive blog posts in English
 const blogPosts: Record<string, {
@@ -440,7 +446,7 @@ CPM (Cost Per Mille) represents the earnings per 1,000 views. Higher CPM niches 
 - Legal/regulatory risks
 - Requires expertise you lack
 - Limited素材 sources`,
-    relatedVideos: ["4", "5", "15"]
+    relatedVideos: ["4", "5", "12"]
   },
   "3": {
     id: "3",
@@ -664,31 +670,107 @@ AI generating personalized content at scale.
 
 **5. Real-time Optimization**
 Automatic performance optimization.`,
-    relatedVideos: ["3", "8", "13", "17"]
+    relatedVideos: ["3", "8", "13", "11"]
   }
 };
+
+const blogPostIds = Object.keys(blogPosts);
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return blogPostIds.map((id) => ({ id }));
+}
+
+export function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Metadata {
+  const post = blogPosts[params.id];
+
+  if (!post) {
+    return {
+      title: "Blog Post Not Found",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    alternates: {
+      canonical: `/blog/${post.id}/`,
+    },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      url: `/blog/${post.id}/`,
+      images: [
+        {
+          url: post.thumbnail,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images: [post.thumbnail],
+    },
+  };
+}
 
 export default function BlogPage({ params }: { params: { id: string } }) {
   const post = blogPosts[params.id];
   
   if (!post) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Blog Post Not Found</h1>
-          <Link href="/" className="text-red-600 hover:underline">
-            ← Back to Home
-          </Link>
-        </div>
-      </div>
-    );
+    notFound();
   }
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: formatIsoDate(post.date),
+    dateModified: formatIsoDate(post.date),
+    image: [post.thumbnail],
+    author: {
+      "@type": "Organization",
+      name: "YouTube Automation AI",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "YouTube Automation AI",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/logo-512.png`,
+      },
+    },
+    mainEntityOfPage: `${siteUrl}/blog/${post.id}/`,
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       {/* Header */}
       <header className="bg-gradient-to-r from-red-600 to-red-800 text-white py-12">
         <div className="container mx-auto px-4">
+          <SiteLogo
+            href="/"
+            className="mb-4"
+            textClassName="text-2xl text-white"
+            iconSize={36}
+          />
           <Link href="/" className="text-white hover:underline mb-4 inline-block">
             ← Back to Home
           </Link>
@@ -706,9 +788,12 @@ export default function BlogPage({ params }: { params: { id: string } }) {
 
       {/* Featured Image */}
       <div className="container mx-auto px-4 -mt-8">
-        <img 
+        <Image
           src={post.thumbnail} 
           alt={post.title}
+          width={1200}
+          height={600}
+          sizes="(max-width: 768px) 100vw, 1200px"
           className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
         />
       </div>
