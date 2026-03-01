@@ -99,8 +99,8 @@
         "label": "Core Problem",
         "description": "Most teams already have long-form content but struggle to consistently produce short clips with strong hooks. We focus on making that process structured and repeatable.",
         "image": {
-          "src": "/og-image.png",
-          "alt": "Long video to short video workflow"
+          "src": "/imgs/landing/introduce-workflow.svg",
+          "alt": "Long video to shorts workflow preview"
         },
         "items": [
           {
@@ -161,8 +161,8 @@
             "description": "Repurpose one recording into multiple short assets instead of publishing only once.",
             "icon": "Layers3",
             "image": {
-              "src": "/imgs/features/1.png",
-              "alt": "Repurposing output"
+              "src": "/imgs/landing/benefit-output.svg",
+              "alt": "One recording converted into many short assets"
             }
           },
           {
@@ -170,8 +170,8 @@
             "description": "Use structure and templates that can be reused by operators and teams.",
             "icon": "BarChart3",
             "image": {
-              "src": "/imgs/features/2.png",
-              "alt": "Repeatable structure"
+              "src": "/imgs/landing/benefit-repeatable.svg",
+              "alt": "Repeatable short-video playbook"
             }
           },
           {
@@ -179,8 +179,8 @@
             "description": "Reduce handoffs across scripting, clipping, captioning, and packaging steps.",
             "icon": "Zap",
             "image": {
-              "src": "/imgs/features/3.png",
-              "alt": "Faster production"
+              "src": "/imgs/landing/benefit-frictionless.svg",
+              "alt": "Frictionless script-to-publish workflow"
             }
           }
         ]

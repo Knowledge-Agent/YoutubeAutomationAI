@@ -22,12 +22,35 @@ export async function generateMetadata({
       : `${envConfigs.app_url}/blog/${slug}`;
 
   const post = await getPost({ slug, locale });
+  const image = post?.image || envConfigs.app_preview_image;
+  const imageUrl = image.startsWith('http')
+    ? image
+    : `${envConfigs.app_url}${image}`;
+
   if (!post) {
     return {
       title: `${slug} | ${t('title')}`,
       description: t('description'),
       alternates: {
         canonical: canonicalUrl,
+      },
+      openGraph: {
+        type: 'article',
+        url: canonicalUrl,
+        title: `${slug} | ${t('title')}`,
+        description: t('description'),
+        siteName: envConfigs.app_name,
+        images: [imageUrl],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${slug} | ${t('title')}`,
+        description: t('description'),
+        images: [imageUrl],
+      },
+      robots: {
+        index: true,
+        follow: true,
       },
     };
   }
@@ -37,6 +60,24 @@ export async function generateMetadata({
     description: post.description,
     alternates: {
       canonical: canonicalUrl,
+    },
+    openGraph: {
+      type: 'article',
+      url: canonicalUrl,
+      title: `${post.title} | ${t('title')}`,
+      description: post.description,
+      siteName: envConfigs.app_name,
+      images: [imageUrl],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${post.title} | ${t('title')}`,
+      description: post.description,
+      images: [imageUrl],
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }

@@ -2,10 +2,10 @@
   "sidebar": {
     "header": {
       "brand": {
-        "title": "ShipAny Chat",
+        "title": "YouTube Automation AI 对话",
         "logo": {
-          "src": "/logo.png",
-          "alt": "ShipAny Chat"
+          "src": "/logo-mark.svg",
+          "alt": "YouTube Automation AI 对话"
         },
         "url": "/chat"
       },
@@ -59,26 +59,14 @@
             "target": "_blank"
           },
           {
-            "title": "GitHub",
-            "url": "https://github.com/your-app-name",
-            "icon": "Github",
-            "target": "_blank"
-          },
-          {
-            "title": "推特",
-            "url": "https://twitter.com/your-app-name",
-            "icon": "RiTwitterXFill",
-            "target": "_blank"
-          },
-          {
-            "title": "Discord",
-            "url": "https://discord.gg/your-app-name",
-            "icon": "RiDiscordFill",
+            "title": "博客",
+            "url": "/blog",
+            "icon": "Newspaper",
             "target": "_blank"
           },
           {
             "title": "邮箱",
-            "url": "mailto:support@your-domain.com",
+            "url": "mailto:hello@youtubeautomationai.com",
             "icon": "Mail",
             "target": "_blank"
           }

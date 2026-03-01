@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "title": "博客",
-    "description": "阅读我们最新的产品功能、解决方案和更新内容。"
+    "title": "YouTube Automation AI 博客",
+    "description": "聚焦长视频拆条、爆款短视频结构、无人出镜频道增长与 AI 自动化工作流的实战内容。"
   },
   "page": {
-    "title": "ShipAny 博客",
+    "title": "YouTube Automation AI 博客",
     "sections": {
       "blog": {
         "id": "blog",
         "title": "博客",
-        "description": "阅读我们最新的产品功能、解决方案和更新内容。"
+        "description": "系统学习如何把长视频拆成可发布短视频，并通过 AI 工作流持续放大内容产出。"
       }
     }
   },

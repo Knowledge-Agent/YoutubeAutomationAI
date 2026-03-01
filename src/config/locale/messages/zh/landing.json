@@ -83,26 +83,6 @@
               "target": "_self"
             }
           ]
-        },
-        {
-          "title": "账户",
-          "children": [
-            {
-              "title": "登录",
-              "url": "/sign-in",
-              "target": "_self"
-            },
-            {
-              "title": "注册",
-              "url": "/sign-up",
-              "target": "_self"
-            },
-            {
-              "title": "账单",
-              "url": "/settings/billing",
-              "target": "_self"
-            }
-          ]
         }
       ]
     },

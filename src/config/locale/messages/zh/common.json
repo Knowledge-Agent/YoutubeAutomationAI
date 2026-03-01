@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "ShipAny 模板二",
-    "description": "ShipAny 是用于构建 AI SaaS 创业项目的 NextJS 脚手架。提供丰富模板和组件，助您快速上线产品。",
-    "keywords": "shipany, shipany-boilerplate, shipany-template-two-demo"
+    "title": "YouTube Automation AI - 长视频一键拆成爆款短视频",
+    "description": "把一条长视频高效拆分为多条爆款风格短视频，覆盖切片、钩子文案、字幕包装与发布流程。",
+    "keywords": "youtube automation ai, 长视频拆短视频, 爆款短视频, 无人出镜频道, ai 剪辑"
   },
   "sign": {
     "sign_in_title": "登录",

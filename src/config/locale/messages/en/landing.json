@@ -83,26 +83,6 @@
               "target": "_self"
             }
           ]
-        },
-        {
-          "title": "Account",
-          "children": [
-            {
-              "title": "Sign In",
-              "url": "/sign-in",
-              "target": "_self"
-            },
-            {
-              "title": "Sign Up",
-              "url": "/sign-up",
-              "target": "_self"
-            },
-            {
-              "title": "Billing",
-              "url": "/settings/billing",
-              "target": "_self"
-            }
-          ]
         }
       ]
     },

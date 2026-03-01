@@ -1,36 +1,32 @@
-<svg width="860" height="200" viewBox="0 0 860 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="1220" height="240" viewBox="0 0 1220 240" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="mark-bg" x1="12" y1="8" x2="168" y2="172" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#EF4444" />
-      <stop offset="0.55" stop-color="#DC2626" />
-      <stop offset="1" stop-color="#7F1D1D" />
+    <linearGradient id="bg" x1="24" y1="24" x2="196" y2="196" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0D2150" />
+      <stop offset="1" stop-color="#071736" />
     </linearGradient>
-    <linearGradient id="shorts-bar" x1="108" y1="54" x2="148" y2="109" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#CFFAFE" />
-      <stop offset="1" stop-color="#22D3EE" />
+    <linearGradient id="spark" x1="66" y1="52" x2="154" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67E8F9" />
+      <stop offset="1" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="play" x1="84" y1="90" x2="138" y2="144" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FB7185" />
+      <stop offset="1" stop-color="#EF4444" />
     </linearGradient>
   </defs>
 
-  <rect width="860" height="200" rx="28" fill="white" />
-
   <g transform="translate(24,24)">
-    <rect width="152" height="152" rx="40" fill="url(#mark-bg)" />
-    <rect width="152" height="152" rx="40" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="2" />
+    <rect width="172" height="172" rx="48" fill="url(#bg)" />
+    <rect width="172" height="172" rx="48" stroke="#1E3A8A" stroke-width="2" />
 
-    <path d="M52 50C52 45 57.5 42 62 44.8L98 67.2C102.2 69.8 102.2 76.2 98 78.8L62 101.2C57.5 104 52 101 52 96V50Z" fill="white" />
-
-    <rect x="106" y="56" width="22" height="10" rx="5" fill="url(#shorts-bar)" />
-    <rect x="106" y="74" width="30" height="10" rx="5" fill="url(#shorts-bar)" />
-    <rect x="106" y="92" width="18" height="10" rx="5" fill="url(#shorts-bar)" />
-
-    <circle cx="128" cy="40" r="8" fill="#FDE68A" />
-    <path d="M128 32L129.8 37.2L135 39L129.8 40.8L128 46L126.2 40.8L121 39L126.2 37.2L128 32Z" fill="#B45309" />
+    <path d="M86 52L98 82L128 94L98 106L86 136L74 106L44 94L74 82L86 52Z" fill="url(#spark)" />
+    <path d="M62 136L104 112L62 88V136Z" fill="url(#play)" />
+    <path d="M74 115L89 106L74 97V115Z" fill="white" fill-opacity="0.9" />
   </g>
 
-  <text x="198" y="88" fill="#111827" font-size="50" font-family="Inter, Arial, Helvetica, sans-serif" font-weight="800">
+  <text x="228" y="116" fill="#0F172A" font-size="66" font-family="Inter, Arial, Helvetica, sans-serif" font-weight="800">
     YouTube Automation AI
   </text>
-  <text x="200" y="128" fill="#4B5563" font-size="24" font-family="Inter, Arial, Helvetica, sans-serif" font-weight="500">
-    Long video in. Viral-ready shorts out.
+  <text x="228" y="162" fill="#334155" font-size="30" font-family="Inter, Arial, Helvetica, sans-serif" font-weight="600">
+    AI-powered highlights from long videos
   </text>
 </svg>

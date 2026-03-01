@@ -11,6 +11,7 @@ export const revalidate = 3600;
 export const generateMetadata = getMetadata({
   metadataKey: 'pages.pricing.metadata',
   canonicalUrl: '/pricing',
+  noIndex: true,
 });
 
 export default async function PricingPage({

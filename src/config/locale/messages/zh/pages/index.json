@@ -95,8 +95,8 @@
         "label": "问题定义",
         "description": "很多团队不缺长内容，缺的是“稳定产出短内容”的方法。我们把流程拆清楚，先解决可持续输出。",
         "image": {
-          "src": "/og-image.png",
-          "alt": "长视频拆条流程"
+          "src": "/imgs/landing/introduce-workflow.svg",
+          "alt": "长视频拆短视频流程示意"
         },
         "items": [
           {
@@ -157,8 +157,8 @@
             "description": "一条长内容可复用为多条短内容，提升素材利用率。",
             "icon": "Layers3",
             "image": {
-              "src": "/imgs/features/1.png",
-              "alt": "多条短视频产出"
+              "src": "/imgs/landing/benefit-output.svg",
+              "alt": "一条长视频产出多条短视频"
             }
           },
           {
@@ -166,8 +166,8 @@
             "description": "通过结构化模板提升执行稳定性，而非依赖个人灵感。",
             "icon": "BarChart3",
             "image": {
-              "src": "/imgs/features/2.png",
-              "alt": "结构化模板"
+              "src": "/imgs/landing/benefit-repeatable.svg",
+              "alt": "可复用的内容生产模板"
             }
           },
           {
@@ -175,8 +175,8 @@
             "description": "把脚本、切片、字幕、包装这些重复工作流程化。",
             "icon": "Zap",
             "image": {
-              "src": "/imgs/features/3.png",
-              "alt": "流程效率提升"
+              "src": "/imgs/landing/benefit-frictionless.svg",
+              "alt": "从脚本到发布的低摩擦流程"
             }
           }
         ]

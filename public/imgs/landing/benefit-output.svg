@@ -1,0 +1,48 @@
+<svg width="912" height="708" viewBox="0 0 912 708" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="30" y1="20" x2="880" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E0E7FF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+  <rect width="912" height="708" rx="34" fill="url(#bg)"/>
+  <rect x="44" y="44" width="824" height="620" rx="28" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="3"/>
+
+  <rect x="90" y="96" width="240" height="160" rx="18" fill="#111827"/>
+  <rect x="106" y="112" width="96" height="16" rx="8" fill="#F59E0B"/>
+  <rect x="106" y="138" width="160" height="10" rx="5" fill="#64748B"/>
+  <rect x="106" y="156" width="146" height="10" rx="5" fill="#64748B"/>
+  <rect x="106" y="192" width="80" height="36" rx="10" fill="#EF4444"/>
+  <text x="90" y="286" fill="#334155" font-size="30" font-family="Inter, Arial, sans-serif" font-weight="700">1 Long Video</text>
+
+  <g transform="translate(372,106)">
+    <rect width="154" height="120" rx="16" fill="#2563EB"/>
+    <rect x="18" y="22" width="96" height="12" rx="6" fill="#BFDBFE"/>
+    <rect x="18" y="44" width="118" height="10" rx="5" fill="#DBEAFE"/>
+    <rect x="18" y="62" width="102" height="10" rx="5" fill="#DBEAFE"/>
+  </g>
+  <g transform="translate(558,106)">
+    <rect width="154" height="120" rx="16" fill="#0EA5E9"/>
+    <rect x="18" y="22" width="96" height="12" rx="6" fill="#CFFAFE"/>
+    <rect x="18" y="44" width="118" height="10" rx="5" fill="#E0F2FE"/>
+    <rect x="18" y="62" width="102" height="10" rx="5" fill="#E0F2FE"/>
+  </g>
+  <g transform="translate(372,260)">
+    <rect width="154" height="120" rx="16" fill="#22C55E"/>
+    <rect x="18" y="22" width="96" height="12" rx="6" fill="#DCFCE7"/>
+    <rect x="18" y="44" width="118" height="10" rx="5" fill="#F0FDF4"/>
+    <rect x="18" y="62" width="102" height="10" rx="5" fill="#F0FDF4"/>
+  </g>
+  <g transform="translate(558,260)">
+    <rect width="154" height="120" rx="16" fill="#F59E0B"/>
+    <rect x="18" y="22" width="96" height="12" rx="6" fill="#FEF3C7"/>
+    <rect x="18" y="44" width="118" height="10" rx="5" fill="#FFFBEB"/>
+    <rect x="18" y="62" width="102" height="10" rx="5" fill="#FFFBEB"/>
+  </g>
+
+  <path d="M338 176H354" stroke="#64748B" stroke-width="6" stroke-linecap="round"/>
+  <path d="M346 168L358 176L346 184" stroke="#64748B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="372" y="420" fill="#0F172A" font-size="34" font-family="Inter, Arial, sans-serif" font-weight="800">10+ Short Assets</text>
+  <text x="372" y="456" fill="#475569" font-size="24" font-family="Inter, Arial, sans-serif" font-weight="500">from one recording workflow</text>
+</svg>
