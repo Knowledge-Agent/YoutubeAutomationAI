@@ -1,6 +1,9 @@
-import path from 'node:path';
 import { appendFile, mkdir } from 'node:fs/promises';
+import path from 'node:path';
 
+import { db } from '@/core/db';
+import { envConfigs } from '@/config';
+import { config } from '@/config/db/schema';
 import { respErr, respJson } from '@/shared/lib/resp';
 
 export const runtime = 'nodejs';
@@ -11,6 +14,55 @@ function isJsonRequest(contentType: string) {
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+async function persistToDatabase(payload: {
+  email: string;
+  createdAt: string;
+  source: string;
+}) {
+  if (!envConfigs.database_url) {
+    return false;
+  }
+
+  const key = `waitlist:${payload.email}`;
+
+  try {
+    await db()
+      .insert(config)
+      .values({
+        name: key,
+        value: JSON.stringify(payload),
+      })
+      .onConflictDoUpdate({
+        target: config.name,
+        set: {
+          value: JSON.stringify(payload),
+        },
+      });
+
+    return true;
+  } catch (error) {
+    console.log('[subscribe] persisted to database failed:', error);
+    return false;
+  }
+}
+
+async function persistToFile(payload: {
+  email: string;
+  createdAt: string;
+  source: string;
+}) {
+  try {
+    const dir = path.join(process.cwd(), 'data');
+    const file = path.join(dir, 'waitlist-signups.ndjson');
+    await mkdir(dir, { recursive: true });
+    await appendFile(file, `${JSON.stringify(payload)}\n`, 'utf8');
+    return true;
+  } catch (error) {
+    console.log('[subscribe] persisted to file failed:', error);
+    return false;
+  }
 }
 
 export async function POST(req: Request) {
@@ -48,15 +100,10 @@ export async function POST(req: Request) {
     source: 'homepage_waitlist',
   };
 
-  let persisted = false;
-  try {
-    const dir = path.join(process.cwd(), 'data');
-    const file = path.join(dir, 'waitlist-signups.ndjson');
-    await mkdir(dir, { recursive: true });
-    await appendFile(file, `${JSON.stringify(payload)}\n`, 'utf8');
-    persisted = true;
-  } catch (error) {
-    console.log('[subscribe] persisted failed, fallback to logs:', error);
+  let persisted = await persistToDatabase(payload);
+
+  if (!persisted) {
+    persisted = await persistToFile(payload);
   }
 
   console.log('[subscribe] new waitlist lead:', {
