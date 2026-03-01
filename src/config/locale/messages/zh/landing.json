@@ -1,0 +1,135 @@
+{
+  "header": {
+    "id": "header",
+    "brand": {
+      "title": "YouTube Automation AI",
+      "logo": {
+        "src": "/logo-mark.svg",
+        "alt": "YouTube Automation AI",
+        "width": 28,
+        "height": 28
+      },
+      "url": "/"
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "首页",
+          "url": "/",
+          "icon": "House"
+        },
+        {
+          "title": "博客",
+          "url": "/blog",
+          "icon": "Newspaper"
+        }
+      ]
+    },
+    "buttons": [
+      {
+        "title": "加入 Waitlist",
+        "url": "/#hero",
+        "icon": "Mail",
+        "variant": "default"
+      }
+    ],
+    "user_nav": {
+      "show_name": true,
+      "show_credits": true,
+      "show_sign_out": true,
+      "items": [
+        {
+          "title": "账单",
+          "url": "/settings/billing",
+          "icon": "CreditCard"
+        },
+        {
+          "title": "控制台",
+          "url": "/activity",
+          "icon": "LayoutDashboard"
+        }
+      ]
+    },
+    "show_sign": false,
+    "show_theme": false,
+    "show_locale": false
+  },
+  "footer": {
+    "id": "footer",
+    "brand": {
+      "title": "YouTube Automation AI",
+      "description": "长视频拆短视频，围绕爆款结构做可复制的内容增长流程。",
+      "logo": {
+        "src": "/logo-mark.svg",
+        "alt": "YouTube Automation AI",
+        "width": 28,
+        "height": 28
+      },
+      "url": "/"
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "产品",
+          "children": [
+            {
+              "title": "首页",
+              "url": "/",
+              "target": "_self"
+            },
+            {
+              "title": "博客",
+              "url": "/blog",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "账户",
+          "children": [
+            {
+              "title": "登录",
+              "url": "/sign-in",
+              "target": "_self"
+            },
+            {
+              "title": "注册",
+              "url": "/sign-up",
+              "target": "_self"
+            },
+            {
+              "title": "账单",
+              "url": "/settings/billing",
+              "target": "_self"
+            }
+          ]
+        }
+      ]
+    },
+    "social": {
+      "items": [
+        {
+          "title": "邮箱",
+          "icon": "Mail",
+          "url": "mailto:hello@youtubeautomationai.com",
+          "target": "_self"
+        }
+      ]
+    },
+    "agreement": {
+      "items": [
+        {
+          "title": "隐私政策",
+          "url": "/privacy-policy"
+        },
+        {
+          "title": "服务条款",
+          "url": "/terms-of-service"
+        }
+      ]
+    },
+    "show_theme": false,
+    "show_locale": false,
+    "show_built_with": false
+  }
+}

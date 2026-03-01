@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "title": "YouTube Automation Blog",
+    "description": "Actionable guides on faceless channels, high-CPM niches, and AI tools for long-video-to-shorts workflows."
+  },
+  "page": {
+    "title": "YouTube Automation Blog",
+    "sections": {
+      "blog": {
+        "id": "blog",
+        "title": "Blog",
+        "description": "Learn how to turn long videos into short, viral-ready content with practical playbooks."
+      }
+    }
+  },
+  "messages": {
+    "all": "All",
+    "no_content": "No Content",
+    "crumb": "Blog",
+    "toc": "Table of Contents"
+  }
+}

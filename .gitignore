@@ -1,53 +1,65 @@
-# -------------------- Next.js 特定的文件和目录 --------------------
-# Next.js 应用程序的构建输出目录
-.next/
-# Next.js 在开发模式下使用的临时缓存目录
-.next/cache/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# -------------------- Node.js 和包管理器文件 --------------------
-# Node.js 依赖项目录
-node_modules/
-# npm 调试日志
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-# pnpm 调试日志
 .pnpm-debug.log*
-# pnpm 存储目录
-.pnpm-store/
 
-# -------------------- 环境文件 --------------------
-# 敏感信息，如 API 密钥、数据库凭据等，不应提交到版本控制
+# env files (can opt-in for committing if needed)
 .env
-.env.development.local
-.env.test.local
-.env.production.local
 .env.local
-# .env.* 文件通常会包含敏感信息，所以建议忽略所有 .env 文件
+.env.development
+.env.test
+.env.production
 
-# -------------------- 构建和输出文件 --------------------
-# Vercel 部署的构建输出目录
-.vercel/
-# Next.js 的静态资源生成目录（如果使用 `next export`）
-out/
+# vercel
+.vercel
 
-# -------------------- 编辑器和IDE特定的文件 --------------------
-# VS Code
-.vscode/
-# WebStorm/IntelliJ IDEA
-.idea/
-# Sublime Text
-*.sublime-project
-*.sublime-workspace
-# Vim
-*.swp
-*.swo
-
-# -------------------- 操作系统特定的文件 --------------------
-.DS_Store # macOS
-Thumbs.db # Windows
-# -------------------- 额外的日志文件 --------------------
-*.log
-
-# TypeScript incremental build info
+# typescript
 *.tsbuildinfo
+next-env.d.ts
+
+data*
+*debug*
+
+*.db
+
+.open-next
+wrangler.toml
+.wrangler
+src/shared/types/cloudflare.d.ts
+
+src/config/db/migrations*
+
+.debug 
+.test
+
+*.sql
+.source
+
+.chats

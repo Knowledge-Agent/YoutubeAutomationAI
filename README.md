@@ -1,40 +1,22 @@
-# YoutubeAutomation
+# YouTube Automation AI
 
-## Static SEO site
+SEO-first product site for a long-video-to-short-video workflow platform.
 
-This project is configured for static export with Next.js App Router.
+## Current Scope
 
-### Local development
+- Homepage focused on demand validation and waitlist capture
+- Blog-first content strategy for SEO traffic
+- Base platform capabilities retained (auth, billing, admin)
 
-```bash
-npm install
-npm run dev
-```
-
-### Build static files
+## Dev
 
 ```bash
-npm run build
+pnpm dev
 ```
 
-Static files are generated in `out/`.
-
-### Important SEO setting
-
-Set your production domain before build, otherwise sitemap and canonical links default to `http://localhost:3000`.
+## Build
 
 ```bash
-export NEXT_PUBLIC_SITE_URL="https://your-domain.com"
-npm run build
+pnpm build
+pnpm start
 ```
-
-### Branding assets
-
-Generated logo and social assets are in `public/`:
-
-- `logo.svg`
-- `logo-mark.svg`
-- `logo-512.png`
-- `favicon.ico`
-- `apple-touch-icon.png`
-- `og-image.png`

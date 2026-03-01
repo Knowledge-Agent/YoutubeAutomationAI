@@ -1,0 +1,135 @@
+{
+  "header": {
+    "id": "header",
+    "brand": {
+      "title": "YouTube Automation AI",
+      "logo": {
+        "src": "/logo-mark.svg",
+        "alt": "YouTube Automation AI",
+        "width": 28,
+        "height": 28
+      },
+      "url": "/"
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "Home",
+          "url": "/",
+          "icon": "House"
+        },
+        {
+          "title": "Blog",
+          "url": "/blog",
+          "icon": "Newspaper"
+        }
+      ]
+    },
+    "buttons": [
+      {
+        "title": "Join Waitlist",
+        "url": "/#hero",
+        "icon": "Mail",
+        "variant": "default"
+      }
+    ],
+    "user_nav": {
+      "show_name": true,
+      "show_credits": true,
+      "show_sign_out": true,
+      "items": [
+        {
+          "title": "Billing",
+          "url": "/settings/billing",
+          "icon": "CreditCard"
+        },
+        {
+          "title": "Dashboard",
+          "url": "/activity",
+          "icon": "LayoutDashboard"
+        }
+      ]
+    },
+    "show_sign": false,
+    "show_theme": false,
+    "show_locale": false
+  },
+  "footer": {
+    "id": "footer",
+    "brand": {
+      "title": "YouTube Automation AI",
+      "description": "Long video to short viral clips. Build repeatable YouTube growth workflows with AI.",
+      "logo": {
+        "src": "/logo-mark.svg",
+        "alt": "YouTube Automation AI",
+        "width": 28,
+        "height": 28
+      },
+      "url": "/"
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "Product",
+          "children": [
+            {
+              "title": "Home",
+              "url": "/",
+              "target": "_self"
+            },
+            {
+              "title": "Blog",
+              "url": "/blog",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "Account",
+          "children": [
+            {
+              "title": "Sign In",
+              "url": "/sign-in",
+              "target": "_self"
+            },
+            {
+              "title": "Sign Up",
+              "url": "/sign-up",
+              "target": "_self"
+            },
+            {
+              "title": "Billing",
+              "url": "/settings/billing",
+              "target": "_self"
+            }
+          ]
+        }
+      ]
+    },
+    "social": {
+      "items": [
+        {
+          "title": "Email",
+          "icon": "Mail",
+          "url": "mailto:hello@youtubeautomationai.com",
+          "target": "_self"
+        }
+      ]
+    },
+    "agreement": {
+      "items": [
+        {
+          "title": "Privacy Policy",
+          "url": "/privacy-policy"
+        },
+        {
+          "title": "Terms of Service",
+          "url": "/terms-of-service"
+        }
+      ]
+    },
+    "show_theme": false,
+    "show_locale": false,
+    "show_built_with": false
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "metadata": {
+    "title": "YouTube Automation AI - Turn Long Videos Into Viral Shorts",
+    "description": "Turn one long video into multiple viral-style short videos with AI clip detection, hook generation, and caption workflows.",
+    "keywords": "youtube automation ai, long video to short video, viral shorts, faceless youtube workflow, ai clip generator"
+  },
+  "page": {
+    "show_sections": [
+      "hero",
+      "introduce",
+      "usage",
+      "benefits",
+      "stats",
+      "features",
+      "faq",
+      "blog",
+      "cta"
+    ],
+    "sections": {
+      "hero": {
+        "id": "hero",
+        "label": "Waitlist Open · Early Access",
+        "title": "Turn one long video into viral-ready shorts",
+        "highlight_text": "viral-ready shorts",
+        "description": "YouTube Automation AI is built for creators and teams that want to repurpose long-form content faster.<br/>We focus on <strong>clip selection, hook structure, caption packaging, and repeatable publishing workflows</strong>.",
+        "audience": "Best for faceless channels, repurposing teams, and creator operators who need speed without losing quality.",
+        "key_points": [
+          "Extract multiple short candidates from one long video",
+          "Apply proven viral hook and pacing patterns",
+          "Generate captions and title angles for short feeds",
+          "Ship faster with one repeatable workflow"
+        ],
+        "proof_card": {
+          "title": "What users want this to solve",
+          "quote": "“I need a reliable system to turn long-form ideas into short-form output every week, without editing bottlenecks.”",
+          "bullets": [
+            "Auto scene and highlight detection",
+            "Hook-first scripting patterns",
+            "Caption + packaging assist",
+            "Workflow designed for batch publishing"
+          ],
+          "note": "We’re currently validating demand and onboarding waitlist users in small batches."
+        },
+        "metrics": [
+          {
+            "value": "10+",
+            "label": "Target clips from one source video"
+          },
+          {
+            "value": "3x",
+            "label": "Target faster first-draft output"
+          },
+          {
+            "value": "1",
+            "label": "Unified workflow for script → clip → publish"
+          },
+          {
+            "value": "Weekly",
+            "label": "New waitlist invites sent in cohorts"
+          }
+        ],
+        "social_proof": [
+          "No credit card required",
+          "Early users onboarded weekly",
+          "You can unsubscribe anytime"
+        ],
+        "submit": {
+          "input": {
+            "placeholder": "Enter your email to join early access"
+          },
+          "button": {
+            "title": "Join Waitlist"
+          },
+          "hint": "We only send access and product updates. No spam.",
+          "action": "/api/subscribe"
+        },
+        "buttons": [
+          {
+            "title": "See Workflow",
+            "icon": "Workflow",
+            "url": "/#usage",
+            "target": "_self",
+            "variant": "default"
+          },
+          {
+            "title": "Read Blog",
+            "icon": "Newspaper",
+            "url": "/blog",
+            "target": "_self",
+            "variant": "outline"
+          }
+        ],
+        "tip": "Current focus: long-video clipping + viral-format mimic + SEO growth content.",
+        "show_avatars": false,
+        "className": "bg-gradient-to-b from-red-50/70 via-background to-background"
+      },
+      "introduce": {
+        "block": "features-list",
+        "id": "introduce",
+        "title": "What the product is built to do",
+        "label": "Core Problem",
+        "description": "Most teams already have long-form content but struggle to consistently produce short clips with strong hooks. We focus on making that process structured and repeatable.",
+        "image": {
+          "src": "/og-image.png",
+          "alt": "Long video to short video workflow"
+        },
+        "items": [
+          {
+            "title": "Find clip-worthy moments faster",
+            "description": "Identify high-signal moments in podcasts, interviews, tutorials, and webinar recordings.",
+            "icon": "Scissors"
+          },
+          {
+            "title": "Use viral structure instead of guesswork",
+            "description": "Apply repeatable patterns for hooks, pacing, and retention from proven short-video formats.",
+            "icon": "TrendingUp"
+          },
+          {
+            "title": "Package clips for short feeds",
+            "description": "Generate subtitle and title options aligned with short-form viewing behavior.",
+            "icon": "Captions"
+          },
+          {
+            "title": "Build an SEO-backed content engine",
+            "description": "Pair short-video output with demand-driven blog and metadata strategy.",
+            "icon": "Search"
+          }
+        ]
+      },
+      "usage": {
+        "block": "features-step",
+        "id": "usage",
+        "title": "How the workflow works",
+        "description": "A practical loop from long-form source to short-form distribution:",
+        "label": "3-Step Process",
+        "items": [
+          {
+            "title": "Input long-form source",
+            "description": "Upload your long video or reference an existing YouTube source.",
+            "icon": "Upload"
+          },
+          {
+            "title": "Generate short candidates",
+            "description": "Score scenes, apply hook templates, and prepare subtitle-ready short drafts.",
+            "icon": "Clapperboard"
+          },
+          {
+            "title": "Publish and iterate",
+            "description": "Ship clips, track performance, and refine the next batch from real feedback.",
+            "icon": "RefreshCw"
+          }
+        ]
+      },
+      "benefits": {
+        "block": "features-accordion",
+        "id": "benefits",
+        "title": "Why this approach is effective",
+        "label": "Advantages",
+        "description": "The goal is not just faster editing — it is consistent short-form output that compounds over time.",
+        "items": [
+          {
+            "title": "Higher output from existing content",
+            "description": "Repurpose one recording into multiple short assets instead of publishing only once.",
+            "icon": "Layers3",
+            "image": {
+              "src": "/imgs/features/1.png",
+              "alt": "Repurposing output"
+            }
+          },
+          {
+            "title": "Repeatability over random creativity",
+            "description": "Use structure and templates that can be reused by operators and teams.",
+            "icon": "BarChart3",
+            "image": {
+              "src": "/imgs/features/2.png",
+              "alt": "Repeatable structure"
+            }
+          },
+          {
+            "title": "Less production friction",
+            "description": "Reduce handoffs across scripting, clipping, captioning, and packaging steps.",
+            "icon": "Zap",
+            "image": {
+              "src": "/imgs/features/3.png",
+              "alt": "Faster production"
+            }
+          }
+        ]
+      },
+      "stats": {
+        "id": "stats",
+        "title": "Current validation focus",
+        "description": "The product is in SEO and waitlist stage, focused on proving demand around the core short-video workflow.",
+        "items": [
+          {
+            "title": "1",
+            "description": "Core waitlist funnel for early users"
+          },
+          {
+            "title": "3",
+            "description": "SEO guides already published"
+          },
+          {
+            "title": "24/7",
+            "description": "Search visibility compounding potential"
+          }
+        ]
+      },
+      "features": {
+        "id": "features",
+        "title": "Production infrastructure already retained",
+        "description": "Core clipping features are being validated, while foundational product systems already exist.",
+        "items": [
+          {
+            "title": "Authentication",
+            "description": "Email and social auth flows are available for gated rollout.",
+            "icon": "ShieldCheck"
+          },
+          {
+            "title": "Payments",
+            "description": "Checkout and billing rails are already in place for future plans.",
+            "icon": "CreditCard"
+          },
+          {
+            "title": "Admin Backend",
+            "description": "User, content, permission, and setting management is operational.",
+            "icon": "LayoutDashboard"
+          },
+          {
+            "title": "Blog System",
+            "description": "Structured routes and content support SEO-first growth execution.",
+            "icon": "FileText"
+          },
+          {
+            "title": "International-ready Architecture",
+            "description": "Locale-capable routing and config are prepared for multilingual growth.",
+            "icon": "Languages"
+          },
+          {
+            "title": "API-first Foundation",
+            "description": "Backend route foundation is ready for feature iteration and integrations.",
+            "icon": "Webhook"
+          }
+        ]
+      },
+      "faq": {
+        "id": "faq",
+        "title": "Frequently asked questions",
+        "description": "Clear status on what is available now and what is being validated.",
+        "items": [
+          {
+            "question": "Is the long-video clipping feature fully launched?",
+            "answer": "Not yet. We are in SEO and waitlist validation stage while core workflows are being refined."
+          },
+          {
+            "question": "What problem are you solving first?",
+            "answer": "Turning long videos into short, viral-style clips with stronger hooks and faster production cycles."
+          },
+          {
+            "question": "How can I get early access?",
+            "answer": "Submit your email in the hero section. We invite users in weekly cohorts."
+          },
+          {
+            "question": "Do sign-in and billing systems already exist?",
+            "answer": "Yes. Infrastructure for auth and payment is retained and ready to support rollout."
+          },
+          {
+            "question": "Who is this product for?",
+            "answer": "Creators, solo operators, and small teams running faceless or repurposed-content channels."
+          }
+        ]
+      },
+      "blog": {
+        "block": "blog",
+        "id": "blog",
+        "title": "Latest guides",
+        "description": "Start with practical, SEO-focused guides from the current content library.",
+        "data": {
+          "categories": [
+            {
+              "id": "all",
+              "slug": "all",
+              "title": "All",
+              "url": "/blog"
+            }
+          ],
+          "currentCategory": {
+            "id": "all",
+            "slug": "all",
+            "title": "All",
+            "url": "/blog"
+          },
+          "posts": [
+            {
+              "id": "1",
+              "slug": "what-is-youtube-automation",
+              "title": "What is YouTube Automation? A Complete Beginner's Guide",
+              "description": "Learn everything about YouTube Automation, from basic concepts to advanced strategies for building profitable faceless channels.",
+              "image": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=1200&h=630&fit=crop",
+              "created_at": "Jan 28, 2026",
+              "author_name": "YouTube Automation AI Team",
+              "author_image": "/logo-mark.svg",
+              "url": "/blog/what-is-youtube-automation"
+            },
+            {
+              "id": "2",
+              "slug": "best-youtube-automation-niches-2026",
+              "title": "Best YouTube Automation Niches for 2026 - High CPM Analysis",
+              "description": "Data-driven analysis of the most profitable niches based on CPM, competition, and growth potential.",
+              "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop",
+              "created_at": "Jan 27, 2026",
+              "author_name": "YouTube Automation AI Team",
+              "author_image": "/logo-mark.svg",
+              "url": "/blog/best-youtube-automation-niches-2026"
+            },
+            {
+              "id": "3",
+              "slug": "ai-tools-youtube-automation-guide",
+              "title": "AI Tools for YouTube Automation - Complete 2026 Guide",
+              "description": "A practical guide to AI tools for scripting, voiceover, clipping, packaging, and scaling output.",
+              "image": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&h=630&fit=crop",
+              "created_at": "Jan 26, 2026",
+              "author_name": "YouTube Automation AI Team",
+              "author_image": "/logo-mark.svg",
+              "url": "/blog/ai-tools-youtube-automation-guide"
+            }
+          ]
+        }
+      },
+      "cta": {
+        "id": "cta",
+        "title": "Join the waitlist and get early workflow access",
+        "description": "If long-video-to-short output is your bottleneck, leave your email and we’ll onboard you in batches.",
+        "buttons": [
+          {
+            "title": "Join Waitlist",
+            "icon": "Mail",
+            "url": "/#hero",
+            "target": "_self",
+            "variant": "default"
+          },
+          {
+            "title": "Read Blog",
+            "icon": "Newspaper",
+            "url": "/blog",
+            "target": "_self",
+            "variant": "outline"
+          }
+        ]
+      }
+    }
+  }
+}

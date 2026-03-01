@@ -1,34 +1,39 @@
-import type { MetadataRoute } from "next";
-import { blogIds, videoIds } from "@/lib/content-data";
-import { siteUrl } from "@/lib/site";
+import type { MetadataRoute } from 'next';
+
+import { envConfigs } from '@/config';
+
+const blogSlugs = [
+  'what-is-youtube-automation',
+  'best-youtube-automation-niches-2026',
+  'ai-tools-youtube-automation-guide',
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  return [
+  const routes: MetadataRoute.Sitemap = [
     {
-      url: `${siteUrl}/`,
+      url: `${envConfigs.app_url}/`,
       lastModified: now,
-      changeFrequency: "daily",
+      changeFrequency: 'weekly',
       priority: 1,
     },
     {
-      url: `${siteUrl}/blog/`,
+      url: `${envConfigs.app_url}/blog`,
       lastModified: now,
-      changeFrequency: "daily",
+      changeFrequency: 'daily',
       priority: 0.9,
     },
-    ...blogIds.map((id) => ({
-      url: `${siteUrl}/blog/${id}/`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    })),
-    ...videoIds.map((id) => ({
-      url: `${siteUrl}/video/${id}/`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
   ];
+
+  blogSlugs.forEach((slug) => {
+    routes.push({
+      url: `${envConfigs.app_url}/blog/${slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    });
+  });
+
+  return routes;
 }
