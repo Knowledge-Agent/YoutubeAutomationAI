@@ -2,7 +2,9 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { getThemePage } from '@/core/theme';
 import { envConfigs } from '@/config';
+import { defaultLocale } from '@/config/locale';
 import { Empty } from '@/shared/blocks/common';
+import { buildBlogPostingStructuredData, buildBreadcrumbStructuredData, createStructuredDataGraph } from '@/shared/lib/structured-data';
 import { getPost } from '@/shared/models/post';
 import { DynamicPage } from '@/shared/types/blocks/landing';
 
@@ -16,10 +18,8 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const t = await getTranslations('pages.blog.metadata');
 
-  const canonicalUrl =
-    locale !== envConfigs.locale
-      ? `${envConfigs.app_url}/${locale}/blog/${slug}`
-      : `${envConfigs.app_url}/blog/${slug}`;
+  const localeSegment = locale !== defaultLocale ? `/${locale}` : '';
+  const canonicalUrl = `${envConfigs.app_url}${localeSegment}/blog/${slug}`;
 
   const post = await getPost({ slug, locale });
   const image = post?.image || envConfigs.app_preview_image;
@@ -108,7 +108,28 @@ export default async function BlogDetailPage({
     },
   };
 
+  const structuredData = createStructuredDataGraph([
+    buildBlogPostingStructuredData({ locale, post }),
+    buildBreadcrumbStructuredData({
+      locale,
+      items: [
+        { name: 'Home', url: '/' },
+        { name: 'Blog', url: '/blog' },
+        { name: post.title || slug, url: post.url || `/blog/${slug}` },
+      ],
+    }),
+  ]);
+
   const Page = await getThemePage('dynamic-page');
 
-  return <Page locale={locale} page={page} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <Page locale={locale} page={page} />
+    </>
+  );
 }

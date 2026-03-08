@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { getThemePage } from '@/core/theme';
+import { buildFaqStructuredData, buildOrganizationStructuredData, buildWebsiteStructuredData, createStructuredDataGraph } from '@/shared/lib/structured-data';
 import { getMetadata } from '@/shared/lib/seo';
 import { DynamicPage } from '@/shared/types/blocks/landing';
 
@@ -21,11 +22,31 @@ export default async function LandingPage({
 
   const t = await getTranslations('pages.index');
 
-  // get page data
   const page: DynamicPage = t.raw('page');
+  const metadata = t.raw('metadata') as { description?: string };
+  const faqStructuredData = buildFaqStructuredData(
+    (page.sections?.faq?.items || []) as any
+  );
+  const structuredData = createStructuredDataGraph([
+    buildWebsiteStructuredData({
+      locale,
+      path: '/',
+      description: metadata.description || page.sections?.hero?.description,
+    }),
+    buildOrganizationStructuredData(),
+    faqStructuredData,
+  ]);
 
-  // load page component
   const Page = await getThemePage('dynamic-page');
 
-  return <Page locale={locale} page={page} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <Page locale={locale} page={page} />
+    </>
+  );
 }

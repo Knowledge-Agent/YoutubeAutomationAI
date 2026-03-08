@@ -2,6 +2,9 @@ import { ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 
 import { ConsoleLayout } from '@/shared/blocks/console/layout';
+import { getMetadata } from '@/shared/lib/seo';
+
+export const generateMetadata = getMetadata({ noIndex: true });
 
 export default async function SettingsLayout({
   children,
