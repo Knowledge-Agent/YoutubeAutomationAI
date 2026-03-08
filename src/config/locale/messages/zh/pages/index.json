@@ -57,7 +57,11 @@
             "label": "面向 automated youtube videos 的稳定产能"
           }
         ],
-        "social_proof": ["无需信用卡", "每周发放内测名额", "随时可取消订阅"],
+        "social_proof": [
+          "无需信用卡",
+          "每周发放内测名额",
+          "随时可取消订阅"
+        ],
         "submit": {
           "input": {
             "placeholder": "输入邮箱，获取一站式工作流内测"
@@ -72,7 +76,7 @@
           {
             "title": "查看流程",
             "icon": "Workflow",
-            "url": "/#usage",
+            "url": "/#hero-waitlist",
             "target": "_self",
             "variant": "default"
           },

@@ -10,9 +10,21 @@ export default async function DynamicPage({
   page: DynamicPageType;
   data?: Record<string, any>;
 }) {
+  const sectionKeys = page.show_sections || Object.keys(page.sections || {});
+  const hasHeroSection = sectionKeys.some((sectionKey) => {
+    const section = page.sections?.[sectionKey];
+    if (!section) {
+      return false;
+    }
+
+    const blockName = String(section.block || '').toLowerCase();
+    const sectionId = String(section.id || '').toLowerCase();
+    return blockName.startsWith('hero') || sectionId === 'hero';
+  });
+
   return (
     <>
-      {page.title && !page.sections?.hero && (
+      {page.title && !hasHeroSection && (
         <h1 className="sr-only">{page.title}</h1>
       )}
       {page?.sections &&

@@ -3,6 +3,7 @@ export * from './header';
 export * from './footer';
 
 export * from './hero';
+export * from './hero-automation';
 
 export * from './features';
 export * from './features-list';
@@ -10,6 +11,9 @@ export * from './features-accordion';
 export * from './features-step';
 export * from './features-flow';
 export * from './features-media';
+export * from './workflow-pillars';
+export * from './use-cases-grid';
+export * from './why-automation';
 
 export * from './showcases';
 export * from './showcases-flow';
