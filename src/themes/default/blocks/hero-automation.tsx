@@ -1,13 +1,26 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, type FormEvent } from 'react';
-import { ArrowRight, CheckCircle2, Loader2, Mail, SendHorizonal } from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Loader2,
+  Mail,
+  SendHorizonal,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Link } from '@/core/i18n/navigation';
 import { SmartIcon } from '@/shared/blocks/common';
 import { Button } from '@/shared/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/components/ui/dialog';
 import { cn } from '@/shared/lib/utils';
 import { Section } from '@/shared/types/blocks/landing';
 
@@ -20,6 +33,7 @@ export function HeroAutomation({
 }) {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
 
   const keyPoints = Array.isArray(section.key_points)
     ? section.key_points.filter(Boolean)
@@ -31,6 +45,40 @@ export function HeroAutomation({
   const workflowSteps = Array.isArray(section.workflow_steps)
     ? section.workflow_steps
     : [];
+
+  useEffect(() => {
+    const syncWaitlistState = () => {
+      const hash = window.location.hash.replace('#', '');
+      setWaitlistOpen(hash === 'hero-waitlist' || hash === 'join-waitlist');
+    };
+
+    syncWaitlistState();
+    window.addEventListener('hashchange', syncWaitlistState);
+
+    return () => {
+      window.removeEventListener('hashchange', syncWaitlistState);
+    };
+  }, []);
+
+  const updateWaitlistOpen = (open: boolean) => {
+    setWaitlistOpen(open);
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    if (open) {
+      url.hash = 'hero-waitlist';
+    } else if (
+      url.hash === '#hero-waitlist' ||
+      url.hash === '#join-waitlist'
+    ) {
+      url.hash = '';
+    }
+
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  };
 
   const handleWaitlistSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -81,6 +129,7 @@ export function HeroAutomation({
       }
 
       setEmail('');
+      updateWaitlistOpen(false);
       toast.success(message || 'Thanks! You are on the waitlist.');
     } catch (error: any) {
       toast.error(error?.message || 'submit failed');
@@ -133,89 +182,65 @@ export function HeroAutomation({
               dangerouslySetInnerHTML={{ __html: section.description ?? '' }}
             />
 
-            {section.submit?.action && (
-              <form
-                id="hero-waitlist"
-                className="mx-auto mt-8 max-w-2xl"
-                onSubmit={handleWaitlistSubmit}
-              >
-                <label htmlFor="hero-waitlist-email" className="sr-only">
-                  Email address
-                </label>
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <div className="relative flex-1 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur has-[input:focus]:ring-2 has-[input:focus]:ring-orange-400/40">
-                    <Mail className="pointer-events-none absolute inset-y-0 left-4 my-auto size-4 text-slate-400" />
-                    <input
-                      id="hero-waitlist-email"
-                      type="email"
-                      name="email"
-                      required
-                      aria-required="true"
-                      placeholder={
-                        section.submit?.input?.placeholder ||
-                        'Enter your email for early access'
+            {section.buttons && section.buttons.length > 0 && (
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                {section.buttons.map((button, idx) => {
+                  const isWaitlistButton = (button.url || '').includes(
+                    '#hero-waitlist'
+                  );
+
+                  return (
+                    <Button
+                      key={idx}
+                      size={button.size || 'lg'}
+                      variant={button.variant || 'default'}
+                      className={cn(
+                        'h-12 rounded-xl px-6 text-sm',
+                        idx === 0 &&
+                          'bg-primary text-primary-foreground hover:bg-primary/90 border-[0.5px] border-white/25 shadow-md ring-1 shadow-black/20 ring-(--ring-color) [--ring-color:color-mix(in_oklab,var(--color-foreground)15%,var(--color-primary))]'
+                      )}
+                      asChild={!isWaitlistButton}
+                      onClick={
+                        isWaitlistButton
+                          ? () => updateWaitlistOpen(true)
+                          : undefined
                       }
-                      className="h-12 w-full bg-transparent pr-4 pl-11 text-sm text-white placeholder:text-slate-500 focus:outline-none"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="h-12 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 px-6 text-white shadow-lg shadow-orange-500/20 hover:from-orange-400 hover:to-red-400"
-                    disabled={submitting}
-                  >
-                    {submitting ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <>
-                        <span className="hidden sm:inline">
-                          {section.submit?.button?.title || 'Join Waitlist'}
-                        </span>
-                        <SendHorizonal className="size-4 sm:hidden" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-                {section.submit?.hint && (
-                  <p
-                    className="mt-3 text-sm text-slate-400"
-                    dangerouslySetInnerHTML={{ __html: section.submit.hint }}
-                  />
-                )}
-              </form>
+                    >
+                      {isWaitlistButton ? (
+                        <>
+                          {button.icon && (
+                            <SmartIcon
+                              name={button.icon as string}
+                              className="size-4"
+                            />
+                          )}
+                          <span>{button.title}</span>
+                        </>
+                      ) : (
+                        <Link
+                          href={button.url ?? ''}
+                          target={button.target ?? '_self'}
+                        >
+                          {button.icon && (
+                            <SmartIcon
+                              name={button.icon as string}
+                              className="size-4"
+                            />
+                          )}
+                          <span>{button.title}</span>
+                        </Link>
+                      )}
+                    </Button>
+                  );
+                })}
+              </div>
             )}
 
-            {section.buttons && section.buttons.length > 0 && (
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-                {section.buttons.map((button, idx) => (
-                  <Button
-                    asChild
-                    key={idx}
-                    size={button.size || 'lg'}
-                    variant={button.variant || 'default'}
-                    className={cn(
-                      'h-12 rounded-xl px-6 text-sm',
-                      idx === 0 &&
-                        'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20 hover:from-orange-400 hover:to-red-400'
-                    )}
-                  >
-                    <Link
-                      href={button.url ?? ''}
-                      target={button.target ?? '_self'}
-                    >
-                      {button.icon && (
-                        <SmartIcon
-                          name={button.icon as string}
-                          className="size-4"
-                        />
-                      )}
-                      <span>{button.title}</span>
-                    </Link>
-                  </Button>
-                ))}
-              </div>
+            {section.submit?.action && (
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-slate-400">
+                Click <span className="font-semibold text-orange-300">Join Waitlist</span>{' '}
+                to leave your email and get early-access invites.
+              </p>
             )}
 
             {socialProof.length > 0 && (
@@ -322,6 +347,67 @@ export function HeroAutomation({
           </div>
         </div>
       </div>
+
+      <Dialog open={waitlistOpen} onOpenChange={updateWaitlistOpen}>
+        <DialogContent className="border-white/10 bg-[#0b1126] p-0 text-white shadow-2xl sm:max-w-xl">
+          <div className="rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(249,115,22,0.18),_transparent_38%),linear-gradient(180deg,_rgba(11,17,38,1)_0%,_rgba(8,12,28,1)_100%)] p-6 sm:p-8">
+            <DialogHeader className="text-left">
+              <DialogTitle className="text-2xl font-semibold text-white">
+                {section.submit?.button?.title || 'Join Waitlist'}
+              </DialogTitle>
+              <DialogDescription className="text-sm leading-6 text-slate-400">
+                Get early access to the long-video-to-shorts workflow. Leave your email and we will send invites in batches.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form className="mt-6 space-y-4" onSubmit={handleWaitlistSubmit}>
+              <label htmlFor="hero-waitlist-email" className="sr-only">
+                Email address
+              </label>
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur has-[input:focus]:ring-2 has-[input:focus]:ring-orange-400/40">
+                <Mail className="pointer-events-none absolute inset-y-0 left-4 my-auto size-4 text-slate-400" />
+                <input
+                  id="hero-waitlist-email"
+                  type="email"
+                  name="email"
+                  required
+                  aria-required="true"
+                  placeholder={
+                    section.submit?.input?.placeholder ||
+                    'Enter your email for early access'
+                  }
+                  className="h-12 w-full bg-transparent pr-4 pl-11 text-sm text-white placeholder:text-slate-500 focus:outline-none"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
+              </div>
+
+              {section.submit?.hint && (
+                <p
+                  className="text-sm leading-6 text-slate-400"
+                  dangerouslySetInnerHTML={{ __html: section.submit.hint }}
+                />
+              )}
+
+              <Button
+                type="submit"
+                size="lg"
+                className="h-12 w-full rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 border-[0.5px] border-white/25 px-6 shadow-md ring-1 shadow-black/20 ring-(--ring-color) [--ring-color:color-mix(in_oklab,var(--color-foreground)15%,var(--color-primary))]"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <>
+                    <span>{section.submit?.button?.title || 'Join Waitlist'}</span>
+                    <SendHorizonal className="size-4" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
