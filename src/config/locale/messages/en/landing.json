@@ -28,7 +28,7 @@
     "buttons": [
       {
         "title": "Join Waitlist",
-        "url": "/#hero",
+        "url": "/#hero-waitlist",
         "icon": "Mail",
         "variant": "default"
       }
