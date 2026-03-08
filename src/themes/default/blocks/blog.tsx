@@ -3,13 +3,11 @@ import { Calendar } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Link } from '@/core/i18n/navigation';
-import { Tabs } from '@/shared/blocks/common/tabs';
 import { cn } from '@/shared/lib/utils';
 import {
   Category as CategoryType,
   Post as PostType,
 } from '@/shared/types/blocks/blog';
-import { Tab } from '@/shared/types/blocks/common';
 import { Section } from '@/shared/types/blocks/landing';
 
 export function Blog({
@@ -26,41 +24,54 @@ export function Blog({
   posts: PostType[];
 }) {
   const t = useTranslations('pages.blog.messages');
-  const tabs: Tab[] = [];
-  categories?.map((category: CategoryType) => {
-    tabs.push({
-      name: category.slug,
-      title: category.title,
-      url:
-        !category.slug || category.slug === 'all'
-          ? '/blog'
-          : `/blog/category/${category.slug}`,
-      is_active: currentCategory?.slug == category.slug,
-    });
-  });
 
   return (
     <section
       id={section.id}
-      className={cn('py-24 md:py-36', section.className, className)}
+      className={cn('py-14 md:py-20', section.className, className)}
     >
-      <div className="mx-auto mb-12 text-center">
+      <div className="mx-auto mb-6 max-w-4xl px-4 text-center md:mb-8">
         {section.sr_only_title && (
           <h1 className="sr-only">{section.sr_only_title}</h1>
         )}
-        <h2 className="mb-6 text-3xl font-bold text-pretty lg:text-4xl">
+        <h2 className="mb-3 text-3xl font-bold text-pretty lg:text-4xl">
           {section.title}
         </h2>
-        <p className="text-muted-foreground mb-4 max-w-xl lg:max-w-none lg:text-lg">
+        <p className="text-muted-foreground mx-auto max-w-3xl text-sm leading-7 md:text-base lg:text-lg">
           {section.description}
         </p>
       </div>
 
-      <div className="container flex flex-col items-center gap-8 lg:px-16">
+      <div className="container flex flex-col items-center gap-6 lg:px-16">
         {categories && categories.length > 0 && (
-          <div className="mb-2 flex flex-wrap items-center justify-center gap-4">
-            <Tabs tabs={tabs} />
-          </div>
+          <nav
+            aria-label="Blog categories"
+            className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-2 py-3 md:gap-3"
+          >
+            {categories.map((category: CategoryType) => {
+              const href =
+                !category.slug || category.slug === 'all'
+                  ? '/blog'
+                  : `/blog/category/${category.slug}`;
+              const isActive = currentCategory?.slug === category.slug;
+
+              return (
+                <Link
+                  key={category.slug || category.id}
+                  href={href}
+                  className={cn(
+                    'rounded-full border px-3 py-1.5 text-sm font-medium transition-colors md:px-4',
+                    'hover:border-foreground/30 hover:bg-foreground/5',
+                    isActive
+                      ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                      : 'border-border bg-background text-muted-foreground'
+                  )}
+                >
+                  {category.title}
+                </Link>
+              );
+            })}
+          </nav>
         )}
 
         {posts && posts.length > 0 ? (
