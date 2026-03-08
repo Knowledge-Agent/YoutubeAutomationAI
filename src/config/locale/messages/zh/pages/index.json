@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "YouTube Automation AI - 长视频一键拆成爆款短视频",
-    "description": "把一条长视频高效拆分为多条爆款风格短视频，覆盖切片、钩子文案、字幕包装与发布流程。",
-    "keywords": "youtube automation ai, 长视频拆短视频, 爆款短视频, 无人出镜频道, ai 剪辑"
+    "title": "YouTube Automation AI | 一站式视频复刻改编自动化",
+    "description": "在一个平台完成视频复刻改编：分析原视频、改写脚本、生成分镜图、生成视频并自动合成导出。",
+    "keywords": "youtube automation, automation for youtube content, automated youtube videos, ai video generator youtube automation, how to start youtube automation with ai, n8n youtube automation"
   },
   "page": {
     "show_sections": [
@@ -18,56 +18,52 @@
       "hero": {
         "id": "hero",
         "label": "Waitlist 开放中 · 早期内测",
-        "title": "把一条长视频，拆成爆款短视频",
-        "highlight_text": "爆款短视频",
-        "description": "YouTube Automation AI 面向创作者和内容团队，目标是把长内容快速转化为可发布短视频。<br/>重点解决 <strong>切点选择、钩子结构、字幕包装、批量发布</strong> 这四个高频痛点。",
-        "audience": "适合无人出镜频道、内容代运营团队、以及需要稳定产出的创作者。",
+        "title": "一个工作流完成视频复刻与改编自动化",
+        "highlight_text": "一站式自动化",
+        "description": "不再在多个平台来回切换。YouTube Automation AI 支持在一个系统中完成 <strong>automation for YouTube content</strong>：原视频分析、脚本改写、分镜图生成、视频生成与自动合成。",
+        "audience": "适合 faceless 频道操盘手、内容代运营团队和高频复刻改编场景。",
         "key_points": [
-          "一条长视频拆出多条候选短视频",
-          "复用爆款开场与节奏结构，减少拍脑袋",
-          "快速生成字幕与标题方向，适配短视频平台",
-          "形成可复用的周更生产流程"
+          "自动解析原视频脚本结构与场景节奏",
+          "按目标受众改写脚本并生成可执行分镜",
+          "逐镜头生成分镜图与视频素材",
+          "自动拼接合成并导出可发布成片"
         ],
         "proof_card": {
-          "title": "我们正在验证的核心需求",
-          "quote": "“我需要一套稳定流程，把长视频持续转成可发短视频，而不是每次都从零剪辑。”",
+          "title": "多平台拼接流程的核心痛点",
+          "quote": "“我需要从参考视频到最终导出一条龙完成，而不是在 5 个工具之间切来切去。”",
           "bullets": [
-            "自动识别高价值片段",
-            "钩子优先的短视频结构",
-            "字幕与包装辅助产出",
-            "支持批量发布节奏"
+            "参考视频分析 + 文本结构提取",
+            "AI 脚本改写与风格控制",
+            "逐场景分镜图生成",
+            "自动化视频组合与导出"
           ],
           "note": "当前处于 SEO + Waitlist 阶段，按周小批量邀请内测。"
         },
         "metrics": [
           {
-            "value": "10+",
-            "label": "目标：单条长视频产出 10+ 候选短视频"
+            "value": "1",
+            "label": "统一平台：改写脚本到自动合成"
+          },
+          {
+            "value": "5+",
+            "label": "典型流程可减少 5 次以上工具切换"
           },
           {
             "value": "3x",
-            "label": "目标：首版短视频产出速度提升 3 倍"
+            "label": "从参考视频到首版成片速度提升"
           },
           {
-            "value": "1",
-            "label": "统一流程：脚本 → 切片 → 包装 → 发布"
-          },
-          {
-            "value": "每周",
-            "label": "Waitlist 用户分批邀请"
+            "value": "周更",
+            "label": "面向 automated youtube videos 的稳定产能"
           }
         ],
-        "social_proof": [
-          "无需信用卡",
-          "每周发放内测名额",
-          "随时可取消订阅"
-        ],
+        "social_proof": ["无需信用卡", "每周发放内测名额", "随时可取消订阅"],
         "submit": {
           "input": {
-            "placeholder": "输入邮箱，加入早期内测"
+            "placeholder": "输入邮箱，获取一站式工作流内测"
           },
           "button": {
-            "title": "加入 Waitlist"
+            "title": "申请早期访问"
           },
           "hint": "只发送内测与产品更新，不会群发广告。",
           "action": "/api/subscribe"
@@ -88,63 +84,63 @@
             "variant": "outline"
           }
         ],
-        "tip": "当前重点：长视频拆条 + 爆款结构模仿 + SEO 内容增长。",
+        "tip": "核心意图：视频复刻改编一站式自动化（脚本改写 + 分镜图 + 自动合成）。",
         "show_avatars": false,
         "className": "bg-gradient-to-b from-red-50/70 via-background to-background"
       },
       "introduce": {
         "block": "features-list",
         "id": "introduce",
-        "title": "这个产品先解决什么问题",
+        "title": "为什么你需要一站式 YouTube Automation",
         "label": "问题定义",
-        "description": "很多团队不缺长内容，缺的是“稳定产出短内容”的方法。我们把流程拆清楚，先解决可持续输出。",
+        "description": "瓶颈不是选题，而是执行链路被下载工具、脚本工具、图片工具、视频工具和剪辑工具切碎。我们把它整合为一条流水线。",
         "image": {
           "src": "/imgs/landing/introduce-workflow.svg",
           "alt": "长视频拆短视频流程示意"
         },
         "items": [
           {
-            "title": "更快找到可剪片段",
-            "description": "从播客、访谈、教程、直播回放中识别高价值片段。",
-            "icon": "Scissors"
-          },
-          {
-            "title": "用结构化方式做爆款",
-            "description": "复用已验证的钩子与节奏模型，而不是每条视频重新试错。",
-            "icon": "TrendingUp"
-          },
-          {
-            "title": "面向短视频平台包装",
-            "description": "自动生成字幕与标题方向，贴合 Shorts / Reels / TikTok 分发形态。",
-            "icon": "Captions"
-          },
-          {
-            "title": "叠加 SEO 内容增长",
-            "description": "通过博客与元信息布局，让流量不仅依赖推荐，也能来自搜索。",
+            "title": "自动分析参考视频",
+            "description": "先解析 transcript、结构节奏和可改编片段，再进入生产。",
             "icon": "Search"
+          },
+          {
+            "title": "按目标改写脚本",
+            "description": "保留原逻辑，重写表达角度与 hook，适配你的频道定位。",
+            "icon": "FileText"
+          },
+          {
+            "title": "按场景生成分镜图",
+            "description": "把每个场景转成可执行分镜图和视觉提示词。",
+            "icon": "Image"
+          },
+          {
+            "title": "生成并自动合成视频",
+            "description": "批量生成镜头素材并自动拼接输出，减少人工中转。",
+            "icon": "Clapperboard"
           }
         ]
       },
       "usage": {
         "block": "features-step",
         "id": "usage",
-        "title": "流程怎么跑",
-        "description": "从长内容到短视频发布，核心流程分为 3 步：",
+        "title": "从参考视频到最终导出，只要 3 步",
+        "description": "面向 automated youtube videos 的一站式流程：",
         "label": "3 步执行",
         "items": [
           {
-            "title": "输入长视频",
-            "description": "上传视频文件或引用 YouTube 长视频链接。",
+            "title": "导入并分析参考视频",
+            "description": "上传或粘贴原视频链接，提取脚本结构与候选场景。",
             "icon": "Upload"
           },
           {
-            "title": "生成短视频候选",
-            "description": "识别高价值片段，套用钩子模板，并生成字幕草稿。",
-            "icon": "Clapperboard"
+            "title": "改写脚本并生成分镜图",
+            "description": "在同一流程里完成脚本改写和逐场景分镜图输出。",
+            "icon": "FileText"
           },
           {
-            "title": "发布并持续迭代",
-            "description": "根据平台反馈迭代下一批短视频选题与结构。",
+            "title": "生成素材并自动合成",
+            "description": "生成镜头素材，自动组合时间线并导出发布版本。",
             "icon": "RefreshCw"
           }
         ]
@@ -152,13 +148,13 @@
       "benefits": {
         "block": "features-accordion",
         "id": "benefits",
-        "title": "为什么这套方法更实用",
+        "title": "为什么一站式自动化比多平台拼接更高效",
         "label": "核心优势",
-        "description": "目标不是“剪得更花”，而是“稳定、可复制地持续发片”。",
+        "description": "核心价值在执行效率：更少切换、更少交接损耗、更快周更。",
         "items": [
           {
-            "title": "同一素材产出更多短视频",
-            "description": "一条长内容可复用为多条短内容，提升素材利用率。",
+            "title": "显著减少工具切换成本",
+            "description": "从脚本、分镜、生成到合成都在一个链路内完成。",
             "icon": "Layers3",
             "image": {
               "src": "/imgs/landing/benefit-output.svg",
@@ -166,8 +162,8 @@
             }
           },
           {
-            "title": "减少随机试错",
-            "description": "通过结构化模板提升执行稳定性，而非依赖个人灵感。",
+            "title": "提升每个镜头的质量一致性",
+            "description": "通过模板化控制脚本语气、分镜风格和镜头节奏。",
             "icon": "BarChart3",
             "image": {
               "src": "/imgs/landing/benefit-repeatable.svg",
@@ -175,8 +171,8 @@
             }
           },
           {
-            "title": "降低制作摩擦",
-            "description": "把脚本、切片、字幕、包装这些重复工作流程化。",
+            "title": "更快产出可发布视频",
+            "description": "缩短从参考视频分析到成片导出的整体周期。",
             "icon": "Zap",
             "image": {
               "src": "/imgs/landing/benefit-frictionless.svg",
@@ -187,40 +183,32 @@
       },
       "faq": {
         "id": "faq",
-        "title": "关于 YouTube Automation AI 的常见问题",
-        "description": "围绕 waitlist、长视频拆条、爆款包装以及适用人群的核心解答。",
+        "title": "一站式视频复刻改编自动化 FAQ",
+        "description": "聚焦脚本改写、分镜图生成、自动合成和技术流程接入。",
         "items": [
           {
-            "question": "YouTube Automation AI 主要帮我解决什么问题？",
-            "answer": "它要解决的核心问题，是把一条长视频拆成多条可发布的短视频候选内容，并进一步补上 hook、字幕包装和发布角度。"
+            "question": "我还需要在多个平台切换才能复刻改编视频吗？",
+            "answer": "不需要。该流程将参考视频分析、脚本改写、分镜图生成、视频生成和自动合成都放在一个平台内完成。"
           },
           {
-            "question": "产品现在已经正式上线了吗？",
-            "answer": "还没有。当前站点的重点是验证需求、积累 waitlist 线索，并持续打磨长视频转短视频的核心工作流。"
+            "question": "脚本改写能保留原视频逻辑吗？",
+            "answer": "可以。你可以保留核心观点，同时按目标受众和频道语气进行结构化改写。"
           },
           {
-            "question": "播客、访谈、教程、口播类视频适合吗？",
-            "answer": "适合。这些长视频通常包含较多可复用的高信号片段，也是我们优先聚焦的内容类型。"
+            "question": "可以先生成分镜图再生成视频吗？",
+            "answer": "可以。系统支持先按场景生成分镜图，确认节奏后再生成对应视频镜头。"
           },
           {
-            "question": "它只适合无人出镜频道吗？",
-            "answer": "不是。除了 faceless YouTube 频道，它也适合创作者团队、内容代运营、品牌内容团队和需要批量拆条的操盘手。"
+            "question": "这套流程适合 automated YouTube videos 和 Shorts 吗？",
+            "answer": "适合。无论长视频改编还是 Shorts 拆条，都可复用同一流程。"
           },
           {
-            "question": "只是剪片吗，还是也会处理 hook 和包装？",
-            "answer": "重点不只是截取时间点。我们更关注 clip selection、hook-first 结构、字幕包装以及更适合 Shorts / Reels / TikTok 的发布形态。"
+            "question": "新手如何开始 YouTube automation with AI？",
+            "answer": "先固定一个内容类型，跑通 3 步闭环（分析→改写/分镜→合成），再做批量化。"
           },
           {
-            "question": "我需要很强的剪辑能力或本地 GPU 环境吗？",
-            "answer": "不需要。目标是提供云端工作流，让运营者不必自己维护复杂的剪辑和算力环境，也能稳定产出短视频。"
-          },
-          {
-            "question": "如何获得早期内测资格？",
-            "answer": "在首页提交邮箱即可进入 waitlist。我们会结合使用场景和需求强度，按批次邀请早期用户。"
-          },
-          {
-            "question": "相比人工手动拆条，优势在哪里？",
-            "answer": "手动拆条的最大问题是慢且不稳定。我们的目标是把片段选择、包装和周更产出流程标准化，让同一条长视频可以持续产出更多短内容。"
+            "question": "支持 n8n YouTube automation workflow 吗？",
+            "answer": "流程本身为自动化编排设计，可与 n8n 等技术编排链路配合使用。"
           }
         ],
         "tip": "还有问题？欢迎 <a href='mailto:hello@youtubeautomationai.com' class='text-primary hover:underline'>给我们发邮件</a>。"
@@ -228,8 +216,8 @@
       "blog": {
         "block": "blog",
         "id": "blog",
-        "title": "最新文章",
-        "description": "先阅读现有的实操型 SEO 指南，再决定是否加入内测。",
+        "title": "一站式工作流实操文章",
+        "description": "优先阅读：脚本改写、分镜图生成、自动合成与 n8n 编排方案。",
         "data": {
           "categories": [
             {
@@ -248,47 +236,47 @@
           "posts": [
             {
               "id": "1",
-              "slug": "what-is-youtube-automation",
-              "title": "What is YouTube Automation? A Complete Beginner's Guide",
-              "description": "Learn everything about YouTube Automation, from basic concepts to advanced strategies for building profitable faceless channels.",
-              "image": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=1200&h=630&fit=crop",
-              "created_at": "Jan 28, 2026",
+              "slug": "one-stop-youtube-video-remake-workflow",
+              "title": "One-Stop YouTube Video Remake Workflow: Script Rewrite, Storyboard, and Auto Assembly",
+              "description": "A complete workflow to adapt a source video into publish-ready output in one platform.",
+              "image": "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1200&h=630&fit=crop",
+              "created_at": "Mar 08, 2026",
               "author_name": "YouTube Automation AI Team",
               "author_image": "/logo-mark.svg",
-              "url": "/blog/what-is-youtube-automation"
+              "url": "/blog/one-stop-youtube-video-remake-workflow"
             },
             {
               "id": "2",
-              "slug": "best-youtube-automation-niches-2026",
-              "title": "Best YouTube Automation Niches for 2026 - High CPM Analysis",
-              "description": "Data-driven analysis of the most profitable niches based on CPM, competition, and growth potential.",
-              "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop",
-              "created_at": "Jan 27, 2026",
+              "slug": "youtube-script-rewrite-storyboard-automation-guide",
+              "title": "YouTube Script Rewrite and Storyboard Automation Guide (2026)",
+              "description": "How to rewrite scripts, generate scene storyboard images, and improve adaptation speed.",
+              "image": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&h=630&fit=crop",
+              "created_at": "Mar 08, 2026",
               "author_name": "YouTube Automation AI Team",
               "author_image": "/logo-mark.svg",
-              "url": "/blog/best-youtube-automation-niches-2026"
+              "url": "/blog/youtube-script-rewrite-storyboard-automation-guide"
             },
             {
               "id": "3",
-              "slug": "ai-tools-youtube-automation-guide",
-              "title": "AI Tools for YouTube Automation - Complete 2026 Guide",
-              "description": "A practical guide to AI tools for scripting, voiceover, clipping, packaging, and scaling output.",
-              "image": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&h=630&fit=crop",
-              "created_at": "Jan 26, 2026",
+              "slug": "n8n-youtube-automation-workflow-guide",
+              "title": "n8n YouTube Automation Workflow Guide: From Source Analysis to Final Export",
+              "description": "Design an n8n workflow for YouTube automation with source parsing, script rewrite, and auto assembly.",
+              "image": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1200&h=630&fit=crop",
+              "created_at": "Mar 08, 2026",
               "author_name": "YouTube Automation AI Team",
               "author_image": "/logo-mark.svg",
-              "url": "/blog/ai-tools-youtube-automation-guide"
+              "url": "/blog/n8n-youtube-automation-workflow-guide"
             }
           ]
         }
       },
       "cta": {
         "id": "cta",
-        "title": "提交邮箱，优先获得内测资格",
-        "description": "如果你的核心问题也是“长视频如何稳定拆成短视频”，现在加入 Waitlist。",
+        "title": "从脚本改写到自动合成，一站式完成视频改编",
+        "description": "加入内测，用一条自动化链路完成你的复刻改编生产。",
         "buttons": [
           {
-            "title": "加入 Waitlist",
+            "title": "申请早期访问",
             "icon": "Mail",
             "url": "/#hero",
             "target": "_self",
