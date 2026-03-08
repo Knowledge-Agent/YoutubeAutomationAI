@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { envConfigs } from '@/config';
 import { defaultLocale, locales } from '@/config/locale';
-import { postsSource } from '@/core/docs/source';
+import { pagesSource, postsSource } from '@/core/docs/source';
 
 const staticRoutes: Array<{
   path: string;
@@ -39,6 +39,21 @@ function getLastModified(data: unknown, fallback: Date) {
   return Number.isNaN(parsed.getTime()) ? fallback : parsed;
 }
 
+function getPostCategories(data: unknown) {
+  if (!data || typeof data !== 'object') {
+    return [] as string[];
+  }
+
+  const frontmatter = data as { categories?: unknown };
+  if (!Array.isArray(frontmatter.categories)) {
+    return [] as string[];
+  }
+
+  return frontmatter.categories.filter(
+    (value): value is string => typeof value === 'string' && Boolean(value)
+  );
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const routeMap = new Map<string, MetadataRoute.Sitemap[number]>();
@@ -55,7 +70,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       });
     });
 
+    const staticPages = pagesSource.getPages(locale) || [];
+    staticPages.forEach((staticPage) => {
+      const url = toAbsoluteUrl(staticPage.url);
+      routeMap.set(url, {
+        url,
+        lastModified: getLastModified(staticPage.data, now),
+        changeFrequency: 'yearly',
+        priority: 0.3,
+      });
+    });
+
     const postPages = postsSource.getPages(locale) || [];
+    const categorySet = new Set<string>();
+
     postPages.forEach((postPage) => {
       const url = toAbsoluteUrl(postPage.url);
       routeMap.set(url, {
@@ -64,10 +92,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: 'monthly',
         priority: 0.85,
       });
+
+      getPostCategories(postPage.data).forEach((category) => {
+        categorySet.add(category);
+      });
+    });
+
+    categorySet.forEach((category) => {
+      const categoryPath = toLocalizedPath(locale, `/blog/category/${category}`);
+      const url = toAbsoluteUrl(categoryPath);
+      routeMap.set(url, {
+        url,
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      });
     });
   });
 
-  return Array.from(routeMap.values()).sort((a, b) =>
-    a.url.localeCompare(b.url)
-  );
+  return Array.from(routeMap.values()).sort((a, b) => a.url.localeCompare(b.url));
 }

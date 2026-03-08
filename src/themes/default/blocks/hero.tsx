@@ -73,12 +73,23 @@ export function Hero({
     try {
       setSubmitting(true);
 
+      const pagePath =
+        typeof window !== 'undefined'
+          ? `${window.location.pathname}${window.location.search}`
+          : '';
+
       const resp = await fetch(action, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: trimmed }),
+        body: JSON.stringify({
+          email: trimmed,
+          source: section.id || 'homepage_waitlist',
+          pagePath,
+          locale:
+            typeof navigator !== 'undefined' ? navigator.language || '' : '',
+        }),
       });
 
       if (!resp.ok) {

@@ -1,6 +1,7 @@
 import { and, count, desc, eq, inArray } from 'drizzle-orm';
 
 import { db } from '@/core/db';
+import { envConfigs } from '@/config';
 import { taxonomy } from '@/config/db/schema';
 
 export type Taxonomy = typeof taxonomy.$inferSelect;
@@ -52,6 +53,10 @@ export async function findTaxonomy({
   slug?: string;
   status?: TaxonomyStatus;
 }) {
+  if (!envConfigs.database_url) {
+    return undefined;
+  }
+
   const [result] = await db()
     .select()
     .from(taxonomy)
@@ -80,6 +85,10 @@ export async function getTaxonomies({
   page?: number;
   limit?: number;
 } = {}): Promise<Taxonomy[]> {
+  if (!envConfigs.database_url) {
+    return [];
+  }
+
   const result = await db()
     .select()
     .from(taxonomy)
@@ -104,6 +113,10 @@ export async function getTaxonomiesCount({
   type?: TaxonomyType;
   status?: TaxonomyStatus;
 } = {}): Promise<number> {
+  if (!envConfigs.database_url) {
+    return 0;
+  }
+
   const [result] = await db()
     .select({ count: count() })
     .from(taxonomy)

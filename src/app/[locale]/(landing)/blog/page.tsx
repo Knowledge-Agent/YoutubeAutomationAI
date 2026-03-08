@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { getThemePage } from '@/core/theme';
+import { buildBreadcrumbStructuredData, buildCollectionPageStructuredData, createStructuredDataGraph } from '@/shared/lib/structured-data';
 import { getMetadata } from '@/shared/lib/seo';
 import { getPostsAndCategories } from '@/shared/models/post';
 import {
@@ -60,7 +61,6 @@ export default async function BlogPage({
     console.log('getting posts failed:', error);
   }
 
-  // build page sections
   const page: DynamicPage = {
     title: t('page.title'),
     sections: {
@@ -75,8 +75,33 @@ export default async function BlogPage({
     },
   };
 
-  // load page component
+  const structuredData = createStructuredDataGraph([
+    buildCollectionPageStructuredData({
+      locale,
+      path: '/blog',
+      title: page.title,
+      description: page.sections?.blog?.description,
+      posts,
+    }),
+    buildBreadcrumbStructuredData({
+      locale,
+      items: [
+        { name: 'Home', url: '/' },
+        { name: page.title || 'Blog', url: '/blog' },
+      ],
+    }),
+  ]);
+
   const Page = await getThemePage('dynamic-page');
 
-  return <Page locale={locale} page={page} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <Page locale={locale} page={page} />
+    </>
+  );
 }

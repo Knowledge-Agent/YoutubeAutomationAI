@@ -185,88 +185,45 @@
           }
         ]
       },
-      "stats": {
-        "id": "stats",
-        "title": "Current validation focus",
-        "description": "The product is in SEO and waitlist stage, focused on proving demand around the core short-video workflow.",
-        "items": [
-          {
-            "title": "1",
-            "description": "Core waitlist funnel for early users"
-          },
-          {
-            "title": "3",
-            "description": "SEO guides already published"
-          },
-          {
-            "title": "24/7",
-            "description": "Search visibility compounding potential"
-          }
-        ]
-      },
-      "features": {
-        "id": "features",
-        "title": "Production infrastructure already retained",
-        "description": "Core clipping features are being validated, while foundational product systems already exist.",
-        "items": [
-          {
-            "title": "Authentication",
-            "description": "Email and social auth flows are available for gated rollout.",
-            "icon": "ShieldCheck"
-          },
-          {
-            "title": "Payments",
-            "description": "Checkout and billing rails are already in place for future plans.",
-            "icon": "CreditCard"
-          },
-          {
-            "title": "Admin Backend",
-            "description": "User, content, permission, and setting management is operational.",
-            "icon": "LayoutDashboard"
-          },
-          {
-            "title": "Blog System",
-            "description": "Structured routes and content support SEO-first growth execution.",
-            "icon": "FileText"
-          },
-          {
-            "title": "International-ready Architecture",
-            "description": "Locale-capable routing and config are prepared for multilingual growth.",
-            "icon": "Languages"
-          },
-          {
-            "title": "API-first Foundation",
-            "description": "Backend route foundation is ready for feature iteration and integrations.",
-            "icon": "Webhook"
-          }
-        ]
-      },
       "faq": {
         "id": "faq",
-        "title": "Frequently asked questions",
-        "description": "Clear status on what is available now and what is being validated.",
+        "title": "Frequently asked questions about YouTube Automation AI",
+        "description": "Answers about the waitlist, long-video-to-short workflows, packaging, and who this product is built for.",
         "items": [
           {
-            "question": "Is the long-video clipping feature fully launched?",
-            "answer": "Not yet. We are in SEO and waitlist validation stage while core workflows are being refined."
+            "question": "What does YouTube Automation AI help me do?",
+            "answer": "The planned workflow helps you turn one long video into multiple short-form candidates, then improve hooks, captions, and packaging so they are easier to publish as Shorts, Reels, and TikTok clips."
           },
           {
-            "question": "What problem are you solving first?",
-            "answer": "Turning long videos into short, viral-style clips with stronger hooks and faster production cycles."
+            "question": "Is the product fully live today?",
+            "answer": "Not yet. The public site is currently validating demand and collecting waitlist feedback while the core long-video-to-short workflow is being refined."
           },
           {
-            "question": "How can I get early access?",
-            "answer": "Submit your email in the hero section. We invite users in weekly cohorts."
+            "question": "Can I use it for podcasts, interviews, tutorials, or talking-head videos?",
+            "answer": "Yes. Those are exactly the kinds of long-form videos we are targeting first, because they usually contain repeatable moments that can be repurposed into short clips."
           },
           {
-            "question": "Do sign-in and billing systems already exist?",
-            "answer": "Yes. Infrastructure for auth and payment is retained and ready to support rollout."
+            "question": "Is this only for faceless YouTube channels?",
+            "answer": "No. It is relevant for faceless channels, creator-led brands, agencies, repurposing teams, and operators who need a repeatable publishing system."
           },
           {
-            "question": "Who is this product for?",
-            "answer": "Creators, solo operators, and small teams running faceless or repurposed-content channels."
+            "question": "Does it only clip video, or does it also help with hooks and packaging?",
+            "answer": "The focus is not just cutting timestamps. The workflow is aimed at clip selection, hook-first structure, subtitle packaging, and publishing-ready angles."
+          },
+          {
+            "question": "Do I need editing experience or a GPU setup?",
+            "answer": "No. The intended experience is a cloud workflow for operators who want output consistency without building a heavy editing stack."
+          },
+          {
+            "question": "How do early access invites work?",
+            "answer": "Join the waitlist with your email on the homepage. We review demand, group use cases, and invite early users in small batches."
+          },
+          {
+            "question": "What is the advantage over manually repurposing long videos?",
+            "answer": "Manual repurposing is slow and inconsistent. The goal here is to standardize selection, packaging, and weekly output so teams can publish more short-form content from the same source material."
           }
-        ]
+        ],
+        "tip": "Still have questions? <a href='mailto:hello@youtubeautomationai.com' class='text-primary hover:underline'>Email us</a>."
       },
       "blog": {
         "block": "blog",

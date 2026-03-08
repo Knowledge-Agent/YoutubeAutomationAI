@@ -57,7 +57,11 @@
             "label": "Waitlist 用户分批邀请"
           }
         ],
-        "social_proof": ["无需信用卡", "每周发放内测名额", "随时可取消订阅"],
+        "social_proof": [
+          "无需信用卡",
+          "每周发放内测名额",
+          "随时可取消订阅"
+        ],
         "submit": {
           "input": {
             "placeholder": "输入邮箱，加入早期内测"
@@ -181,88 +185,45 @@
           }
         ]
       },
-      "stats": {
-        "id": "stats",
-        "title": "当前阶段重点",
-        "description": "目前处于 SEO + Waitlist 阶段，先验证核心需求与转化信号。",
-        "items": [
-          {
-            "title": "1",
-            "description": "首页 Waitlist 转化漏斗"
-          },
-          {
-            "title": "3",
-            "description": "已上线的 SEO 博文指南"
-          },
-          {
-            "title": "24/7",
-            "description": "可持续累积的搜索流量入口"
-          }
-        ]
-      },
-      "features": {
-        "id": "features",
-        "title": "底层能力已具备",
-        "description": "核心业务功能在验证中，但基础平台能力已经可用。",
-        "items": [
-          {
-            "title": "登录认证",
-            "description": "支持邮箱与社交登录，便于后续功能分批开放。",
-            "icon": "ShieldCheck"
-          },
-          {
-            "title": "支付能力",
-            "description": "结账与账单流程已预留，支持后续商业化。",
-            "icon": "CreditCard"
-          },
-          {
-            "title": "后台管理",
-            "description": "可统一管理用户、内容、权限与配置。",
-            "icon": "LayoutDashboard"
-          },
-          {
-            "title": "博客系统",
-            "description": "具备结构化博客路由，支持 SEO 增长策略。",
-            "icon": "FileText"
-          },
-          {
-            "title": "多语言架构",
-            "description": "路由与文案配置支持后续多语言扩展。",
-            "icon": "Languages"
-          },
-          {
-            "title": "API 基础设施",
-            "description": "后端接口体系可支撑后续 AI 工作流接入。",
-            "icon": "Webhook"
-          }
-        ]
-      },
       "faq": {
         "id": "faq",
-        "title": "常见问题",
-        "description": "关于当前状态与产品方向的透明说明。",
+        "title": "关于 YouTube Automation AI 的常见问题",
+        "description": "围绕 waitlist、长视频拆条、爆款包装以及适用人群的核心解答。",
         "items": [
           {
-            "question": "核心拆条功能已经正式上线了吗？",
-            "answer": "还没有。目前以 SEO 与 Waitlist 验证为主，核心流程正在打磨。"
+            "question": "YouTube Automation AI 主要帮我解决什么问题？",
+            "answer": "它要解决的核心问题，是把一条长视频拆成多条可发布的短视频候选内容，并进一步补上 hook、字幕包装和发布角度。"
           },
           {
-            "question": "你们先解决的核心问题是什么？",
-            "answer": "把长视频转成具备爆款结构的短视频，并提升产出效率与稳定性。"
+            "question": "产品现在已经正式上线了吗？",
+            "answer": "还没有。当前站点的重点是验证需求、积累 waitlist 线索，并持续打磨长视频转短视频的核心工作流。"
+          },
+          {
+            "question": "播客、访谈、教程、口播类视频适合吗？",
+            "answer": "适合。这些长视频通常包含较多可复用的高信号片段，也是我们优先聚焦的内容类型。"
+          },
+          {
+            "question": "它只适合无人出镜频道吗？",
+            "answer": "不是。除了 faceless YouTube 频道，它也适合创作者团队、内容代运营、品牌内容团队和需要批量拆条的操盘手。"
+          },
+          {
+            "question": "只是剪片吗，还是也会处理 hook 和包装？",
+            "answer": "重点不只是截取时间点。我们更关注 clip selection、hook-first 结构、字幕包装以及更适合 Shorts / Reels / TikTok 的发布形态。"
+          },
+          {
+            "question": "我需要很强的剪辑能力或本地 GPU 环境吗？",
+            "answer": "不需要。目标是提供云端工作流，让运营者不必自己维护复杂的剪辑和算力环境，也能稳定产出短视频。"
           },
           {
             "question": "如何获得早期内测资格？",
-            "answer": "在首页提交邮箱后进入 Waitlist，我们会按周分批邀请。"
+            "answer": "在首页提交邮箱即可进入 waitlist。我们会结合使用场景和需求强度，按批次邀请早期用户。"
           },
           {
-            "question": "登录和支付功能是否保留？",
-            "answer": "是的，认证与支付底层能力已保留，可随业务节奏开启。"
-          },
-          {
-            "question": "适合哪些用户？",
-            "answer": "适合内容创作者、小团队、以及运营无人出镜频道的操盘手。"
+            "question": "相比人工手动拆条，优势在哪里？",
+            "answer": "手动拆条的最大问题是慢且不稳定。我们的目标是把片段选择、包装和周更产出流程标准化，让同一条长视频可以持续产出更多短内容。"
           }
-        ]
+        ],
+        "tip": "还有问题？欢迎 <a href='mailto:hello@youtubeautomationai.com' class='text-primary hover:underline'>给我们发邮件</a>。"
       },
       "blog": {
         "block": "blog",

@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { requireAdminAccess } from '@/core/rbac/permission';
+import { getMetadata } from '@/shared/lib/seo';
 import { LocaleDetector } from '@/shared/blocks/common';
 import { DashboardLayout } from '@/shared/blocks/dashboard/layout';
 import { getAllConfigs } from '@/shared/models/config';
@@ -10,6 +11,8 @@ import { Sidebar as SidebarType } from '@/shared/types/blocks/dashboard';
 /**
  * Admin layout to manage datas
  */
+export const generateMetadata = getMetadata({ noIndex: true });
+
 export default async function AdminLayout({
   children,
   params,
