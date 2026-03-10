@@ -1,5 +1,6 @@
 import '@/config/style/global.css';
 
+import { Analytics } from '@vercel/analytics/next';
 import { JetBrains_Mono, Merriweather, Noto_Sans_Mono } from 'next/font/google';
 import { getLocale, setRequestLocale } from 'next-intl/server';
 import NextTopLoader from 'nextjs-toploader';
@@ -174,6 +175,9 @@ export default async function RootLayout({
 
         {/* inject customer service body scripts */}
         {customerServiceBodyScripts}
+
+        {/* Vercel Web Analytics */}
+        <Analytics />
       </body>
     </html>
   );
