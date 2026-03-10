@@ -18,6 +18,9 @@ export const logs = defineDocs({
 
 export default defineConfig({
   mdxOptions: {
+    remarkImageOptions: {
+      onError: 'ignore',
+    },
     rehypeCodeOptions: {
       themes: {
         light: 'github-light',
