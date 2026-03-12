@@ -1,148 +1,140 @@
 {
   "metadata": {
-    "title": "Showcases",
-    "description": "Awesome projects built with ShipAny"
+    "title": "Workflow Examples",
+    "description": "See how YouTube Automation AI supports research, writing, storyboards, and channel operations."
   },
   "page": {
-    "title": "Showcases",
+    "title": "Workflow Examples",
     "sections": {
       "showcases": {
         "id": "showcases",
-        "title": "AI SaaS Startups built with ShipAny",
-        "description": "Easy to use and fast to ship.",
+        "title": "How teams use YouTube Automation AI",
+        "description": "Practical use cases for faceless channels, agencies, and content repurposing teams.",
         "groups": [
           {
             "name": "all",
             "title": "All"
           },
           {
-            "name": "ai-chatbot",
-            "title": "AI Chatbot"
+            "name": "research",
+            "title": "Research"
           },
           {
-            "name": "ai-image",
-            "title": "AI Image"
+            "name": "writing",
+            "title": "Writing"
           },
           {
-            "name": "ai-video",
-            "title": "AI Video"
+            "name": "storyboard",
+            "title": "Storyboard"
           },
           {
-            "name": "ai-audio",
-            "title": "AI Audio"
+            "name": "production",
+            "title": "Production"
           },
           {
-            "name": "ai-music",
-            "title": "AI Music"
-          },
-          {
-            "name": "ai-coding",
-            "title": "AI Coding"
-          },
-          {
-            "name": "other",
-            "title": "Other"
+            "name": "operations",
+            "title": "Operations"
           }
         ],
         "items": [
           {
-            "title": "ThinkAny",
-            "description": "AI Search Engine",
-            "url": "https://thinkany.ai",
-            "target": "_blank",
+            "title": "Reference Breakdown Board",
+            "description": "Turn one winning video into a reusable research brief for your next upload.",
+            "url": "/blog",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/7.png",
-              "alt": "showcases"
+              "alt": "Reference Breakdown Board"
             },
-            "group": "ai-chatbot"
+            "group": "research"
           },
           {
-            "title": "HeyBeauty",
-            "description": "AI Virtual Try On",
-            "url": "https://heybeauty.ai",
-            "target": "_blank",
+            "title": "Hook Rewrite Sprint",
+            "description": "Rewrite intros and retention beats before the full script is locked.",
+            "url": "/blog",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/5.png",
-              "alt": "showcases"
+              "alt": "Hook Rewrite Sprint"
             },
-            "group": "ai-image"
+            "group": "writing"
           },
           {
-            "title": "AI Wallpaper",
-            "description": "AI Wallpaper Generator",
-            "url": "https://aiwallpaper.shop",
-            "target": "_blank",
+            "title": "Storyboard Draft Queue",
+            "description": "Generate scene prompts and shot ideas for faceless video edits.",
+            "url": "/blog",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/1.png",
-              "alt": "showcases"
+              "alt": "Storyboard Draft Queue"
             },
-            "group": "ai-image"
+            "group": "storyboard"
           },
           {
-            "title": "AI Cover",
-            "description": "AI Cover Generator",
-            "url": "https://aicover.design",
-            "target": "_blank",
+            "title": "Long-to-Short Repurposing",
+            "description": "Map one source asset into multiple YouTube-ready deliverables.",
+            "url": "/blog",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/2.png",
-              "alt": "showcases"
+              "alt": "Long-to-Short Repurposing"
             },
-            "group": "ai-image"
+            "group": "production"
           },
           {
-            "title": "GPTs Works",
-            "description": "GPTs Directory",
-            "url": "https://gpts.works",
-            "target": "_blank",
+            "title": "Agency Client Handoff",
+            "description": "Package scripts, references, and revision notes for editors and clients.",
+            "url": "/pricing",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/3.png",
-              "alt": "showcases"
+              "alt": "Agency Client Handoff"
             },
-            "group": "other"
+            "group": "operations"
           },
           {
-            "title": "Melodisco",
-            "description": "AI Music Player",
-            "url": "https://melodis.co",
-            "target": "_blank",
+            "title": "Thumbnail and Clip Planning",
+            "description": "Align visual concepts with the script before production begins.",
+            "url": "/blog",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/4.png",
-              "alt": "showcases"
+              "alt": "Thumbnail and Clip Planning"
             },
-            "group": "ai-music"
+            "group": "storyboard"
           },
           {
-            "title": "Pagen",
-            "description": "AI Landing Page Generator",
-            "url": "https://pagen.so",
-            "target": "_blank",
+            "title": "Niche Research Workflow",
+            "description": "Compare formats, topics, and hooks before choosing the next upload.",
+            "url": "/blog",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/6.png",
-              "alt": "showcases"
+              "alt": "Niche Research Workflow"
             },
-            "group": "ai-coding"
+            "group": "research"
           },
           {
-            "title": "SoraFM",
-            "description": "AI Video Generator",
-            "url": "https://sorafm.trys.ai",
-            "target": "_blank",
+            "title": "Automation Ops Stack",
+            "description": "Connect research, prompts, and production steps into one repeatable system.",
+            "url": "/docs",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/8.png",
-              "alt": "showcases"
+              "alt": "Automation Ops Stack"
             },
-            "group": "ai-video"
+            "group": "operations"
           },
           {
-            "title": "PodLM",
-            "description": "AI Podcast Generator",
-            "url": "https://podlm.ai",
-            "target": "_blank",
+            "title": "Launch Offer Positioning",
+            "description": "Explain a YouTube automation offer with clearer workflow positioning.",
+            "url": "/#hero",
+            "target": "_self",
             "image": {
               "src": "/imgs/cases/9.png",
-              "alt": "showcases"
+              "alt": "Launch Offer Positioning"
             },
-            "group": "ai-audio"
+            "group": "production"
           }
         ]
       }
