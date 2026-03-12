@@ -1,15 +1,15 @@
 {
   "metadata": {
     "title": "Pricing",
-    "description": "Start with a plan"
+    "description": "Choose a plan for your YouTube automation workflow."
   },
   "page": {
-    "title": "ShipAny Pricing",
+    "title": "YouTube Automation AI Pricing",
     "sections": {
       "pricing": {
         "id": "pricing",
         "title": "Pricing",
-        "description": "Get all features of ShipAny, Ship your AI SaaS startups fast.",
+        "description": "Pick the credit plan that matches your research, script rewrite, storyboard, and production handoff volume.",
         "groups": [
           {
             "name": "one-time",
@@ -29,16 +29,14 @@
         "items": [
           {
             "title": "Starter",
-            "description": "Get started with your first SaaS startup.",
+            "description": "Validate one repeatable channel workflow.",
             "features_title": "Includes",
             "features": [
-              "100 credits, valid for 1 month",
-              "NextJS boilerplate",
-              "SEO-friendly structure",
-              "Payment with Stripe",
-              "Data storage with Supabase",
-              "Google Oauth & One-Tap Login",
-              "i18n support"
+              "100 credits for reference analysis, script rewrites, and storyboard drafts",
+              "Reference notes, transcript breakdowns, and scene prompts",
+              "Production brief exports for editors and operators",
+              "One focused workflow for a faceless channel format",
+              "Email support"
             ],
             "interval": "one-time",
             "amount": 9900,
@@ -47,32 +45,30 @@
             "original_price": "$199",
             "unit": "",
             "is_featured": false,
-            "tip": "Pay once. Build unlimited projects!",
+            "tip": "Pay once. Ideal for pilots and one-off launches.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Starter",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "starter",
-            "product_name": "ShipAny Boilerplate Starter",
+            "product_name": "YouTube Automation AI Starter",
             "credits": 100,
             "valid_days": 30,
             "group": "one-time"
           },
           {
             "title": "Standard",
-            "description": "Ship Fast with your SaaS Startups.",
+            "description": "Support a growing team or agency workflow.",
             "label": "Popular",
             "features_title": "Everything in Starter, plus",
             "features": [
-              "200 credits, valid for 3 month",
-              "Deploy with Vercel or Cloudflare",
-              "Generation of Privacy & Terms",
-              "Google Analytics Integration",
-              "Google Search Console Integration",
-              "Discord community",
-              "Technical support for your first ship",
-              "Lifetime updates"
+              "200 credits with a 3-month runway",
+              "Reusable workflow templates for recurring formats",
+              "Shared handoff notes for writers, storyboarders, and editors",
+              "Priority queue for revisions and fresh generation runs",
+              "Deeper collaboration across research, writing, and editing",
+              "Priority email support"
             ],
             "interval": "one-time",
             "amount": 19900,
@@ -81,30 +77,28 @@
             "original_price": "$299",
             "unit": "",
             "is_featured": true,
-            "tip": "Pay once. Build unlimited projects!",
+            "tip": "Pay once. Best for active publishing teams.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Standard",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "standard",
-            "product_name": "ShipAny Boilerplate Standard",
+            "product_name": "YouTube Automation AI Standard",
             "credits": 200,
             "valid_days": 90,
             "group": "one-time"
           },
           {
             "title": "Premium",
-            "description": "Ship Any AI SaaS Startups.",
+            "description": "Run higher-volume faceless video operations.",
             "features_title": "Everything in Standard, plus",
             "features": [
-              "300 credits, valid for 1 year",
-              "Business Functions with AI",
-              "User Center",
-              "Credits System",
-              "API Sales for your SaaS",
-              "Admin System",
-              "Priority Technical Support"
+              "300 credits with a full-year validity window",
+              "Higher-volume planning for faceless channel operations",
+              "Advanced packaging for scripts, visual prompts, clips, and revision notes",
+              "Better visibility for reviews, approvals, and operator QA",
+              "Priority technical support"
             ],
             "interval": "one-time",
             "amount": 29900,
@@ -113,30 +107,28 @@
             "original_price": "$399",
             "unit": "",
             "is_featured": false,
-            "tip": "Pay once. Build unlimited projects!",
+            "tip": "Pay once. Built for agencies and multi-channel teams.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Premium",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "premium",
-            "product_name": "ShipAny Boilerplate Premium",
+            "product_name": "YouTube Automation AI Premium",
             "credits": 300,
             "valid_days": 365,
             "group": "one-time"
           },
           {
             "title": "Starter",
-            "description": "Get started with your first SaaS startup.",
+            "description": "Keep one channel moving every month.",
             "features_title": "Includes",
             "features": [
-              "100 credits, valid for 1 month",
-              "NextJS boilerplate",
-              "SEO-friendly structure",
-              "Payment with Stripe",
-              "Data storage with Supabase",
-              "Google Oauth & One-Tap Login",
-              "i18n support"
+              "100 monthly credits for research, rewrites, and storyboard work",
+              "Reference notes, transcript breakdowns, and scene prompts",
+              "Production brief exports for editors and operators",
+              "One focused workflow for a faceless channel format",
+              "Email support"
             ],
             "interval": "month",
             "amount": 8900,
@@ -145,14 +137,14 @@
             "original_price": "$99",
             "unit": "/ month",
             "is_featured": false,
-            "tip": "Pay monthly. Build unlimited projects!",
+            "tip": "Pay monthly. Good for consistent experiments.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Starter",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "starter-monthly",
-            "product_name": "ShipAny Boilerplate Starter Monthly",
+            "product_name": "YouTube Automation AI Starter Monthly",
             "credits": 100,
             "valid_days": 30,
             "group": "monthly",
@@ -160,18 +152,16 @@
           },
           {
             "title": "Standard",
-            "description": "Ship Fast with your SaaS Startups.",
+            "description": "Support multiple creators or clients each month.",
             "label": "Popular",
             "features_title": "Everything in Starter, plus",
             "features": [
-              "200 credits, valid for 1 month",
-              "Deploy with Vercel or Cloudflare",
-              "Generation of Privacy & Terms",
-              "Google Analytics Integration",
-              "Google Search Console Integration",
-              "Discord community",
-              "Technical support for your first ship",
-              "Lifetime updates"
+              "200 monthly credits for active publishing cycles",
+              "Reusable workflow templates for recurring formats",
+              "Shared handoff notes for writers, storyboarders, and editors",
+              "Priority queue for revisions and fresh generation runs",
+              "Deeper collaboration across research, writing, and editing",
+              "Priority email support"
             ],
             "interval": "month",
             "amount": 16900,
@@ -180,14 +170,14 @@
             "original_price": "$199",
             "unit": "/ month",
             "is_featured": true,
-            "tip": "Pay monthly. Ship Fast with your SaaS Startups.",
+            "tip": "Pay monthly. Best for steady team output.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Standard",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "standard-monthly",
-            "product_name": "ShipAny Boilerplate Standard Monthly",
+            "product_name": "YouTube Automation AI Standard Monthly",
             "credits": 200,
             "valid_days": 30,
             "group": "monthly",
@@ -195,16 +185,14 @@
           },
           {
             "title": "Premium",
-            "description": "Ship Any AI SaaS Startups.",
+            "description": "Run a high-volume operation with more headroom.",
             "features_title": "Everything in Standard, plus",
             "features": [
-              "300 credits, valid for 1 month",
-              "Business Functions with AI",
-              "User Center",
-              "Credits System",
-              "API Sales for your SaaS",
-              "Admin System",
-              "Priority Technical Support"
+              "300 monthly credits for larger production calendars",
+              "Higher-volume planning for faceless channel operations",
+              "Advanced packaging for scripts, visual prompts, clips, and revision notes",
+              "Better visibility for reviews, approvals, and operator QA",
+              "Priority technical support"
             ],
             "interval": "month",
             "amount": 24900,
@@ -213,14 +201,14 @@
             "original_price": "$299",
             "unit": "/ month",
             "is_featured": false,
-            "tip": "Pay monthly. Ship Any AI SaaS Startups.",
+            "tip": "Pay monthly. Built for agencies with recurring demand.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Premium",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "premium-monthly",
-            "product_name": "ShipAny Boilerplate Premium Monthly",
+            "product_name": "YouTube Automation AI Premium Monthly",
             "credits": 300,
             "valid_days": 30,
             "group": "monthly",
@@ -228,16 +216,14 @@
           },
           {
             "title": "Starter",
-            "description": "Get started with your first SaaS startup.",
+            "description": "Lower your cost for one channel over the year.",
             "features_title": "Includes",
             "features": [
-              "100 credits, valid for 1 year",
-              "NextJS boilerplate",
-              "SEO-friendly structure",
-              "Payment with Stripe",
-              "Data storage with Supabase",
-              "Google Oauth & One-Tap Login",
-              "i18n support"
+              "1200 yearly credits for research, rewrites, and storyboard work",
+              "Reference notes, transcript breakdowns, and scene prompts",
+              "Production brief exports for editors and operators",
+              "One focused workflow for a faceless channel format",
+              "Email support"
             ],
             "interval": "year",
             "amount": 82800,
@@ -246,14 +232,14 @@
             "original_price": "$89",
             "unit": "/ month",
             "is_featured": false,
-            "tip": "Pay annually. Build unlimited projects!",
+            "tip": "Pay annually. Best value for one focused channel.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Starter",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "starter-yearly",
-            "product_name": "ShipAny Boilerplate Starter Annually",
+            "product_name": "YouTube Automation AI Starter Annually",
             "credits": 1200,
             "valid_days": 365,
             "group": "yearly",
@@ -261,18 +247,16 @@
           },
           {
             "title": "Standard",
-            "description": "Ship Fast with your SaaS Startups.",
+            "description": "Give a growing team an annual content runway.",
             "label": "Popular",
             "features_title": "Everything in Starter, plus",
             "features": [
-              "200 credits, valid for 1 year",
-              "Deploy with Vercel or Cloudflare",
-              "Generation of Privacy & Terms",
-              "Google Analytics Integration",
-              "Google Search Console Integration",
-              "Discord community",
-              "Technical support for your first ship",
-              "Lifetime updates"
+              "2400 yearly credits for an active publishing calendar",
+              "Reusable workflow templates for recurring formats",
+              "Shared handoff notes for writers, storyboarders, and editors",
+              "Priority queue for revisions and fresh generation runs",
+              "Deeper collaboration across research, writing, and editing",
+              "Priority email support"
             ],
             "interval": "year",
             "amount": 154800,
@@ -281,14 +265,14 @@
             "original_price": "$169",
             "unit": "/ month",
             "is_featured": true,
-            "tip": "Pay annually. Ship Fast with your SaaS Startups.",
+            "tip": "Pay annually. Best for teams with a repeatable schedule.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Standard",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "standard-yearly",
-            "product_name": "ShipAny Boilerplate Standard Annually",
+            "product_name": "YouTube Automation AI Standard Annually",
             "credits": 2400,
             "valid_days": 365,
             "group": "yearly",
@@ -296,16 +280,14 @@
           },
           {
             "title": "Premium",
-            "description": "Ship Any AI SaaS Startups.",
+            "description": "Operate multiple channels or client pods across the year.",
             "features_title": "Everything in Standard, plus",
             "features": [
-              "300 credits, valid for 1 year",
-              "Business Functions with AI",
-              "User Center",
-              "Credits System",
-              "API Sales for your SaaS",
-              "Admin System",
-              "Priority Technical Support"
+              "3600 yearly credits for high-volume planning and revisions",
+              "Higher-volume planning for faceless channel operations",
+              "Advanced packaging for scripts, visual prompts, clips, and revision notes",
+              "Better visibility for reviews, approvals, and operator QA",
+              "Priority technical support"
             ],
             "interval": "year",
             "amount": 226800,
@@ -314,14 +296,14 @@
             "original_price": "$249",
             "unit": "/ month",
             "is_featured": false,
-            "tip": "Pay annually. Ship Any AI SaaS Startups.",
+            "tip": "Pay annually. Built for agencies and multi-channel teams.",
             "button": {
-              "title": "Get ShipAny",
+              "title": "Choose Premium",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "premium-yearly",
-            "product_name": "ShipAny Boilerplate Premium Annually",
+            "product_name": "YouTube Automation AI Premium Annually",
             "credits": 3600,
             "valid_days": 365,
             "group": "yearly",
