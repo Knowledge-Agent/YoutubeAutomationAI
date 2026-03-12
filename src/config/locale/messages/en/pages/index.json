@@ -17,79 +17,12 @@
       "hero_automation": {
         "block": "hero-automation",
         "id": "hero",
-        "label": "Rebuilt for YouTube Automation AI",
-        "title": "YouTube Automation AI for Faceless Channels, Script Rewrite, Storyboards & Video Remake Workflows",
-        "description": "Turn scattered creator ops into one repeatable system. <strong>YouTube Automation AI</strong> helps teams analyze reference videos, rewrite scripts, generate storyboard plans, create production-ready assets, and move toward final export with less manual handoff.",
-        "audience": "Built for faceless channel operators, repurposing teams, automation agencies, and creators scaling repeatable content pipelines.",
-        "social_proof": [
-          "Research to final draft in one workflow",
-          "Designed for automated YouTube videos",
-          "Built around faceless channel operations"
-        ],
-        "key_points": [
-          "Analyze reference videos before you rewrite, storyboard, or generate clips.",
-          "Keep hooks, pacing, and scene logic aligned across the full content pipeline.",
-          "Reduce switching between script tools, image tools, editors, and manual docs.",
-          "Create a repeatable YouTube automation process your team can actually scale."
-        ],
-        "metrics": [
-          {
-            "value": "1",
-            "label": "workflow from source analysis to production-ready draft"
-          },
-          {
-            "value": "5+",
-            "label": "tool handoffs removed from a typical remake pipeline"
-          },
-          {
-            "value": "3x",
-            "label": "faster first draft for faceless channel teams"
-          },
-          {
-            "value": "Weekly",
-            "label": "operator-friendly cadence for repeatable publishing"
-          }
-        ],
-        "workflow_label": "Workflow Blueprint",
-        "workflow_title": "Move from reference video to publish-ready draft without breaking the chain",
-        "workflow_steps": [
-          {
-            "title": "Analyze Source",
-            "description": "Extract transcript structure, pacing, key moments, and reusable hooks from a reference video.",
-            "icon": "Search"
-          },
-          {
-            "title": "Rewrite Script",
-            "description": "Adapt the angle, sharpen the hook, and produce a new script tailored to your channel strategy.",
-            "icon": "FileText"
-          },
-          {
-            "title": "Plan Visuals",
-            "description": "Generate storyboard prompts, shot guidance, and scene-by-scene creative direction.",
-            "icon": "PanelsTopLeft"
-          },
-          {
-            "title": "Assemble Faster",
-            "description": "Package assets, scene clips, and edit intent into a repeatable final production workflow.",
-            "icon": "Clapperboard"
-          }
-        ],
-        "buttons": [
-          {
-            "title": "Join Waitlist",
-            "icon": "Workflow",
-            "url": "/#hero-waitlist",
-            "target": "_self",
-            "variant": "default"
-          },
-          {
-            "title": "Read Blog Guides",
-            "icon": "ArrowRight",
-            "url": "/blog",
-            "target": "_self",
-            "variant": "outline"
-          }
-        ],
+        "label": "Early-access waitlist",
+        "title": "YouTube Automation AI for Script Rewrite & Storyboards",
+        "description": "Join the waitlist for a one-stop workflow that helps faceless channel teams rewrite scripts, plan storyboards, and organize video remake production.",
+        "prompt_placeholder": "Enter your email to join the early-access waitlist",
+        "prompt_default": "",
+        "prompt_button_label": "Join waitlist",
         "submit": {
           "input": {
             "placeholder": "Enter your email for early access"
@@ -112,6 +45,10 @@
             "title": "Reference Video Analysis",
             "description": "Start with source material. Break down transcript flow, hook placement, pacing, and scene logic before production begins.",
             "icon": "Search",
+            "image": {
+              "src": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?fm=jpg&q=80&w=1600&fit=max",
+              "alt": "Analytics dashboard on a laptop for reference video analysis"
+            },
             "keywords": [
               "reference video analysis",
               "youtube automation research",
@@ -123,6 +60,10 @@
             "title": "Script Rewrite & Storyboarding",
             "description": "Turn raw inspiration into a fresh angle, then generate visual planning that keeps scenes, transitions, and pacing connected.",
             "icon": "PenTool",
+            "image": {
+              "src": "https://images.unsplash.com/photo-1455390582262-044cdead277a?fm=jpg&q=80&w=1600&fit=max",
+              "alt": "Notebook and pen for script rewrite and storyboard planning"
+            },
             "keywords": [
               "script rewrite ai",
               "youtube storyboard generator",
@@ -134,6 +75,10 @@
             "title": "Production-Ready Automation",
             "description": "Package script, visuals, clips, and edit intent into a workflow your operators can repeat at channel scale.",
             "icon": "Bot",
+            "image": {
+              "src": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?fm=jpg&q=80&w=1600&fit=max",
+              "alt": "Video editing timeline representing production-ready automation"
+            },
             "keywords": [
               "youtube automation tools",
               "automated youtube videos",
@@ -276,7 +221,6 @@
         "id": "faq",
         "title": "Frequently asked questions about YouTube Automation AI",
         "description": "Quick answers for creators, operators, and agencies evaluating a YouTube automation workflow.",
-        "className": "min-h-screen flex flex-col justify-center bg-[#060816] text-white",
         "items": [
           {
             "question": "What does YouTube Automation AI actually help me do?",
@@ -301,7 +245,6 @@
         "id": "cta",
         "title": "Build a YouTube automation workflow that looks polished and explains the product clearly",
         "description": "Use the new SeedVR2-inspired homepage structure to position YouTube Automation AI around reference analysis, script rewrite, storyboard generation, and production handoffs.",
-        "className": "min-h-screen flex flex-col justify-center bg-[#060816] text-white",
         "buttons": [
           {
             "title": "Read Workflow Guides",
