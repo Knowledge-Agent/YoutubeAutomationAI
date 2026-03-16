@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import Image from 'next/image';
-import { ArrowUp, Loader2 } from 'lucide-react';
+import { ArrowUp, Loader2, Mail, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 import {
@@ -157,6 +157,9 @@ export function HeroAutomation({
           ],
     [section.prompt_examples]
   );
+  const surfaceTags = Array.isArray((section as any).surface_tags)
+    ? (section as any).surface_tags.filter(Boolean)
+    : ['Script rewrite', 'Storyboard', 'Video remake'];
 
   useEffect(() => {
     if (email) {
@@ -317,58 +320,79 @@ export function HeroAutomation({
               className="inset-x-8 -top-4 -bottom-4 -z-10"
             />
             <form
-              className="overflow-hidden rounded-[2rem] border border-zinc-200/80 shadow-[0_24px_60px_rgba(15,23,42,0.08)]"
+              className="relative overflow-hidden rounded-[2rem] border border-zinc-200/80 shadow-[0_24px_60px_rgba(15,23,42,0.08)]"
               onSubmit={handleWaitlistSubmit}
             >
-              <div className="relative flex items-center gap-3 px-5 py-5 sm:px-6 sm:py-6">
+              <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,170,64,0.10),transparent_22%),radial-gradient(circle_at_82%_24%,rgba(156,64,255,0.08),transparent_18%)]" />
+
+              <div className="relative flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200/80 px-5 py-3 sm:px-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/80 px-3 py-1 text-xs font-medium tracking-tight text-zinc-500 shadow-xs">
+                  <Sparkles className="size-3.5 text-zinc-900" />
+                  {section.label || 'Early-access waitlist'}
+                </div>
+
+                <div className="hidden flex-wrap items-center gap-2 md:flex">
+                  {surfaceTags.map((tag: string) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-zinc-200 bg-white/70 px-3 py-1 text-[11px] font-medium tracking-tight text-zinc-500 shadow-xs"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative flex items-center gap-3 px-5 py-4 sm:px-6 sm:py-5">
                 <label htmlFor="hero-email-surface" className="sr-only">
                   Waitlist email
                 </label>
-                {!email && (
-                  <div className="pointer-events-none absolute inset-y-0 right-20 left-5 flex items-center sm:left-6">
-                    <span className="truncate text-lg font-medium tracking-tight text-zinc-400">
-                      {placeholderText ||
-                        section.prompt_placeholder ||
-                        'Enter your email to join the waitlist'}
-                    </span>
-                    <span className="type-caret ml-0.5 inline-block h-7 w-px shrink-0 bg-zinc-400/90" />
-                  </div>
-                )}
-                <input
-                  id="hero-email-surface"
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder=""
-                  className="relative z-10 h-14 flex-1 appearance-none border-none bg-transparent p-0 text-lg leading-8 font-medium tracking-tight text-zinc-700 caret-zinc-900 shadow-none outline-none focus:ring-0 focus:outline-none"
-                  style={{
-                    backgroundColor: 'transparent',
-                    WebkitBoxShadow: '0 0 0 1000px transparent inset',
-                    boxShadow: 'none',
-                  }}
-                  required
-                />
+
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-white/80 text-zinc-900 shadow-xs">
+                  <Mail className="size-4" />
+                </div>
+
+                <div className="relative min-w-0 flex-1">
+                  {!email && (
+                    <div className="pointer-events-none absolute inset-y-0 right-0 left-0 flex items-center">
+                      <span className="truncate text-base font-medium tracking-tight text-zinc-400 sm:text-lg">
+                        {placeholderText ||
+                          section.prompt_placeholder ||
+                          'Enter your email to join the waitlist'}
+                      </span>
+                      <span className="type-caret ml-0.5 inline-block h-6 w-px shrink-0 bg-zinc-400/90" />
+                    </div>
+                  )}
+                  <input
+                    id="hero-email-surface"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder=""
+                    className="relative z-10 h-12 w-full appearance-none border-none bg-transparent p-0 text-base leading-8 font-medium tracking-tight text-zinc-700 caret-zinc-900 shadow-none outline-none focus:ring-0 focus:outline-none sm:text-lg"
+                    style={{
+                      backgroundColor: 'transparent',
+                      WebkitBoxShadow: '0 0 0 1000px transparent inset',
+                      boxShadow: 'none',
+                    }}
+                    required
+                  />
+                </div>
 
                 <button
                   type="submit"
                   aria-label={section.prompt_button_label || 'Join waitlist'}
-                  className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
                   disabled={submitting}
                 >
                   {submitting ? (
-                    <Loader2 className="size-5 animate-spin" />
+                    <Loader2 className="size-4 animate-spin" />
                   ) : (
-                    <ArrowUp className="size-5" />
+                    <ArrowUp className="size-4" />
                   )}
                 </button>
               </div>
             </form>
-
-            {section.surface_hint && (
-              <p className="mt-4 text-center text-sm leading-7 text-zinc-500">
-                {section.surface_hint}
-              </p>
-            )}
           </div>
         </div>
       </div>
