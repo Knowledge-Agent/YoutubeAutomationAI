@@ -289,13 +289,13 @@ export function ToolWorkspaceShell({
             >
               <Bell className="size-4" />
             </button>
-            <Link
+            <button
               aria-label="AI assistant"
-              href="/chat"
+              type="button"
               className="flex h-9 w-9 items-center justify-center rounded-full bg-[#8ed916] text-[12px] font-semibold text-[#132200] shadow-[0_14px_28px_rgba(142,217,22,0.28)] transition hover:brightness-105"
             >
               <span>AI</span>
-            </Link>
+            </button>
           </div>
         </div>
       </header>

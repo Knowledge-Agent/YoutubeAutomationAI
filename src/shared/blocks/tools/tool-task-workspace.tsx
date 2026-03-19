@@ -7,7 +7,6 @@ import {
   FolderOpen,
   ImagePlus,
   LoaderCircle,
-  MessageSquare,
   Play,
   RefreshCcw,
   Sparkles,
@@ -196,7 +195,6 @@ export function ToolTaskWorkspace({
   const router = useRouter();
   const pathname = usePathname();
   const { models: toolModels, options, loading } = useToolCatalog(surface);
-  const { models: chatModels } = useToolCatalog('chat');
   const { user, isCheckSign, setIsShowSignModal, fetchUserCredits } =
     useAppContext();
 
@@ -278,15 +276,6 @@ export function ToolTaskWorkspace({
     surface === 'image' ? 'max-w-[1040px]' : 'max-w-[1120px]';
   const composerMaxWidth =
     surface === 'image' ? 'max-w-[980px]' : 'max-w-[1020px]';
-  const chatHref = useMemo(() => {
-    const params = new URLSearchParams();
-    if (prompt.trim()) {
-      params.set('prompt', prompt.trim());
-    }
-    params.set('surface', surface);
-    params.set('mode', mode);
-    return `/chat${params.toString() ? `?${params.toString()}` : ''}`;
-  }, [mode, prompt, surface]);
   const canSubmit =
     Boolean(prompt.trim()) &&
     Boolean(selectedModel) &&
@@ -462,57 +451,6 @@ export function ToolTaskWorkspace({
       toast.error(error.message || 'failed to create task');
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleOpenInChat = async () => {
-    const trimmedPrompt = prompt.trim();
-
-    if (!trimmedPrompt) {
-      toast.error('Enter a prompt first.');
-      return;
-    }
-
-    if (!user) {
-      router.push(chatHref);
-      return;
-    }
-
-    try {
-      const resp = await fetch('/api/chat/from-tool', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: trimmedPrompt,
-          surface,
-          mode,
-          model: chatModels[0]?.id || 'gpt-4o',
-          toolModel: selectedModel?.id,
-          toolOptions: modelOptions,
-          appendPrompt: true,
-        }),
-      });
-
-      if (!resp.ok) {
-        throw new Error(`request failed with status: ${resp.status}`);
-      }
-
-      const json = (await resp.json()) as {
-        code: number;
-        message?: string;
-        data?: { path?: string };
-      };
-
-      if (json.code !== 0 || !json.data?.path) {
-        throw new Error(json.message || 'failed to open chat');
-      }
-
-      router.push(json.data.path);
-    } catch (error: any) {
-      console.error('open chat from tool failed:', error);
-      toast.error(error.message || 'failed to open chat');
     }
   };
 
@@ -922,14 +860,6 @@ export function ToolTaskWorkspace({
                   </div>
 
                   <div className="ml-auto flex items-center gap-3 text-sm text-zinc-500">
-                    <button
-                      type="button"
-                      onClick={handleOpenInChat}
-                      className="inline-flex h-11 items-center gap-2 rounded-[16px] border border-white/8 bg-[#262734] px-4 text-sm font-medium text-zinc-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] transition hover:bg-[#2d2e3b] hover:text-white"
-                    >
-                      <MessageSquare className="size-4" />
-                      Open in Chat
-                    </button>
                     <span className="inline-flex items-center gap-2">
                       <Clock3 className="size-4" />
                       {costCredits} Credits
