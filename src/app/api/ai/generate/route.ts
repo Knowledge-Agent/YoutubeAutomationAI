@@ -76,7 +76,10 @@ export async function POST(request: Request) {
       throw new Error('insufficient credits');
     }
 
-    const callbackUrl = `${envConfigs.app_url}/api/ai/notify/${provider}`;
+    const callbackUrl =
+      provider === 'apimart'
+        ? undefined
+        : `${envConfigs.app_url}/api/ai/notify/${provider}`;
 
     const params: any = {
       mediaType,

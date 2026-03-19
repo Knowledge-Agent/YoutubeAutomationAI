@@ -2,6 +2,11 @@ import { generateId } from 'ai';
 
 import { respData, respErr } from '@/shared/lib/resp';
 import { ChatStatus, createChat, NewChat } from '@/shared/models/chat';
+import {
+  ChatMessageStatus,
+  createChatMessage,
+  NewChatMessage,
+} from '@/shared/models/chat_message';
 import { getUserInfo } from '@/shared/models/user';
 
 export async function POST(req: Request) {
@@ -21,8 +26,7 @@ export async function POST(req: Request) {
 
     // todo: check user credits
 
-    // todo: get provider from settings
-    const provider = 'openrouter';
+    const provider = 'apimart';
 
     // todo: auto generate title
     const title = message.text.substring(0, 100);
@@ -46,13 +50,27 @@ export async function POST(req: Request) {
       model: body.model,
       provider: provider,
       title: title,
-      parts: '',
-      // parts: JSON.stringify(parts),
+      parts: JSON.stringify(parts),
       metadata: JSON.stringify(body),
       content: JSON.stringify(message),
     };
 
     await createChat(chat);
+
+    const chatMessage: NewChatMessage = {
+      id: generateId().toLowerCase(),
+      chatId,
+      userId: user.id,
+      status: ChatMessageStatus.CREATED,
+      createdAt: currentTime,
+      updatedAt: currentTime,
+      role: 'user',
+      parts: JSON.stringify(parts),
+      metadata: JSON.stringify(body),
+      model: body.model,
+      provider,
+    };
+    await createChatMessage(chatMessage);
 
     return respData(chat);
   } catch (e: any) {

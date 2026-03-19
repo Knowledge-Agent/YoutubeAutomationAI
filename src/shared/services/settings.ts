@@ -208,6 +208,12 @@ export async function getSettingGroups() {
       tab: 'storage',
     },
     {
+      name: 'apimart',
+      title: 'APIMart',
+      description: `Custom <a href="https://docs.apimart.ai/en" class="text-primary" target="_blank">APIMart</a> settings`,
+      tab: 'ai',
+    },
+    {
       name: 'openrouter',
       title: t('groups.openrouter'),
       description: `Custom <a href="https://openrouter.ai" class="text-primary" target="_blank">OpenRouter</a> settings`,
@@ -748,6 +754,23 @@ export async function getSettings() {
       placeholder: '',
       group: 'r2',
       tab: 'storage',
+    },
+    {
+      name: 'apimart_api_key',
+      title: 'APIMart API Key',
+      type: 'password',
+      placeholder: 'sk-xxx',
+      group: 'apimart',
+      tab: 'ai',
+    },
+    {
+      name: 'apimart_base_url',
+      title: 'APIMart Base URL',
+      type: 'url',
+      placeholder: 'https://api.apimart.ai/v1',
+      tip: 'Leave empty to use the default APIMart API URL',
+      group: 'apimart',
+      tab: 'ai',
     },
     {
       name: 'openrouter_api_key',
