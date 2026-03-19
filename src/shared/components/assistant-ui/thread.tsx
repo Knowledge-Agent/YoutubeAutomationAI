@@ -92,6 +92,7 @@ export function AssistantWorkspaceThread({
   emptyTitle,
   emptyDescription,
   footerSlot,
+  initialComposerValue,
 }: {
   runtime: AssistantRuntime;
   toolUIs?: AssistantToolUI[];
@@ -104,6 +105,7 @@ export function AssistantWorkspaceThread({
   emptyTitle?: string;
   emptyDescription?: string;
   footerSlot?: ReactNode;
+  initialComposerValue?: string;
 }) {
   return (
     <AssistantRuntimeProvider runtime={runtime}>
@@ -126,6 +128,7 @@ export function AssistantWorkspaceThread({
             <div className="mx-auto w-full max-w-[1120px]">
               <AssistantWorkspaceComposer
                 footer={composerFooter}
+                initialValue={initialComposerValue}
                 placeholder={composerPlaceholder}
                 toolbar={composerToolbar}
               />

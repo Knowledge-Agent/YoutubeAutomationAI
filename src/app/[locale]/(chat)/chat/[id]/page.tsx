@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { UIMessage } from '@ai-sdk/react';
 
 import { ChatBox } from '@/shared/blocks/chat/box';
@@ -10,6 +10,10 @@ import { Chat } from '@/shared/types/chat';
 
 export default function ChatPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const initialPrompt = searchParams.get('prompt') || '';
+  const initialMode = searchParams.get('mode') || undefined;
+  const initialSurface = searchParams.get('surface') || undefined;
 
   const [initialChat, setInitialChat] = useState<Chat | null>(null);
   const [initialMessages, setInitialMessages] = useState<UIMessage[] | null>(
@@ -27,7 +31,7 @@ export default function ChatPage() {
       }
       const { code, message, data } = await resp.json();
       if (code !== 0) {
-        throw new Error(message);
+        throw new Error(message || 'chat not found');
       }
 
       setInitialChat({
@@ -46,6 +50,29 @@ export default function ChatPage() {
       }
     } catch (e: any) {
       console.log('fetch chat failed:', e);
+      setInitialChat({
+        id: params.id as string,
+        title: initialPrompt ? initialPrompt.slice(0, 100) : 'New Chat',
+        createdAt: new Date(),
+        model: 'gpt-4o',
+        provider: 'apimart',
+        parts: [],
+        metadata: {
+          surface: initialSurface,
+          mode: initialMode,
+        },
+        content: initialPrompt
+          ? {
+              parts: [
+                {
+                  type: 'text',
+                  text: initialPrompt,
+                },
+              ],
+            }
+          : undefined,
+      } as Chat);
+      setInitialMessages([]);
     }
   };
 
@@ -82,7 +109,11 @@ export default function ChatPage() {
   }, [params.id]);
 
   return initialChat && initialMessages ? (
-    <ChatBox initialChat={initialChat} initialMessages={initialMessages} />
+    <ChatBox
+      initialChat={initialChat}
+      initialMessages={initialMessages}
+      initialPrompt={initialPrompt}
+    />
   ) : (
     <div className="flex h-screen items-center justify-center p-8">
       <Loader />

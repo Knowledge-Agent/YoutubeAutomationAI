@@ -11,11 +11,13 @@ export function AssistantWorkspaceComposer({
   toolbar,
   footer,
   className,
+  initialValue,
 }: {
   placeholder?: string;
   toolbar?: ReactNode;
   footer?: ReactNode;
   className?: string;
+  initialValue?: string;
 }) {
   return (
     <ComposerPrimitive.Root
@@ -36,6 +38,7 @@ export function AssistantWorkspaceComposer({
         <ComposerPrimitive.Input
           autoFocus
           className="min-h-[68px] w-full resize-none border-none bg-transparent px-0 py-1 text-[15px] leading-7 text-zinc-200 outline-none placeholder:text-zinc-500/80"
+          defaultValue={initialValue}
           placeholder={placeholder}
           rows={3}
         />

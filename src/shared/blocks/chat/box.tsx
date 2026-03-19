@@ -19,9 +19,11 @@ import { ChatHeader } from './header';
 export function ChatBox({
   initialChat,
   initialMessages,
+  initialPrompt,
 }: {
   initialChat?: Chat;
   initialMessages?: UIMessage[];
+  initialPrompt?: string;
 }) {
   const { setChat } = useChatContext();
   const { models } = useToolCatalog('chat');
@@ -87,6 +89,7 @@ export function ChatBox({
         <AssistantWorkspaceThread
           runtime={runtime}
           composerPlaceholder="Ask about scripts, workflows, prompts, or growth ideas"
+          initialComposerValue={initialPrompt}
           composerToolbar={
             <AssistantModelPicker
               compact
