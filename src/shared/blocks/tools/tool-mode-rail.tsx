@@ -13,6 +13,7 @@ export function ToolModeRail({
     href?: string;
     active?: boolean;
     disabled?: boolean;
+    onClick?: () => void;
   }>;
 }) {
   return (
@@ -47,7 +48,18 @@ export function ToolModeRail({
           );
 
           if (item.disabled || !item.href) {
-            return <div key={item.key}>{content}</div>;
+            return item.onClick ? (
+              <button
+                key={item.key}
+                type="button"
+                className="w-full text-left"
+                onClick={item.onClick}
+              >
+                {content}
+              </button>
+            ) : (
+              <div key={item.key}>{content}</div>
+            );
           }
 
           return (

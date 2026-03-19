@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { UIMessage } from 'ai';
+import { UIMessage } from '@ai-sdk/react';
 
 import { ChatBox } from '@/shared/blocks/chat/box';
 import { Loader } from '@/shared/components/ai-elements/loader';

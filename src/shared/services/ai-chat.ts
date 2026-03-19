@@ -7,7 +7,7 @@ import {
   UIMessage,
 } from 'ai';
 
-import { findChatById, updateChat } from '@/shared/models/chat';
+import { ChatStatus, createChat, findChatById, updateChat } from '@/shared/models/chat';
 import {
   ChatMessageStatus,
   createChatMessage,
@@ -61,17 +61,33 @@ export async function streamPersistedChatResponse({
   metadata?: Record<string, unknown>;
 }) {
   const chat = await findChatById(chatId);
-  if (!chat) {
-    throw new Error('chat not found');
-  }
-
-  if (chat.userId !== user.id) {
+  if (chat && chat.userId !== user.id) {
     throw new Error('no permission to access this chat');
   }
 
   const provider = 'apimart';
   const currentTime = new Date();
   const messageParts = Array.isArray(message.parts) ? message.parts : [];
+  const firstTextPart = messageParts.find(
+    (part) => part.type === 'text' && typeof part.text === 'string'
+  ) as { text?: string } | undefined;
+  const chatTitle = (firstTextPart?.text || 'New chat').slice(0, 100);
+
+  if (!chat) {
+    await createChat({
+      id: chatId,
+      userId: user.id,
+      status: ChatStatus.CREATED,
+      createdAt: currentTime,
+      updatedAt: currentTime,
+      model,
+      provider,
+      title: chatTitle,
+      parts: JSON.stringify(messageParts),
+      metadata: metadata ? JSON.stringify(metadata) : null,
+      content: JSON.stringify(message),
+    });
+  }
 
   const userMessage: NewChatMessage = {
     id: generateId().toLowerCase(),
