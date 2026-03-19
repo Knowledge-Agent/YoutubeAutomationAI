@@ -34,10 +34,13 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAppContext } from '@/shared/contexts/app';
+import { cn } from '@/shared/lib/utils';
 
 interface VideoGeneratorProps {
   maxSizeMB?: number;
   srOnlyTitle?: string;
+  embedded?: boolean;
+  className?: string;
 }
 
 interface GeneratedVideo {
@@ -206,6 +209,8 @@ function extractVideoUrls(result: any): string[] {
 export function VideoGenerator({
   maxSizeMB = 50,
   srOnlyTitle,
+  embedded = false,
+  className,
 }: VideoGeneratorProps) {
   const t = useTranslations('ai.video.generator');
 
@@ -620,10 +625,10 @@ export function VideoGenerator({
   };
 
   return (
-    <section className="py-16 md:py-24">
-      <div className="container">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <section className={cn(embedded ? 'py-0' : 'py-16 md:py-24', className)}>
+      <div className={cn(embedded ? '' : 'container')}>
+        <div className={cn(embedded ? '' : 'mx-auto max-w-6xl')}>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <Card>
               <CardHeader>
                 {srOnlyTitle && <h2 className="sr-only">{srOnlyTitle}</h2>}

@@ -1,9 +1,9 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { getThemePage } from '@/core/theme';
-import { VideoGenerator } from '@/shared/blocks/generator';
+import { AiVideoHubUi } from '@/shared/blocks/tools/ai-video-hub-ui';
+import { AiVideoWorkspaceUi } from '@/shared/blocks/tools/ai-video-workspace-ui';
+import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
 import { getMetadata } from '@/shared/lib/seo';
-import { DynamicPage } from '@/shared/types/blocks/landing';
 
 export const revalidate = 3600;
 
@@ -14,34 +14,34 @@ export const generateMetadata = getMetadata({
 
 export default async function AiVideoGeneratorPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ view?: string; prompt?: string }>;
 }) {
   const { locale } = await params;
+  const { view, prompt } = await searchParams;
   setRequestLocale(locale);
 
-  // get ai video data
   const t = await getTranslations('ai.video');
+  const isDetailView = view === 'detail';
 
-  // build page sections
-  const page: DynamicPage = {
-    sections: {
-      hero: {
-        title: t.raw('page.title'),
-        description: t.raw('page.description'),
-        background_image: {
-          src: '/imgs/bg/tree.jpg',
-          alt: 'hero background',
-        },
-      },
-      generator: {
-        component: <VideoGenerator srOnlyTitle={t.raw('generator.title')} />,
-      },
-    },
-  };
-
-  // load page component
-  const Page = await getThemePage('dynamic-page');
-
-  return <Page locale={locale} page={page} />;
+  return (
+    <ToolWorkspaceShell
+      activeKey="ai-video"
+      activeTab="ai-video"
+      workspaceMode={isDetailView ? 'detail' : 'hub'}
+      title={t.raw('page.title')}
+      description={t.raw('page.description')}
+      actions={['Favorites', 'Assets']}
+      contentCard={false}
+      showIntroCard={false}
+    >
+      {isDetailView ? (
+        <AiVideoWorkspaceUi initialPrompt={prompt} />
+      ) : (
+        <AiVideoHubUi />
+      )}
+    </ToolWorkspaceShell>
+  );
 }

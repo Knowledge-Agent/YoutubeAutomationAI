@@ -19,6 +19,22 @@
           "icon": "House"
         },
         {
+          "title": "Tools",
+          "children": [
+            {
+              "title": "AI Video",
+              "url": "/ai-video-generator",
+              "target": "_self"
+            },
+            {
+              "title": "AI Image",
+              "url": "/ai-image-generator",
+              "target": "_self"
+            }
+          ],
+          "url": "/tools"
+        },
+        {
           "title": "Blog",
           "url": "/blog",
           "icon": "Newspaper"
@@ -78,8 +94,23 @@
               "target": "_self"
             },
             {
+              "title": "Tools",
+              "url": "/tools",
+              "target": "_self"
+            },
+            {
               "title": "Blog",
               "url": "/blog",
+              "target": "_self"
+            },
+            {
+              "title": "AI Video",
+              "url": "/ai-video-generator",
+              "target": "_self"
+            },
+            {
+              "title": "AI Image",
+              "url": "/ai-image-generator",
               "target": "_self"
             }
           ]

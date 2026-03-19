@@ -247,14 +247,14 @@ export async function getSettingGroups() {
       name: 'affonso',
       title: t('groups.affonso'),
       description:
-        'custom your <a href="https://affonso.io?atp=shipany" class="text-primary" target="_blank">Affonso</a> settings',
+        'custom your <a href="https://affonso.io" class="text-primary" target="_blank">Affonso</a> settings',
       tab: 'affiliate',
     },
     {
       name: 'promotekit',
       title: t('groups.promotekit'),
       description:
-        'custom your <a href="https://www.promotekit.com?via=shipany" class="text-primary" target="_blank">PromoteKit</a> settings',
+        'custom your <a href="https://www.promotekit.com" class="text-primary" target="_blank">PromoteKit</a> settings',
       tab: 'affiliate',
     },
     {
@@ -280,7 +280,7 @@ export async function getSettings() {
     {
       name: 'app_name',
       title: 'App Name',
-      placeholder: 'ShipAny',
+      placeholder: 'YouTube Automation AI',
       type: 'text',
       group: 'appinfo',
       tab: 'general',
@@ -289,7 +289,7 @@ export async function getSettings() {
       name: 'app_description',
       title: 'App Description',
       placeholder:
-        'ShipAny is a NextJS boilerplate for building AI SaaS startups. ',
+        'Turn long videos into viral-ready shorts with AI clipping, hook optimization, and remix workflows.',
       type: 'textarea',
       group: 'appinfo',
       tab: 'general',
@@ -655,7 +655,7 @@ export async function getSettings() {
       name: 'plausible_domain',
       title: 'Plausible Domain',
       type: 'text',
-      placeholder: 'shipany.site',
+      placeholder: 'youtubeautomationai.com',
       group: 'plausible',
       tab: 'analytics',
     },
@@ -695,7 +695,7 @@ export async function getSettings() {
       name: 'resend_sender_email',
       title: 'Resend Sender Email',
       type: 'text',
-      placeholder: 'ShipAny Two <no-reply@mail.shipany.site>',
+      placeholder: 'YouTube Automation AI <no-reply@youtubeautomationai.com>',
       group: 'resend',
       tab: 'email',
     },

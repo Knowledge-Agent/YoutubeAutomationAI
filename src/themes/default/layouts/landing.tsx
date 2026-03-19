@@ -1,12 +1,15 @@
+'use client';
+
 import { ReactNode } from 'react';
 
+import { usePathname } from '@/core/i18n/navigation';
 import {
   Footer as FooterType,
   Header as HeaderType,
 } from '@/shared/types/blocks/landing';
 import { Footer, Header } from '@/themes/default/blocks';
 
-export default async function LandingLayout({
+export default function LandingLayout({
   children,
   header,
   footer,
@@ -15,6 +18,16 @@ export default async function LandingLayout({
   header: HeaderType;
   footer: FooterType;
 }) {
+  const pathname = usePathname();
+  const isWorkspaceRoute =
+    pathname === '/tools' ||
+    pathname.startsWith('/ai-video-generator') ||
+    pathname.startsWith('/ai-image-generator');
+
+  if (isWorkspaceRoute) {
+    return <div className="min-h-screen bg-[#101117]">{children}</div>;
+  }
+
   return (
     <div className="h-screen w-screen">
       <Header header={header} />

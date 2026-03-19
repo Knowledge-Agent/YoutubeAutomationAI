@@ -42,16 +42,26 @@ function DesktopNavItem({
   }
 
   return (
-    <div className="group relative">
-      <button
-        type="button"
-        className="inline-flex items-center gap-1 text-[1.08rem] font-medium tracking-tight text-zinc-800 transition-colors hover:text-zinc-950"
-      >
-        <span>{item.title}</span>
-        <ChevronDown className="size-4 text-zinc-400 transition group-hover:text-zinc-600" />
-      </button>
+    <div className="group relative flex items-center gap-1 py-2">
+      {item.url ? (
+        <Link
+          href={item.url}
+          target={item.target || '_self'}
+          className="text-[1.08rem] font-medium tracking-tight text-zinc-800 transition-colors hover:text-zinc-950"
+        >
+          {item.title}
+        </Link>
+      ) : (
+        <button
+          type="button"
+          className="text-[1.08rem] font-medium tracking-tight text-zinc-800 transition-colors hover:text-zinc-950"
+        >
+          {item.title}
+        </button>
+      )}
+      <ChevronDown className="size-4 text-zinc-400 transition group-hover:text-zinc-600" />
 
-      <div className="pointer-events-none absolute top-full left-1/2 z-30 mt-3 w-56 -translate-x-1/2 rounded-2xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
+      <div className="pointer-events-none absolute top-full left-1/2 z-30 mt-1 w-56 -translate-x-1/2 rounded-2xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
         <div className="space-y-1">
           {item.children.map((subItem, index) => (
             <Link
@@ -138,9 +148,20 @@ export function Header({ header }: { header: HeaderType }) {
               {header.nav?.items?.map((item, idx) =>
                 item.children && item.children.length > 0 ? (
                   <div key={`${item.title}-${idx}`} className="space-y-1">
-                    <p className="px-2 text-sm font-semibold tracking-tight text-zinc-500">
-                      {item.title}
-                    </p>
+                    {item.url ? (
+                      <Link
+                        href={item.url}
+                        target={item.target || '_self'}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block rounded-xl px-3 py-3 text-base font-semibold tracking-tight text-zinc-900 transition hover:bg-zinc-100"
+                      >
+                        {item.title}
+                      </Link>
+                    ) : (
+                      <p className="px-2 text-sm font-semibold tracking-tight text-zinc-500">
+                        {item.title}
+                      </p>
+                    )}
                     {item.children.map((subItem, subIndex) => (
                       <Link
                         key={`${subItem.title}-${subIndex}`}
