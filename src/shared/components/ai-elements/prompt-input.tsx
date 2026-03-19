@@ -1018,57 +1018,46 @@ export const PromptInputSubmit = ({
   );
 };
 
-interface SpeechRecognition extends EventTarget {
+interface BrowserSpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
   start(): void;
   stop(): void;
-  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onstart: ((this: BrowserSpeechRecognition, ev: Event) => any) | null;
+  onend: ((this: BrowserSpeechRecognition, ev: Event) => any) | null;
   onresult:
-    | ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any)
+    | ((this: BrowserSpeechRecognition, ev: BrowserSpeechRecognitionEvent) => any)
     | null;
   onerror:
-    | ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any)
+    | ((this: BrowserSpeechRecognition, ev: BrowserSpeechRecognitionErrorEvent) => any)
     | null;
 }
 
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
+interface BrowserSpeechRecognitionEvent extends Event {
+  results: BrowserSpeechRecognitionResultList;
 }
 
-type SpeechRecognitionResultList = {
+type BrowserSpeechRecognitionResultList = {
   readonly length: number;
-  item(index: number): SpeechRecognitionResult;
-  [index: number]: SpeechRecognitionResult;
+  item(index: number): BrowserSpeechRecognitionResult;
+  [index: number]: BrowserSpeechRecognitionResult;
 };
 
-type SpeechRecognitionResult = {
+type BrowserSpeechRecognitionResult = {
   readonly length: number;
-  item(index: number): SpeechRecognitionAlternative;
-  [index: number]: SpeechRecognitionAlternative;
+  item(index: number): BrowserSpeechRecognitionAlternative;
+  [index: number]: BrowserSpeechRecognitionAlternative;
   isFinal: boolean;
 };
 
-type SpeechRecognitionAlternative = {
+type BrowserSpeechRecognitionAlternative = {
   transcript: string;
   confidence: number;
 };
 
-interface SpeechRecognitionErrorEvent extends Event {
+interface BrowserSpeechRecognitionErrorEvent extends Event {
   error: string;
-}
-
-declare global {
-  interface Window {
-    SpeechRecognition: {
-      new (): SpeechRecognition;
-    };
-    webkitSpeechRecognition: {
-      new (): SpeechRecognition;
-    };
-  }
 }
 
 export type PromptInputSpeechButtonProps = ComponentProps<
@@ -1085,19 +1074,29 @@ export const PromptInputSpeechButton = ({
   ...props
 }: PromptInputSpeechButtonProps) => {
   const [isListening, setIsListening] = useState(false);
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(
+  const [recognition, setRecognition] = useState<BrowserSpeechRecognition | null>(
     null
   );
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
 
   useEffect(() => {
+    const speechWindow = window as Window & {
+      SpeechRecognition?: new () => BrowserSpeechRecognition;
+      webkitSpeechRecognition?: new () => BrowserSpeechRecognition;
+    };
+
     if (
       typeof window !== "undefined" &&
-      ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
+      ("SpeechRecognition" in speechWindow || "webkitSpeechRecognition" in speechWindow)
     ) {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      const speechRecognition = new SpeechRecognition();
+      const SpeechRecognitionCtor =
+        speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
+      if (!SpeechRecognitionCtor) {
+        return;
+      }
+
+      const speechRecognition =
+        new SpeechRecognitionCtor() as unknown as BrowserSpeechRecognition;
 
       speechRecognition.continuous = true;
       speechRecognition.interimResults = true;
@@ -1111,10 +1110,10 @@ export const PromptInputSpeechButton = ({
         setIsListening(false);
       };
 
-      speechRecognition.onresult = (event) => {
+      speechRecognition.onresult = (event: BrowserSpeechRecognitionEvent) => {
         let finalTranscript = "";
 
-        const results = Array.from(event.results);
+        const results = Array.from(event.results as ArrayLike<BrowserSpeechRecognitionResult>);
 
         for (const result of results) {
           if (result.isFinal) {
@@ -1134,7 +1133,7 @@ export const PromptInputSpeechButton = ({
         }
       };
 
-      speechRecognition.onerror = (event) => {
+      speechRecognition.onerror = (event: BrowserSpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error:", event.error);
         setIsListening(false);
       };

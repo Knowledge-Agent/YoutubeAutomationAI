@@ -6,6 +6,7 @@ import {
   Clock3,
   FolderOpen,
   ImagePlus,
+  MessageSquare,
   RefreshCcw,
   Sparkles,
   Star,
@@ -13,7 +14,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { AIMediaType, AITaskStatus } from '@/extensions/ai';
+import { Link, usePathname, useRouter } from '@/core/i18n/navigation';
+import { AIMediaType, AITaskStatus } from '@/extensions/ai/types';
 import { ImageUploader, ImageUploaderValue } from '@/shared/blocks/common';
 import {
   AssistantModelOption,
@@ -183,15 +185,21 @@ function getDefaultPromptIdeas(surface: ToolSurface) {
 export function ToolTaskWorkspace({
   surface,
   initialPrompt = '',
+  initialMode,
 }: {
   surface: ToolSurface;
   initialPrompt?: string;
+  initialMode?: ToolMode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const { models, options, loading } = useToolCatalog(surface);
   const { user, isCheckSign, setIsShowSignModal, fetchUserCredits } =
     useAppContext();
 
-  const [mode, setMode] = useState<ToolMode>(getDefaultMode(surface));
+  const [mode, setMode] = useState<ToolMode>(
+    initialMode ?? getDefaultMode(surface)
+  );
   const [modelId, setModelId] = useState('');
   const [prompt, setPrompt] = useState(initialPrompt.trim());
   const [modelOptions, setModelOptions] = useState<
@@ -256,6 +264,15 @@ export function ToolTaskWorkspace({
   const costCredits = selectedModel?.creditCostByMode?.[mode] ?? 0;
   const promptIdeas = getDefaultPromptIdeas(surface);
   const remainingCredits = user?.credits?.remainingCredits ?? 0;
+  const chatHref = useMemo(() => {
+    const params = new URLSearchParams();
+    if (prompt.trim()) {
+      params.set('prompt', prompt.trim());
+    }
+    params.set('surface', surface);
+    params.set('mode', mode);
+    return `/chat${params.toString() ? `?${params.toString()}` : ''}`;
+  }, [mode, prompt, surface]);
   const canSubmit =
     Boolean(prompt.trim()) &&
     Boolean(selectedModel) &&
@@ -263,6 +280,18 @@ export function ToolTaskWorkspace({
     !isCheckSign &&
     (mode !== 'image-to-image' || referenceImageUrls.length > 0) &&
     (mode !== 'video-to-video' || Boolean(referenceVideoUrl));
+
+  const updateMode = useCallback(
+    (nextMode: ToolMode) => {
+      setMode(nextMode);
+
+      const params = new URLSearchParams(window.location.search);
+      params.set('mode', nextMode);
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname);
+    },
+    [pathname, router]
+  );
 
   useEffect(() => {
     if (!availableModes.includes(mode) && availableModes[0]) {
@@ -446,7 +475,7 @@ export function ToolTaskWorkspace({
                   : Video,
             href: undefined,
             active: item === mode,
-            onClick: () => setMode(item),
+            onClick: () => updateMode(item),
           }))}
         />
       </div>
@@ -534,112 +563,35 @@ export function ToolTaskWorkspace({
             </section>
 
             <div className="mt-4 space-y-3">
-              {mode === 'image-to-image' || mode === 'image-to-video' ? (
-                <div className="rounded-[24px] border border-white/8 bg-[#171821] p-4">
-                  <ImageUploader
-                    allowMultiple={mode === 'image-to-image'}
-                    className="w-full"
-                    emptyHint="Upload reference images"
-                    maxImages={mode === 'image-to-image' ? 4 : 1}
-                    maxSizeMB={8}
-                    onChange={handleReferenceImagesChange}
-                    title="Reference Images"
-                  />
-                </div>
-              ) : null}
-
-              {mode === 'video-to-video' ? (
-                <div className="rounded-[24px] border border-white/8 bg-[#171821] p-4">
-                  <label className="mb-2 block text-sm font-medium text-zinc-300">
-                    Reference Video URL
-                  </label>
-                  <Textarea
-                    className="min-h-24 border-white/8 bg-white/5 text-zinc-100"
-                    onChange={(event) => setReferenceVideoUrl(event.target.value)}
-                    placeholder="Paste a video URL that APIMart can access"
-                    value={referenceVideoUrl}
-                  />
-                </div>
-              ) : null}
-
-              {visibleOptions.length > 0 ? (
-                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                  {visibleOptions.map((option) => {
-                    if (option.type === 'select') {
-                      return (
-                        <div
-                          key={option.key}
-                          className="rounded-[22px] border border-white/8 bg-[#171821] p-4"
-                        >
-                          <div className="mb-2 text-sm font-medium text-zinc-300">
-                            {option.label}
-                          </div>
-                          <Select
-                            onValueChange={(value) =>
-                              setModelOptions((current) => ({
-                                ...current,
-                                [option.key]: value,
-                              }))
-                            }
-                            value={String(
-                              modelOptions[option.key] ??
-                                option.defaultValue ??
-                                ''
-                            )}
-                          >
-                            <SelectTrigger className="border-white/8 bg-white/5 text-zinc-100">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {option.options?.map((choice) => (
-                                <SelectItem
-                                  key={choice.value}
-                                  value={choice.value}
-                                >
-                                  {choice.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      );
-                    }
-
-                    if (option.type === 'boolean') {
-                      return (
-                        <div
-                          key={option.key}
-                          className="flex items-center justify-between rounded-[22px] border border-white/8 bg-[#171821] p-4"
-                        >
-                          <div>
-                            <div className="text-sm font-medium text-zinc-300">
-                              {option.label}
-                            </div>
-                            {option.description ? (
-                              <div className="mt-1 text-xs text-zinc-500">
-                                {option.description}
-                              </div>
-                            ) : null}
-                          </div>
-                          <Switch
-                            checked={Boolean(modelOptions[option.key])}
-                            onCheckedChange={(checked) =>
-                              setModelOptions((current) => ({
-                                ...current,
-                                [option.key]: checked,
-                              }))
-                            }
-                          />
-                        </div>
-                      );
-                    }
-
-                    return null;
-                  })}
-                </div>
-              ) : null}
-
               <section className="w-full rounded-[28px] border border-white/8 bg-[linear-gradient(180deg,rgba(33,34,44,0.98),rgba(28,29,37,0.98))] px-4 py-3.5 shadow-[0_22px_48px_rgba(0,0,0,0.24)] transition focus-within:border-cyan-300/18 focus-within:shadow-[0_24px_60px_rgba(34,211,238,0.16)]">
+                {mode === 'image-to-image' || mode === 'image-to-video' ? (
+                  <div className="mb-4 rounded-[22px] border border-white/8 bg-[#171821] p-3">
+                    <ImageUploader
+                      allowMultiple={mode === 'image-to-image'}
+                      className="w-full"
+                      emptyHint="Upload reference images"
+                      maxImages={mode === 'image-to-image' ? 4 : 1}
+                      maxSizeMB={8}
+                      onChange={handleReferenceImagesChange}
+                      title="Reference Images"
+                    />
+                  </div>
+                ) : null}
+
+                {mode === 'video-to-video' ? (
+                  <div className="mb-4 rounded-[22px] border border-white/8 bg-[#171821] p-3">
+                    <label className="mb-2 block text-sm font-medium text-zinc-300">
+                      Reference Video URL
+                    </label>
+                    <Textarea
+                      className="min-h-24 border-white/8 bg-white/5 text-zinc-100"
+                      onChange={(event) => setReferenceVideoUrl(event.target.value)}
+                      placeholder="Paste a video URL that APIMart can access"
+                      value={referenceVideoUrl}
+                    />
+                  </div>
+                ) : null}
+
                 <div className="flex items-start gap-3">
                   <div className="mt-1 flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] border border-dashed border-white/12 bg-[#171821] text-zinc-500">
                     {surface === 'image' ? (
@@ -660,13 +612,13 @@ export function ToolTaskWorkspace({
                   />
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/6 pt-3">
+                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/6 pt-3">
                   <div className="flex flex-wrap gap-2">
                     {availableModes.map((item) => (
                       <button
                         key={item}
                         type="button"
-                        onClick={() => setMode(item)}
+                        onClick={() => updateMode(item)}
                         className={cn(
                           'rounded-xl border px-3 py-2 text-sm transition',
                           item === mode
@@ -684,9 +636,66 @@ export function ToolTaskWorkspace({
                       onSelect={setModelId}
                       selectedModelId={modelId}
                     />
+
+                    {visibleOptions
+                      .filter((option) => option.type === 'select')
+                      .map((option) => (
+                        <Select
+                          key={option.key}
+                          onValueChange={(value) =>
+                            setModelOptions((current) => ({
+                              ...current,
+                              [option.key]: value,
+                            }))
+                          }
+                          value={String(
+                            modelOptions[option.key] ??
+                              option.defaultValue ??
+                              ''
+                          )}
+                        >
+                          <SelectTrigger className="h-10 min-w-[124px] rounded-xl border-white/8 bg-[#262734] text-[13px] text-zinc-100">
+                            <SelectValue placeholder={option.label} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {option.options?.map((choice) => (
+                              <SelectItem key={choice.value} value={choice.value}>
+                                {choice.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ))}
+
+                    {visibleOptions
+                      .filter((option) => option.type === 'boolean')
+                      .map((option) => (
+                        <div
+                          key={option.key}
+                          className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/8 bg-[#262734] px-3 text-[13px] text-zinc-200"
+                        >
+                          <span>{option.label}</span>
+                          <Switch
+                            checked={Boolean(modelOptions[option.key])}
+                            onCheckedChange={(checked) =>
+                              setModelOptions((current) => ({
+                                ...current,
+                                [option.key]: checked,
+                              }))
+                            }
+                          />
+                        </div>
+                      ))}
                   </div>
 
                   <div className="ml-auto flex items-center gap-3 text-sm text-zinc-500">
+                    <Link
+                      href={chatHref}
+                      className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/8 bg-[#262734] px-3 text-[13px] font-medium text-zinc-200 transition hover:bg-[#2d2e3b] hover:text-white"
+                    >
+                      <MessageSquare className="size-4" />
+                      Open in Chat
+                    </Link>
                     <span className="inline-flex items-center gap-2">
                       <Clock3 className="size-4" />
                       {costCredits} Credits

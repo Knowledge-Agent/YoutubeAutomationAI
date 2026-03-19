@@ -71,7 +71,7 @@ export function AiImageHubUi() {
     const normalizedPrompt = prompt.trim();
     if (!normalizedPrompt) return;
     router.push(
-      `/ai-image-generator?view=detail&prompt=${encodeURIComponent(normalizedPrompt)}`
+      `/ai-image-generator?view=detail&mode=text-to-image&prompt=${encodeURIComponent(normalizedPrompt)}`
     );
   };
 

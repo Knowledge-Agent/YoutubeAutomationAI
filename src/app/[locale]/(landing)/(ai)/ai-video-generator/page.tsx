@@ -17,10 +17,14 @@ export default async function AiVideoGeneratorPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ view?: string; prompt?: string }>;
+  searchParams: Promise<{
+    view?: string;
+    prompt?: string;
+    mode?: 'text-to-video' | 'image-to-video' | 'video-to-video';
+  }>;
 }) {
   const { locale } = await params;
-  const { view, prompt } = await searchParams;
+  const { view, prompt, mode } = await searchParams;
   setRequestLocale(locale);
 
   const t = await getTranslations('ai.video');
@@ -38,7 +42,7 @@ export default async function AiVideoGeneratorPage({
       showIntroCard={false}
     >
       {isDetailView ? (
-        <AiVideoWorkspaceUi initialPrompt={prompt} />
+        <AiVideoWorkspaceUi initialMode={mode} initialPrompt={prompt} />
       ) : (
         <AiVideoHubUi />
       )}

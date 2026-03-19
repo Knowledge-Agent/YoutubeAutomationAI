@@ -99,6 +99,14 @@ export async function getAllConfigs(): Promise<Configs> {
     }
   });
 
+  if (!dbConfigs.apimart_api_key && process.env.API_MART_KEY) {
+    dbConfigs.apimart_api_key = process.env.API_MART_KEY;
+  }
+
+  if (!dbConfigs.apimart_base_url && process.env.API_MART_BASE_URL) {
+    dbConfigs.apimart_base_url = process.env.API_MART_BASE_URL;
+  }
+
   const configs = {
     ...envConfigs,
     ...dbConfigs,

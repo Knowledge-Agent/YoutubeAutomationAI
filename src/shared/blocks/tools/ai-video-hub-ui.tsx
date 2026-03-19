@@ -74,7 +74,7 @@ export function AiVideoHubUi() {
     const normalizedPrompt = prompt.trim();
     if (!normalizedPrompt) return;
     router.push(
-      `/ai-video-generator?view=detail&prompt=${encodeURIComponent(normalizedPrompt)}`
+      `/ai-video-generator?view=detail&mode=text-to-video&prompt=${encodeURIComponent(normalizedPrompt)}`
     );
   };
 

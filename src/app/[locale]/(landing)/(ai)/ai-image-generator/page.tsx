@@ -17,10 +17,14 @@ export default async function AiImageGeneratorPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ view?: string; prompt?: string }>;
+  searchParams: Promise<{
+    view?: string;
+    prompt?: string;
+    mode?: 'text-to-image' | 'image-to-image';
+  }>;
 }) {
   const { locale } = await params;
-  const { view, prompt } = await searchParams;
+  const { view, prompt, mode } = await searchParams;
   setRequestLocale(locale);
 
   const t = await getTranslations('ai.image');
@@ -38,7 +42,7 @@ export default async function AiImageGeneratorPage({
       showIntroCard={false}
     >
       {isDetailView ? (
-        <AiImageWorkspaceUi initialPrompt={prompt} />
+        <AiImageWorkspaceUi initialMode={mode} initialPrompt={prompt} />
       ) : (
         <AiImageHubUi />
       )}

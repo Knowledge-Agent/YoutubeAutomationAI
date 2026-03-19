@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { UIMessage, UseChatHelpers } from '@ai-sdk/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -17,6 +18,7 @@ import { ChatInput } from './input';
 export function ChatGenerator() {
   const router = useRouter();
   const locale = useLocale();
+  const searchParams = useSearchParams();
 
   const t = useTranslations('ai.chat.generator');
 
@@ -25,6 +27,9 @@ export function ChatGenerator() {
 
   const [status, setStatus] = useState<UseChatHelpers<UIMessage>['status']>();
   const [error, setError] = useState<string | null>(null);
+  const initialPrompt = searchParams.get('prompt') || '';
+  const toolSurface = searchParams.get('surface') || undefined;
+  const toolMode = searchParams.get('mode') || undefined;
 
   const fetchNewChat = async (
     msg: PromptInputMessage,
@@ -91,7 +96,11 @@ export function ChatGenerator() {
       return;
     }
 
-    await fetchNewChat(message, body);
+    await fetchNewChat(message, {
+      ...body,
+      ...(toolSurface ? { toolSurface } : {}),
+      ...(toolMode ? { toolMode } : {}),
+    });
   };
 
   useEffect(() => {
@@ -110,6 +119,7 @@ export function ChatGenerator() {
         <ChatInput
           error={error}
           handleSubmit={handleSubmit}
+          initialInput={initialPrompt}
           onInputChange={() => {
             if (status === 'error') {
               setStatus(undefined);

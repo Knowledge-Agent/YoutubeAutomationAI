@@ -25,6 +25,7 @@ export function ChatInput({
   status,
   error,
   onInputChange,
+  initialInput,
 }: {
   handleSubmit: (
     message: PromptInputMessage,
@@ -33,6 +34,7 @@ export function ChatInput({
   status?: UseChatHelpers<UIMessage>['status'];
   error?: string | null;
   onInputChange?: (value: string) => void;
+  initialInput?: string;
 }) {
   const t = useTranslations('ai.chat.generator');
   const { models, loading } = useToolCatalog('chat');
@@ -48,6 +50,12 @@ export function ChatInput({
       setModel(models[0].id);
     }
   }, [model, models]);
+
+  useEffect(() => {
+    if (initialInput) {
+      setInput(initialInput);
+    }
+  }, [initialInput]);
 
   return (
     <div className="w-full">
