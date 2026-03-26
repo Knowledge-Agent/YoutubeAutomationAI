@@ -19,11 +19,12 @@ export default function LandingLayout({
   footer: FooterType;
 }) {
   const pathname = usePathname();
+  const isHomeRoute = pathname === '/';
   const isWorkspaceRoute =
     pathname.startsWith('/ai-video-generator') ||
     pathname.startsWith('/ai-image-generator');
 
-  if (isWorkspaceRoute) {
+  if (isWorkspaceRoute || isHomeRoute) {
     return <div className="min-h-screen bg-[var(--studio-bg)]">{children}</div>;
   }
 

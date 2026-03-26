@@ -119,6 +119,19 @@ pre {
 }
 
 @layer utilities {
+  .seo-embed-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   .landing-shell {
     background-color: var(--landing-canvas);
     color: var(--landing-ink);

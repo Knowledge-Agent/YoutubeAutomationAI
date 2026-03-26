@@ -1,6 +1,8 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { getThemePage } from '@/core/theme';
+import { AiVideoHubUi } from '@/shared/blocks/tools/ai-video-hub-ui';
+import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
 import { getMetadata } from '@/shared/lib/seo';
 import {
   buildFaqStructuredData,
@@ -8,7 +10,11 @@ import {
   buildWebsiteStructuredData,
   createStructuredDataGraph,
 } from '@/shared/lib/structured-data';
-import { DynamicPage } from '@/shared/types/blocks/landing';
+import {
+  DynamicPage,
+  Header as LandingHeader,
+} from '@/shared/types/blocks/landing';
+import { LandingBottomNav } from '@/themes/default/blocks/landing-bottom-nav';
 
 export const revalidate = 3600;
 
@@ -26,8 +32,11 @@ export default async function LandingPage({
   setRequestLocale(locale);
 
   const t = await getTranslations('pages.index');
+  const landingT = await getTranslations('landing');
+  const toolT = await getTranslations('ai.video');
 
   const page: DynamicPage = t.raw('page');
+  const header = landingT.raw('header') as LandingHeader;
   const metadata = t.raw('metadata') as { description?: string };
   const sectionKeys = page.show_sections || Object.keys(page.sections || {});
   const heroSection = sectionKeys
@@ -63,7 +72,26 @@ export default async function LandingPage({
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <Page locale={locale} page={page} />
+      <div className="relative min-h-screen bg-[var(--studio-bg)]">
+        <ToolWorkspaceShell
+          activeKey="ai-video"
+          activeTab="ai-video"
+          workspaceMode="hub"
+          title={toolT.raw('page.title')}
+          description={toolT.raw('page.description')}
+          actions={['Favorites', 'Assets']}
+          contentCard={false}
+          showIntroCard={false}
+        >
+          <AiVideoHubUi />
+        </ToolWorkspaceShell>
+
+        <LandingBottomNav header={header} />
+
+        <div aria-hidden="true" className="seo-embed-hidden">
+          <Page locale={locale} page={page} />
+        </div>
+      </div>
     </>
   );
 }
