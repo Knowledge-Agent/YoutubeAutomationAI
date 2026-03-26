@@ -25,17 +25,21 @@ export function FeaturesStep({
   return (
     <section
       id={section.id}
-      className={cn('py-14 md:py-20', section.className, className)}
+      className={cn(
+        'landing-shell-soft py-14 md:py-20',
+        section.className,
+        className
+      )}
     >
       <div className="m-4 rounded-[2rem]">
         <div className="@container relative container">
           <ScrollAnimation>
             <div className="mx-auto max-w-3xl text-center">
-              <span className="text-primary">{section.label}</span>
-              <h2 className="text-foreground mt-3 text-4xl font-semibold">
+              <span className="text-[var(--brand-signal)]">{section.label}</span>
+              <h2 className="landing-title mt-3 text-4xl font-semibold">
                 {section.title}
               </h2>
-              <p className="text-muted-foreground mx-auto mt-4 max-w-2xl text-lg text-balance">
+              <p className="landing-copy mx-auto mt-4 max-w-2xl text-lg text-balance">
                 {section.description}
               </p>
             </div>
@@ -51,11 +55,11 @@ export function FeaturesStep({
               {section.items?.map((item, idx) => (
                 <div className="space-y-6" key={idx}>
                   <div className="text-center">
-                    <span className="mx-auto flex size-6 items-center justify-center rounded-full bg-zinc-500/15 text-sm font-medium">
+                    <span className="mx-auto flex size-6 items-center justify-center rounded-full bg-[var(--landing-hover-strong)] text-sm font-medium text-[var(--landing-ink)]">
                       {idx + 1}
                     </span>
                     <div className="relative">
-                      <div className="mx-auto my-6 w-fit">
+                      <div className="landing-surface-muted mx-auto my-6 flex w-fit rounded-2xl border p-3 shadow-xs">
                         {item.icon && (
                           <SmartIcon name={item.icon as string} size={24} />
                         )}
@@ -64,10 +68,10 @@ export function FeaturesStep({
                         <ArrowBigRight className="fill-muted stroke-primary absolute inset-y-0 right-0 my-auto mt-1 hidden translate-x-[150%] drop-shadow lg:block" />
                       )}
                     </div>
-                    <h3 className="text-foreground mb-4 text-lg font-semibold">
+                    <h3 className="landing-title mb-4 text-lg font-semibold">
                       {item.title}
                     </h3>
-                    <p className="text-muted-foreground text-balance">
+                    <p className="landing-copy text-balance">
                       {item.description}
                     </p>
                   </div>

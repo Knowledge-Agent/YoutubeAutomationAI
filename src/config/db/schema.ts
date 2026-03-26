@@ -472,6 +472,23 @@ export const userRole = table(
   ]
 );
 
+export const project = table(
+  'project',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    status: text('status').notNull(),
+    title: text('title').notNull().default(''),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [index('idx_project_user_status').on(table.userId, table.status)]
+);
+
 export const aiTask = table(
   'ai_task',
   {
@@ -479,6 +496,9 @@ export const aiTask = table(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
+    chatId: text('chat_id').references(() => chat.id, {
+      onDelete: 'cascade',
+    }),
     mediaType: text('media_type').notNull(),
     provider: text('provider').notNull(),
     model: text('model').notNull(),
@@ -501,6 +521,7 @@ export const aiTask = table(
     // Composite: Query user's AI tasks by status
     // Can also be used for: WHERE userId = ? (left-prefix)
     index('idx_ai_task_user_media_type').on(table.userId, table.mediaType),
+    index('idx_ai_task_chat_created').on(table.chatId, table.createdAt),
     // Composite: Query user's AI tasks by media type and provider
     // Can also be used for: WHERE mediaType = ? AND provider = ? (left-prefix)
     index('idx_ai_task_media_type_status').on(table.mediaType, table.status),
@@ -514,6 +535,9 @@ export const chat = table(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
+    projectId: text('project_id').references(() => project.id, {
+      onDelete: 'set null',
+    }),
     status: text('status').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at')
@@ -526,7 +550,10 @@ export const chat = table(
     metadata: text('metadata'),
     content: text('content'),
   },
-  (table) => [index('idx_chat_user_status').on(table.userId, table.status)]
+  (table) => [
+    index('idx_chat_user_status').on(table.userId, table.status),
+    index('idx_chat_project_status').on(table.projectId, table.status),
+  ]
 );
 
 export const chatMessage = table(
@@ -553,5 +580,32 @@ export const chatMessage = table(
   (table) => [
     index('idx_chat_message_chat_id').on(table.chatId, table.status),
     index('idx_chat_message_user_id').on(table.userId, table.status),
+  ]
+);
+
+export const projectFavorite = table(
+  'project_favorite',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    taskId: text('task_id')
+      .notNull()
+      .references(() => aiTask.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index('idx_project_favorite_project_created').on(
+      table.projectId,
+      table.createdAt
+    ),
+    index('idx_project_favorite_user_project').on(table.userId, table.projectId),
   ]
 );

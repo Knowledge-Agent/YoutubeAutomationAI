@@ -104,18 +104,37 @@ export function AssistantMessage({
   );
 }
 
+export function AssistantTaskFeedItem({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mb-6 flex items-start gap-3">
+      <Avatar className="mt-1 h-9 w-9 border border-white/10 bg-[#181a22]">
+        <AvatarFallback className="bg-transparent text-xs font-semibold text-cyan-300">
+          <Bot className="size-4" />
+        </AvatarFallback>
+      </Avatar>
+      <div className="min-w-0 flex-1">{children}</div>
+    </div>
+  );
+}
+
 export function AssistantThreadMessages({
   toolUIs,
+  hideUserMessages = false,
   className,
 }: {
   toolUIs?: AssistantToolUI[];
+  hideUserMessages?: boolean;
   className?: string;
 }) {
   return (
-    <div className={cn('mx-auto w-full max-w-[1120px] px-4 py-6', className)}>
+    <div className={cn('w-full px-3 py-3 md:px-4', className)}>
       <ThreadPrimitive.Messages
         components={{
-          UserMessage: AssistantUserMessage,
+          UserMessage: hideUserMessages ? () => null : AssistantUserMessage,
           AssistantMessage: () => <AssistantMessage toolUIs={toolUIs} />,
         }}
       />

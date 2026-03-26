@@ -30,6 +30,9 @@ interface AssistantModelPickerProps {
   onSelect: (modelId: string) => void;
   triggerClassName?: string;
   compact?: boolean;
+  showTriggerLabel?: boolean;
+  showTriggerMeta?: boolean;
+  testIdPrefix?: string;
 }
 
 function groupModels(models: AssistantModelOption[]) {
@@ -43,6 +46,13 @@ function groupModels(models: AssistantModelOption[]) {
   }, {});
 }
 
+function toTestIdToken(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export function AssistantModelPicker({
   label = 'Model',
   models,
@@ -50,6 +60,9 @@ export function AssistantModelPicker({
   onSelect,
   triggerClassName,
   compact = false,
+  showTriggerLabel = false,
+  showTriggerMeta = false,
+  testIdPrefix,
 }: AssistantModelPickerProps) {
   const [open, setOpen] = useState(false);
   const groupedModels = useMemo(() => groupModels(models), [models]);
@@ -61,23 +74,51 @@ export function AssistantModelPicker({
         <button
           type="button"
           className={cn(
-            'inline-flex h-11 items-center gap-2 rounded-[16px] border border-white/8 bg-[#262734] px-4 text-sm font-medium text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] transition hover:bg-[#2d2e3b]',
+            'inline-flex h-11 items-center gap-3 rounded-[16px] border border-white/8 bg-[#262734] px-4 text-sm font-medium text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] transition hover:bg-[#2d2e3b]',
             compact && 'h-10 rounded-xl px-3 text-[13px]',
             triggerClassName
           )}
+          data-testid={
+            testIdPrefix ? `${testIdPrefix}-trigger` : undefined
+          }
         >
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#11131a] text-[11px] font-semibold text-cyan-300">
             {(selectedModel?.providerLabel ?? selectedModel?.provider ?? 'A')
               .charAt(0)
               .toUpperCase()}
           </span>
-          <span className="truncate">
-            {selectedModel?.label ?? `Select ${label.toLowerCase()}`}
+          <span className="min-w-0 flex-1 text-left">
+            {showTriggerLabel ? (
+              <span
+                className={cn(
+                  'mb-1 block text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500',
+                  compact && 'hidden'
+                )}
+              >
+                {label}
+              </span>
+            ) : null}
+            <span className="block truncate">
+              {selectedModel?.label ?? `Select ${label.toLowerCase()}`}
+            </span>
+            {showTriggerMeta && selectedModel?.meta ? (
+              <span
+                className={cn(
+                  'mt-1 block truncate text-[11px] font-normal text-zinc-500',
+                  compact && 'hidden'
+                )}
+              >
+                {selectedModel.meta}
+              </span>
+            ) : null}
           </span>
           <ChevronDown className="size-4 text-zinc-400" />
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl border-white/10 bg-[#171821] p-0 text-white">
+      <DialogContent
+        className="max-w-4xl border-white/10 bg-[#171821] p-0 text-white"
+        data-testid={testIdPrefix ? `${testIdPrefix}-dialog` : undefined}
+      >
         <DialogHeader className="border-b border-white/8 px-6 py-5">
           <div className="text-sm font-medium text-zinc-500">{label}</div>
           <DialogTitle className="mt-1 text-2xl tracking-tight text-white">
@@ -90,6 +131,9 @@ export function AssistantModelPicker({
               <Search className="size-4" />
               <CommandInput
                 className="h-auto border-none bg-transparent p-0 text-sm text-white placeholder:text-zinc-500 focus-visible:ring-0"
+                data-testid={
+                  testIdPrefix ? `${testIdPrefix}-search` : undefined
+                }
                 placeholder="Search models"
               />
             </div>
@@ -119,6 +163,11 @@ export function AssistantModelPicker({
                           'flex items-start gap-3 rounded-[20px] border border-white/8 bg-white/5 px-4 py-4 text-left text-white data-[selected=true]:bg-white/10',
                           active && 'border-white/16 bg-white/10'
                         )}
+                        data-testid={
+                          testIdPrefix
+                            ? `${testIdPrefix}-option-${toTestIdToken(model.id)}`
+                            : undefined
+                        }
                       >
                         <div className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#10131a] text-xs font-semibold text-cyan-300">
                           {(model.providerLabel ?? model.provider)

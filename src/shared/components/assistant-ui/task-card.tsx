@@ -1,16 +1,21 @@
 'use client';
-
+import { useState } from 'react';
 import {
   AlertCircle,
-  CheckCircle2,
-  Clock3,
   LoaderCircle,
+  PencilLine,
   Play,
+  RefreshCw,
   XCircle,
 } from 'lucide-react';
 
-import { Badge } from '@/shared/components/ui/badge';
 import { Card, CardContent } from '@/shared/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/shared/components/ui/dialog';
 import { Progress } from '@/shared/components/ui/progress';
 import { cn } from '@/shared/lib/utils';
 
@@ -18,165 +23,231 @@ import { AssistantTaskCardData, AssistantTaskStatus } from './types';
 
 function getStatusMeta(status: AssistantTaskStatus) {
   switch (status) {
-    case 'success':
-      return {
-        label: 'Completed',
-        icon: CheckCircle2,
-        className: 'bg-emerald-400/12 text-emerald-300',
-      };
     case 'failed':
       return {
         label: 'Failed',
         icon: AlertCircle,
-        className: 'bg-rose-500/12 text-rose-300',
+        className: 'text-rose-300',
       };
     case 'canceled':
       return {
         label: 'Canceled',
         icon: XCircle,
-        className: 'bg-zinc-500/12 text-zinc-300',
+        className: 'text-zinc-400',
       };
     case 'processing':
       return {
-        label: 'Processing',
+        label: 'Generating',
         icon: LoaderCircle,
-        className: 'bg-sky-500/12 text-sky-300',
+        className: 'text-sky-300',
       };
     case 'pending':
       return {
         label: 'Queued',
-        icon: Clock3,
-        className: 'bg-amber-500/12 text-amber-300',
+        icon: LoaderCircle,
+        className: 'text-amber-300',
       };
     default:
-      return {
-        label: 'Draft',
-        icon: Clock3,
-        className: 'bg-zinc-500/12 text-zinc-300',
-      };
+      return null;
   }
 }
 
 export function AssistantTaskCard({
   task,
   className,
+  onReprompt,
+  onRegenerate,
 }: {
   task: AssistantTaskCardData;
   className?: string;
+  onReprompt?: (task: AssistantTaskCardData) => void;
+  onRegenerate?: (task: AssistantTaskCardData) => void;
 }) {
   const statusMeta = getStatusMeta(task.status);
-  const StatusIcon = statusMeta.icon;
+  const StatusIcon = statusMeta?.icon;
   const primaryAsset = task.assets?.[0];
+  const isVideoAsset = primaryAsset?.kind === 'video';
+  const showStatusPlaceholder = !primaryAsset && statusMeta && StatusIcon;
+  const [videoOpen, setVideoOpen] = useState(false);
+  const [imageOpen, setImageOpen] = useState(false);
 
   return (
     <Card
       className={cn(
-        'overflow-hidden rounded-[28px] border-white/8 bg-[#171821] py-0 text-white shadow-[0_24px_60px_rgba(0,0,0,0.24)]',
+        'overflow-hidden rounded-[24px] border border-white/6 bg-[#181922] py-0 text-white shadow-[0_18px_50px_rgba(0,0,0,0.16)]',
         className
       )}
     >
-      <CardContent className="grid gap-4 px-4 py-4 md:grid-cols-[minmax(0,1fr)_188px]">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge className={cn('gap-1.5 border-none px-2.5 py-1', statusMeta.className)}>
-              <StatusIcon
-                className={cn('size-3.5', task.status === 'processing' && 'animate-spin')}
-              />
-              {statusMeta.label}
-            </Badge>
+      <CardContent className="px-4 py-3 sm:py-3.5">
+        <div className="max-w-[660px]">
+          <div className="flex flex-wrap items-center gap-1.5">
             {task.modeLabel ? (
-              <Badge
-                variant="secondary"
-                className="border border-white/8 bg-white/5 px-2.5 py-1 text-zinc-300"
-              >
+              <span className="rounded-[10px] border border-white/8 bg-white/[0.04] px-2.5 py-1 text-[12px] text-zinc-300">
                 {task.modeLabel}
-              </Badge>
+              </span>
             ) : null}
             {task.modelLabel ? (
-              <Badge
-                variant="secondary"
-                className="border border-white/8 bg-white/5 px-2.5 py-1 text-zinc-300"
-              >
+              <span className="rounded-[10px] border border-white/8 bg-white/[0.04] px-2.5 py-1 text-[12px] text-zinc-400">
                 {task.modelLabel}
-              </Badge>
+              </span>
             ) : null}
             {task.createdAtLabel ? (
-              <span className="text-xs text-zinc-500">{task.createdAtLabel}</span>
+              <span className="text-[12px] text-zinc-500">
+                {task.createdAtLabel}
+              </span>
             ) : null}
           </div>
 
-          {task.title ? (
-            <h3 className="mt-3 text-lg font-semibold tracking-tight text-white">
-              {task.title}
-            </h3>
+          <p className="mt-2.5 max-w-[560px] text-[14px] font-medium leading-6 text-white sm:text-[15px]">
+            {task.prompt}
+          </p>
+
+          {primaryAsset ? (
+            <div className="mt-2.5 w-full max-w-[148px] sm:max-w-[160px] md:max-w-[172px]">
+              {isVideoAsset ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setVideoOpen(true)}
+                    aria-label="Play generated video"
+                  className="group relative block overflow-hidden rounded-[18px] border border-white/8 bg-[#101118] shadow-[0_20px_40px_rgba(0,0,0,0.22)]"
+                  >
+                    <video
+                      src={primaryAsset.url}
+                      poster={primaryAsset.thumbnailUrl}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="aspect-[3/4] w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/8 to-transparent transition group-hover:from-black/36" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-zinc-950 shadow-[0_18px_36px_rgba(0,0,0,0.32)] transition group-hover:scale-[1.03]">
+                        <Play className="ml-0.5 size-5 fill-current" />
+                      </span>
+                    </div>
+                  </button>
+                  <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
+                    <DialogContent
+                      className="max-w-[min(92vw,960px)] border-white/8 bg-[#111218] p-3 text-white shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
+                      showCloseButton
+                    >
+                      <DialogTitle className="sr-only">
+                        Generated video preview
+                      </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        Play the generated video inside the chat.
+                      </DialogDescription>
+                      <video
+                        src={primaryAsset.url}
+                        poster={primaryAsset.thumbnailUrl}
+                        controls
+                        autoPlay
+                        playsInline
+                        preload="metadata"
+                        className="max-h-[80vh] w-full rounded-[16px] bg-black object-contain"
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setImageOpen(true)}
+                    aria-label="Preview generated image"
+                    className="group block overflow-hidden rounded-[18px] border border-white/8 bg-[#101118] shadow-[0_20px_40px_rgba(0,0,0,0.18)]"
+                  >
+                    <img
+                      src={primaryAsset.url}
+                      alt={primaryAsset.alt ?? 'Generated image preview'}
+                      className="aspect-[3/4] w-full object-cover transition group-hover:scale-[1.02]"
+                    />
+                  </button>
+                  <Dialog open={imageOpen} onOpenChange={setImageOpen}>
+                    <DialogContent
+                      className="max-w-[min(92vw,1080px)] border-white/8 bg-[#111218] p-3 text-white shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
+                      showCloseButton
+                    >
+                      <DialogTitle className="sr-only">
+                        Generated image preview
+                      </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        Preview the generated image inside the chat.
+                      </DialogDescription>
+                      <div className="flex max-h-[80vh] items-center justify-center overflow-hidden rounded-[16px] bg-black">
+                        <img
+                          src={primaryAsset.url}
+                          alt={primaryAsset.alt ?? 'Generated image preview'}
+                          className="max-h-[80vh] w-auto max-w-full object-contain"
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </>
+              )}
+            </div>
           ) : null}
 
-          <p className="mt-2 text-sm leading-7 text-zinc-300">{task.prompt}</p>
+          {showStatusPlaceholder ? (
+            <div className="mt-2.5 flex min-h-[124px] w-full max-w-[148px] sm:max-w-[160px] md:max-w-[172px] items-center justify-center rounded-[18px] border border-white/8 bg-[#12131a]">
+              <div
+                className={cn('flex flex-col items-center gap-3', statusMeta.className)}
+              >
+                <StatusIcon
+                  className={cn(
+                    'size-8',
+                    task.status !== 'failed' &&
+                      task.status !== 'canceled' &&
+                      'animate-spin'
+                  )}
+                />
+                <span className="text-sm font-medium text-zinc-200">
+                  {statusMeta.label}
+                </span>
+              </div>
+            </div>
+          ) : null}
 
           {typeof task.progress === 'number' && task.status !== 'success' ? (
-            <div className="mt-4 space-y-2">
+            <div className="mt-2.5 max-w-[148px] sm:max-w-[160px] md:max-w-[172px] space-y-2">
               <div className="flex items-center justify-between text-xs text-zinc-500">
-                <span>Progress</span>
+                <span>{statusMeta?.label ?? 'Progress'}</span>
                 <span>{task.progress}%</span>
               </div>
               <Progress
                 value={task.progress}
-                className="h-2 rounded-full bg-white/5"
+                className="h-1.5 rounded-full bg-white/5"
               />
             </div>
           ) : null}
 
           {task.errorMessage ? (
-            <div className="mt-4 rounded-2xl border border-rose-500/18 bg-rose-500/8 px-4 py-3 text-sm text-rose-200">
+            <div className="mt-3 max-w-[520px] rounded-[18px] border border-rose-500/18 bg-rose-500/8 px-4 py-3 text-sm text-rose-200">
               {task.errorMessage}
             </div>
           ) : null}
 
-          {(task.providerLabel || task.modelLabel) && (
-            <div className="mt-4 flex flex-wrap gap-3 text-xs text-zinc-500">
-              {task.providerLabel ? <span>{task.providerLabel}</span> : null}
-              {task.modelLabel ? <span>{task.modelLabel}</span> : null}
+          {task.status === 'success' ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onReprompt?.(task)}
+                className="inline-flex h-8 items-center gap-2 rounded-[11px] border border-white/8 bg-[#1c1d25] px-3 text-[12px] font-medium text-zinc-300 transition hover:bg-white/[0.05] hover:text-white"
+              >
+                <PencilLine className="size-4" />
+                Re-prompt
+              </button>
+              <button
+                type="button"
+                onClick={() => onRegenerate?.(task)}
+                className="inline-flex h-8 items-center gap-2 rounded-[11px] border border-white/8 bg-[#1c1d25] px-3 text-[12px] font-medium text-zinc-300 transition hover:bg-white/[0.05] hover:text-white"
+              >
+                <RefreshCw className="size-4" />
+                Regenerate
+              </button>
             </div>
-          )}
-        </div>
-
-        <div className="overflow-hidden rounded-[22px] border border-white/10 bg-[#11131a]">
-          {primaryAsset ? (
-            primaryAsset.kind === 'video' ? (
-              <div className="group relative aspect-[4/4.6] overflow-hidden">
-                <img
-                  src={primaryAsset.thumbnailUrl ?? primaryAsset.url}
-                  alt={primaryAsset.alt ?? 'Generated video preview'}
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-zinc-950 shadow-xl shadow-black/30">
-                    <Play className="ml-0.5 size-4.5 fill-current" />
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <img
-                src={primaryAsset.url}
-                alt={primaryAsset.alt ?? 'Generated image preview'}
-                className="aspect-square h-full w-full object-cover"
-              />
-            )
-          ) : (
-            <div className="flex aspect-[4/4.6] items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_28%)] text-zinc-500">
-              {task.status === 'failed' ? (
-                <AlertCircle className="size-8" />
-              ) : (
-                <LoaderCircle
-                  className={cn(
-                    'size-8',
-                    task.status === 'processing' && 'animate-spin'
-                  )}
-                />
-              )}
-            </div>
-          )}
+          ) : null}
         </div>
       </CardContent>
     </Card>

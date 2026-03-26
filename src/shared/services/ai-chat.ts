@@ -15,6 +15,7 @@ import {
   NewChatMessage,
 } from '@/shared/models/chat_message';
 import { getAllConfigs } from '@/shared/models/config';
+import { createUserProject } from '@/shared/models/project';
 
 export async function streamApimartUIResponse({
   messages,
@@ -74,9 +75,15 @@ export async function streamPersistedChatResponse({
   const chatTitle = (firstTextPart?.text || 'New chat').slice(0, 100);
 
   if (!chat) {
+    const project = await createUserProject({
+      userId: user.id,
+      title: chatTitle,
+    });
+
     await createChat({
       id: chatId,
       userId: user.id,
+      projectId: project.id,
       status: ChatStatus.CREATED,
       createdAt: currentTime,
       updatedAt: currentTime,
@@ -86,6 +93,16 @@ export async function streamPersistedChatResponse({
       parts: JSON.stringify(messageParts),
       metadata: metadata ? JSON.stringify(metadata) : null,
       content: JSON.stringify(message),
+    });
+  } else if (!chat.projectId) {
+    const project = await createUserProject({
+      userId: user.id,
+      title: chat.title || chatTitle,
+    });
+
+    await updateChat(chat.id, {
+      projectId: project.id,
+      updatedAt: new Date(),
     });
   }
 

@@ -19,8 +19,10 @@ export function Footer({ footer }: { footer: FooterType }) {
   return (
     <footer
       id={footer.id}
-      className={`overflow-x-hidden border-t border-zinc-200 bg-[#f8f8f9] py-10 sm:py-12 ${footer.className || ''}`}
+      className={`landing-shell relative overflow-x-hidden border-t border-[color:var(--landing-line)] bg-[linear-gradient(180deg,#e8dfd0_0%,#f3eee5_28%,#f8f4ec_100%)] py-10 sm:py-12 ${footer.className || ''}`}
     >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,122,26,0.42),transparent)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,122,26,0.08),transparent_24%),radial-gradient(circle_at_top_right,rgba(30,184,166,0.05),transparent_22%)]" />
       <div className="container space-y-8 overflow-x-hidden">
         <div className="grid gap-12 md:grid-cols-[minmax(0,1.25fr)_minmax(260px,0.75fr)] md:items-start">
           <div className="max-w-xl space-y-5">
@@ -28,7 +30,7 @@ export function Footer({ footer }: { footer: FooterType }) {
 
             {footer.brand?.description ? (
               <p
-                className="max-w-lg text-sm leading-8 text-balance break-words text-zinc-500"
+                className="landing-copy max-w-lg text-sm leading-8 text-balance break-words"
                 dangerouslySetInnerHTML={{ __html: footer.brand.description }}
               />
             ) : null}
@@ -41,7 +43,7 @@ export function Footer({ footer }: { footer: FooterType }) {
                   key={idx}
                   className="min-w-0 space-y-4 text-sm break-words md:min-w-[160px]"
                 >
-                  <span className="block font-medium break-words text-zinc-950">
+                  <span className="landing-title block font-medium break-words">
                     {item.title}
                   </span>
 
@@ -51,7 +53,7 @@ export function Footer({ footer }: { footer: FooterType }) {
                         key={iidx}
                         href={subItem.url || ''}
                         target={subItem.target || ''}
-                        className="block break-words text-zinc-500 duration-150 hover:text-zinc-900"
+                        className="landing-copy block break-words duration-150 hover:text-[var(--landing-ink)]"
                       >
                         <span className="break-words">
                           {subItem.title || ''}
@@ -79,13 +81,13 @@ export function Footer({ footer }: { footer: FooterType }) {
 
         <div
           aria-hidden
-          className="h-px min-w-0 [background-image:linear-gradient(90deg,var(--color-foreground)_1px,transparent_1px)] bg-[length:6px_1px] bg-repeat-x opacity-20"
+          className="h-px min-w-0 [background-image:linear-gradient(90deg,var(--landing-line)_1px,transparent_1px)] bg-[length:6px_1px] bg-repeat-x opacity-90"
         />
 
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           {footer.copyright ? (
             <p
-              className="text-sm leading-7 text-balance break-words text-zinc-500"
+              className="landing-copy text-sm leading-7 text-balance break-words"
               dangerouslySetInnerHTML={{ __html: footer.copyright }}
             />
           ) : footer.brand ? (
@@ -102,7 +104,7 @@ export function Footer({ footer }: { footer: FooterType }) {
                     key={index}
                     href={item.url || ''}
                     target={item.target || ''}
-                    className="block text-xs break-words text-zinc-500 underline duration-150 hover:text-zinc-900"
+                    className="landing-copy block text-xs break-words underline duration-150 hover:text-[var(--landing-ink)]"
                   >
                     {item.title || ''}
                   </Link>
@@ -117,7 +119,7 @@ export function Footer({ footer }: { footer: FooterType }) {
                     key={index}
                     href={item.url || ''}
                     target={item.target || ''}
-                    className="block cursor-pointer rounded-full border border-zinc-200 bg-white p-2 text-zinc-500 duration-150 hover:border-zinc-300 hover:text-zinc-900"
+                    className="landing-surface block cursor-pointer rounded-full border p-2 duration-150 shadow-[0_10px_22px_rgba(23,24,28,0.05)] hover:bg-[var(--landing-hover)] hover:text-[var(--landing-ink)]"
                     aria-label={item.title || 'Social media link'}
                   >
                     {item.icon && (

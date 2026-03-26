@@ -36,7 +36,7 @@ export function FeaturesAccordion({
     // overflow-x-hidden to prevent horizontal scroll
     <section
       className={cn(
-        'overflow-x-hidden py-16 md:py-24',
+        'landing-shell overflow-x-hidden py-16 md:py-24',
         section.className,
         className
       )}
@@ -45,10 +45,10 @@ export function FeaturesAccordion({
       <div className="container space-y-8 overflow-x-hidden px-2 sm:px-6 md:space-y-16 lg:space-y-20 dark:[--color-border:color-mix(in_oklab,var(--color-white)_10%,transparent)]">
         <ScrollAnimation>
           <div className="mx-auto max-w-4xl text-center text-balance">
-            <h2 className="text-foreground mb-4 text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="landing-title mb-4 text-3xl font-semibold tracking-tight md:text-4xl">
               {section.title}
             </h2>
-            <p className="text-muted-foreground mb-6 md:mb-12 lg:mb-16">
+            <p className="landing-copy mb-6 md:mb-12 lg:mb-16">
               {section.description}
             </p>
           </div>
@@ -89,9 +89,9 @@ export function FeaturesAccordion({
 
           <ScrollAnimation delay={0.2} direction="right">
             {/* min-w-0/flex-shrink to prevent overflow */}
-            <div className="bg-background relative flex min-w-0 flex-shrink overflow-hidden rounded-3xl border p-2">
+            <div className="landing-surface relative flex min-w-0 flex-shrink overflow-hidden rounded-3xl border p-2 shadow-[0_16px_36px_rgba(23,24,28,0.08)]">
               <div className="absolute inset-0 right-0 ml-auto w-15 border-l bg-[repeating-linear-gradient(-45deg,var(--color-border),var(--color-border)_1px,transparent_1px,transparent_8px)]"></div>
-              <div className="bg-background relative aspect-76/59 w-full min-w-0 rounded-2xl sm:w-[calc(3/4*100%+3rem)]">
+              <div className="landing-surface relative aspect-76/59 w-full min-w-0 rounded-2xl sm:w-[calc(3/4*100%+3rem)]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`${activeItem}-id`}
@@ -112,7 +112,7 @@ export function FeaturesAccordion({
               <BorderBeam
                 duration={6}
                 size={200}
-                className="from-transparent via-yellow-700 to-transparent dark:via-white/50"
+                className="from-transparent via-[var(--brand-signal)] to-transparent dark:via-white/50"
               />
             </div>
           </ScrollAnimation>

@@ -7,7 +7,7 @@ import {
   type AssistantToolUI,
 } from '@assistant-ui/react';
 import { ArrowDown } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 import { cn } from '@/shared/lib/utils';
 
@@ -24,7 +24,7 @@ function AssistantThreadWelcome({
 }) {
   return (
     <ThreadPrimitive.Empty>
-      <div className="mx-auto flex min-h-[320px] w-full max-w-[1120px] items-center justify-center px-4 py-12">
+      <div className="mx-auto flex min-h-[clamp(140px,24vh,220px)] w-full max-w-[1040px] items-center justify-center px-4 py-8">
         <div className="max-w-[440px] text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-cyan-400/12 text-cyan-300">
             <ArrowDown className="size-7 rotate-180" />
@@ -63,7 +63,7 @@ function AssistantFollowUpSuggestions({
 
   return (
     <ThreadPrimitive.If empty={false} running={false}>
-      <div className="mx-auto flex w-full max-w-[1120px] flex-wrap gap-2 px-4 pb-4">
+      <div className="mx-auto flex w-full max-w-[1040px] flex-wrap gap-2 px-4 pb-3 md:px-5">
         {suggestions.map((suggestion) => (
           <ThreadPrimitive.Suggestion
             key={suggestion.id ?? suggestion.prompt}
@@ -83,59 +83,122 @@ function AssistantFollowUpSuggestions({
 export function AssistantWorkspaceThread({
   runtime,
   toolUIs,
+  hideUserMessages = false,
+  contentSlot,
   suggestions,
+  headerSlot,
   composerToolbar,
   composerFooter,
   composerPlaceholder,
+  composerLeading,
+  composerShowAttachmentButton = true,
+  composerSubmitDisabled = false,
+  composerSubmitIntent,
+  composerActionSlot,
+  onComposerValueChange,
   className,
   viewportClassName,
   emptyTitle,
   emptyDescription,
   footerSlot,
   initialComposerValue,
+  autoScrollKey,
 }: {
   runtime: AssistantRuntime;
   toolUIs?: AssistantToolUI[];
+  hideUserMessages?: boolean;
+  contentSlot?: ReactNode;
   suggestions?: AssistantSuggestion[];
+  headerSlot?: ReactNode;
   composerToolbar?: ReactNode;
   composerFooter?: ReactNode;
   composerPlaceholder?: string;
+  composerLeading?: ReactNode;
+  composerShowAttachmentButton?: boolean;
+  composerSubmitDisabled?: boolean;
+  composerSubmitIntent?: () => boolean;
+  composerActionSlot?: ReactNode;
+  onComposerValueChange?: (value: string) => void;
   className?: string;
   viewportClassName?: string;
   emptyTitle?: string;
   emptyDescription?: string;
   footerSlot?: ReactNode;
   initialComposerValue?: string;
+  autoScrollKey?: string | number;
 }) {
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!viewportRef.current) {
+      return;
+    }
+
+    viewportRef.current.scrollTo({
+      top: viewportRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
+  }, [autoScrollKey]);
+
   return (
     <AssistantRuntimeProvider runtime={runtime}>
       <ThreadPrimitive.Root
-        className={cn('flex h-full min-h-0 flex-col bg-transparent', className)}
+        className={cn(
+          'flex h-full min-h-0 flex-col overflow-hidden bg-transparent',
+          className
+        )}
       >
-        <ThreadPrimitive.Viewport
-          className={cn('flex min-h-0 flex-1 flex-col', viewportClassName)}
-        >
-          <AssistantThreadWelcome
-            title={emptyTitle}
-            description={emptyDescription}
-          />
-          <AssistantThreadMessages toolUIs={toolUIs} />
-          <AssistantFollowUpSuggestions suggestions={suggestions} />
-          <div className="sticky bottom-0 mt-auto bg-gradient-to-t from-[#15161d] via-[#15161d] to-transparent px-4 pb-5 pt-6">
-            <div className="mx-auto flex w-full max-w-[1120px] justify-end pb-3">
+        {headerSlot ? (
+          <div className="shrink-0 px-2 pb-2 pt-1 md:px-3 md:pb-2 md:pt-2">
+            {headerSlot}
+          </div>
+        ) : null}
+        <div className="relative grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto]">
+          <ThreadPrimitive.Viewport
+            className={cn(
+              'min-h-0 overflow-y-auto overscroll-contain',
+              viewportClassName
+            )}
+            ref={viewportRef}
+          >
+            {!contentSlot ? (
+              <AssistantThreadWelcome
+                title={emptyTitle}
+                description={emptyDescription}
+              />
+            ) : null}
+            {contentSlot ? (
+              <div className="w-full px-3 pb-1 pt-3 md:px-4">{contentSlot}</div>
+            ) : null}
+            <AssistantThreadMessages
+              toolUIs={toolUIs}
+              hideUserMessages={hideUserMessages}
+              className="pb-3"
+            />
+            <AssistantFollowUpSuggestions suggestions={suggestions} />
+            <div className="h-3" />
+          </ThreadPrimitive.Viewport>
+          <div className="relative shrink-0 px-2 pb-1 pt-2 md:px-3">
+            <div className="pointer-events-none absolute right-2 top-0 -translate-y-1/2 md:right-3">
               <AssistantScrollToBottom />
             </div>
             <div className="mx-auto w-full max-w-[1120px]">
               <AssistantWorkspaceComposer
+                actionSlot={composerActionSlot}
                 footer={composerFooter}
                 initialValue={initialComposerValue}
+                leading={composerLeading}
+                onValueChange={onComposerValueChange}
+                onSubmitIntent={composerSubmitIntent}
                 placeholder={composerPlaceholder}
+                showAttachmentButton={composerShowAttachmentButton}
+                submitDisabled={composerSubmitDisabled}
                 toolbar={composerToolbar}
               />
               {footerSlot ? <div className="mt-3">{footerSlot}</div> : null}
             </div>
           </div>
-        </ThreadPrimitive.Viewport>
+        </div>
       </ThreadPrimitive.Root>
     </AssistantRuntimeProvider>
   );

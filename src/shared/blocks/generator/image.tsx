@@ -38,6 +38,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAppContext } from '@/shared/contexts/app';
+import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
 import { cn } from '@/shared/lib/utils';
 
 interface ImageGeneratorProps {
@@ -237,8 +238,13 @@ export function ImageGenerator({
   );
   const [isMounted, setIsMounted] = useState(false);
 
-  const { user, isCheckSign, setIsShowSignModal, fetchUserCredits } =
-    useAppContext();
+  const {
+    user,
+    isCheckSign,
+    setIsShowSignModal,
+    fetchUserCredits,
+    showGenerationLimitModal,
+  } = useAppContext();
 
   useEffect(() => {
     setIsMounted(true);
@@ -418,7 +424,9 @@ export function ImageGenerator({
           toast.error(errorMessage);
           resetTaskState();
 
-          fetchUserCredits();
+          if (AI_CREDITS_ENABLED) {
+            fetchUserCredits();
+          }
 
           return true;
         }
@@ -430,12 +438,14 @@ export function ImageGenerator({
         toast.error(`Query task failed: ${error.message}`);
         resetTaskState();
 
-        fetchUserCredits();
+        if (AI_CREDITS_ENABLED) {
+          fetchUserCredits();
+        }
 
         return true;
       }
     },
-    [generationStartTime, resetTaskState]
+    [fetchUserCredits, generationStartTime, resetTaskState]
   );
 
   useEffect(() => {
@@ -480,7 +490,7 @@ export function ImageGenerator({
       return;
     }
 
-    if (remainingCredits < costCredits) {
+    if (AI_CREDITS_ENABLED && remainingCredits < costCredits) {
       toast.error('Insufficient credits. Please top up to keep creating.');
       return;
     }
@@ -534,6 +544,15 @@ export function ImageGenerator({
       }
 
       const { code, message, data } = await resp.json();
+      if (code === -2 || message === 'daily_generation_limit_reached') {
+        showGenerationLimitModal({
+          title: 'Daily image limit reached',
+          description:
+            'You can generate up to 3 images per day. Super admins are not limited.',
+        });
+        resetTaskState();
+        return;
+      }
       if (code !== 0) {
         throw new Error(message || 'Failed to create an image task');
       }
@@ -560,7 +579,9 @@ export function ImageGenerator({
           toast.success('Image generated successfully');
           setProgress(100);
           resetTaskState();
-          await fetchUserCredits();
+          if (AI_CREDITS_ENABLED) {
+            await fetchUserCredits();
+          }
           return;
         }
       }
@@ -568,7 +589,9 @@ export function ImageGenerator({
       setTaskId(newTaskId);
       setProgress(25);
 
-      await fetchUserCredits();
+      if (AI_CREDITS_ENABLED) {
+        await fetchUserCredits();
+      }
     } catch (error: any) {
       console.error('Failed to generate image:', error);
       toast.error(`Failed to generate image: ${error.message}`);
@@ -760,24 +783,15 @@ export function ImageGenerator({
                   </Button>
                 )}
 
-                {!isMounted ? (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-primary">
-                      {t('credits_cost', { credits: costCredits })}
-                    </span>
-                    <span>{t('credits_remaining', { credits: 0 })}</span>
-                  </div>
-                ) : user && remainingCredits > 0 ? (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-primary">
-                      {t('credits_cost', { credits: costCredits })}
-                    </span>
-                    <span>
-                      {t('credits_remaining', { credits: remainingCredits })}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
+                {AI_CREDITS_ENABLED ? (
+                  !isMounted ? (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-primary">
+                        {t('credits_cost', { credits: costCredits })}
+                      </span>
+                      <span>{t('credits_remaining', { credits: 0 })}</span>
+                    </div>
+                  ) : user && remainingCredits > 0 ? (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-primary">
                         {t('credits_cost', { credits: costCredits })}
@@ -786,14 +800,27 @@ export function ImageGenerator({
                         {t('credits_remaining', { credits: remainingCredits })}
                       </span>
                     </div>
-                    <Link href="/pricing">
-                      <Button variant="outline" className="w-full" size="lg">
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        {t('buy_credits')}
-                      </Button>
-                    </Link>
-                  </div>
-                )}
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-primary">
+                          {t('credits_cost', { credits: costCredits })}
+                        </span>
+                        <span>
+                          {t('credits_remaining', {
+                            credits: remainingCredits,
+                          })}
+                        </span>
+                      </div>
+                      <Link href="/pricing">
+                        <Button variant="outline" className="w-full" size="lg">
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          {t('buy_credits')}
+                        </Button>
+                      </Link>
+                    </div>
+                  )
+                ) : null}
 
                 {isGenerating && (
                   <div className="space-y-2 rounded-lg border p-4">

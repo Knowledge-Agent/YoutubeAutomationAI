@@ -39,6 +39,7 @@ import {
 import { Switch } from '@/shared/components/ui/switch';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAppContext } from '@/shared/contexts/app';
+import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
 import { cn } from '@/shared/lib/utils';
 
 interface SongData {
@@ -199,7 +200,9 @@ export function MusicGenerator({ className, srOnlyTitle }: SongGeneratorProps) {
         setGenerationStartTime(null);
         toast.error('Generate music failed: ' + errorMessage);
 
-        fetchUserCredits();
+        if (AI_CREDITS_ENABLED) {
+          fetchUserCredits();
+        }
 
         return true;
       }
@@ -224,7 +227,9 @@ export function MusicGenerator({ className, srOnlyTitle }: SongGeneratorProps) {
       setGenerationStartTime(null);
       toast.error('Create song failed: ' + error.message);
 
-      fetchUserCredits();
+      if (AI_CREDITS_ENABLED) {
+        fetchUserCredits();
+      }
 
       return true; // Stop polling on error
     }
@@ -250,7 +255,10 @@ export function MusicGenerator({ className, srOnlyTitle }: SongGeneratorProps) {
       return;
     }
 
-    if (!user.credits || user.credits.remainingCredits < costCredits) {
+    if (
+      AI_CREDITS_ENABLED &&
+      (!user.credits || user.credits.remainingCredits < costCredits)
+    ) {
       toast.error('Insufficient credits');
       return;
     }
@@ -342,7 +350,9 @@ export function MusicGenerator({ className, srOnlyTitle }: SongGeneratorProps) {
       }
 
       // refresh user credits
-      await fetchUserCredits();
+      if (AI_CREDITS_ENABLED) {
+        await fetchUserCredits();
+      }
 
       setTaskId(taskId);
       setProgress(20);
@@ -591,44 +601,46 @@ export function MusicGenerator({ className, srOnlyTitle }: SongGeneratorProps) {
                   </Button>
                 )}
 
-                {!isMounted ? (
-                  <div className="mb-6 flex items-center justify-between text-sm">
-                    <span className="text-primary">
-                      {t('generator.credits_cost', { credits: costCredits })}
-                    </span>
-                    <span className="text-foreground font-medium">
-                      {t('generator.credits_remaining', { credits: 0 })}
-                    </span>
-                  </div>
-                ) : user &&
-                  user.credits &&
-                  user.credits.remainingCredits > 0 ? (
-                  <div className="mb-6 flex items-center justify-between text-sm">
-                    <span className="text-primary">
-                      {t('generator.credits_cost', { credits: costCredits })}
-                    </span>
-                    <span className="text-foreground font-medium">
-                      {t('generator.credits_remaining', {
-                        credits: user.credits.remainingCredits,
-                      })}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="mb-6 flex items-center justify-between text-sm">
-                    <span className="text-primary">
-                      {t('generator.credits_cost', { credits: costCredits })},{' '}
-                      {t('generator.credits_remaining', {
-                        credits: user?.credits?.remainingCredits || 0,
-                      })}
-                    </span>
-                    <Link href="/pricing">
-                      <Button className="w-full" size="lg" variant="outline">
-                        <CreditCard className="size-4" />{' '}
-                        {t('generator.buy_credits')}
-                      </Button>
-                    </Link>
-                  </div>
-                )}
+                {AI_CREDITS_ENABLED ? (
+                  !isMounted ? (
+                    <div className="mb-6 flex items-center justify-between text-sm">
+                      <span className="text-primary">
+                        {t('generator.credits_cost', { credits: costCredits })}
+                      </span>
+                      <span className="text-foreground font-medium">
+                        {t('generator.credits_remaining', { credits: 0 })}
+                      </span>
+                    </div>
+                  ) : user &&
+                    user.credits &&
+                    user.credits.remainingCredits > 0 ? (
+                    <div className="mb-6 flex items-center justify-between text-sm">
+                      <span className="text-primary">
+                        {t('generator.credits_cost', { credits: costCredits })}
+                      </span>
+                      <span className="text-foreground font-medium">
+                        {t('generator.credits_remaining', {
+                          credits: user.credits.remainingCredits,
+                        })}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="mb-6 flex items-center justify-between text-sm">
+                      <span className="text-primary">
+                        {t('generator.credits_cost', { credits: costCredits })},{' '}
+                        {t('generator.credits_remaining', {
+                          credits: user?.credits?.remainingCredits || 0,
+                        })}
+                      </span>
+                      <Link href="/pricing">
+                        <Button className="w-full" size="lg" variant="outline">
+                          <CreditCard className="size-4" />{' '}
+                          {t('generator.buy_credits')}
+                        </Button>
+                      </Link>
+                    </div>
+                  )
+                ) : null}
 
                 {isGenerating && (
                   <div className="space-y-2">

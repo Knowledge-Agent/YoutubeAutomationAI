@@ -1,4 +1,5 @@
 import { AIMediaType, AITaskStatus } from '@/extensions/ai';
+import { AI_CREDITS_ENABLED, getAICreditCost } from '@/shared/lib/ai-credits';
 import { getUuid } from '@/shared/lib/hash';
 import {
   createAITask,
@@ -8,6 +9,7 @@ import {
 import { getRemainingCredits } from '@/shared/models/credit';
 import { getAIService } from '@/shared/services/ai';
 import { getToolModelById } from '@/shared/services/apimart/catalog';
+import { assertGenerationQuota } from '@/shared/services/generation-quota';
 
 const FALLBACK_COSTS: Partial<Record<string, number>> = {
   'text-to-image': 2,
@@ -16,6 +18,53 @@ const FALLBACK_COSTS: Partial<Record<string, number>> = {
   'image-to-video': 8,
   'video-to-video': 10,
 };
+
+function hasImageUrls(options?: Record<string, unknown>) {
+  return Array.isArray(options?.image_urls) && options.image_urls.length > 0;
+}
+
+function hasVideoUrls(options?: Record<string, unknown>) {
+  return Array.isArray(options?.video_urls) && options.video_urls.length > 0;
+}
+
+export function validateToolTaskInput({
+  mediaType,
+  scene,
+  model,
+  options,
+}: {
+  mediaType: AIMediaType;
+  scene: string;
+  model: string;
+  options?: Record<string, unknown>;
+}) {
+  const modelDefinition = getToolModelById(model);
+  if (!modelDefinition) {
+    throw new Error('unsupported model');
+  }
+
+  if (!modelDefinition.modeSupport.includes(scene as any)) {
+    throw new Error('unsupported scene');
+  }
+
+  if (modelDefinition.mediaType !== mediaType) {
+    throw new Error('model does not match mediaType');
+  }
+
+  if (scene === 'image-to-image' && !hasImageUrls(options)) {
+    throw new Error('reference image is required');
+  }
+
+  if (scene === 'video-to-video' && !hasVideoUrls(options)) {
+    throw new Error('reference video is required');
+  }
+
+  if (scene === 'image-to-video' && !hasImageUrls(options)) {
+    throw new Error('reference image is required');
+  }
+
+  return modelDefinition;
+}
 
 export function getCreditCost({
   modelId,
@@ -34,6 +83,7 @@ export function getCreditCost({
 
 export async function createToolTask({
   userId,
+  chatId,
   mediaType,
   scene,
   model,
@@ -41,6 +91,7 @@ export async function createToolTask({
   options,
 }: {
   userId: string;
+  chatId?: string;
   mediaType: AIMediaType;
   scene: string;
   model: string;
@@ -53,12 +104,26 @@ export async function createToolTask({
     throw new Error('apimart provider is not configured');
   }
 
-  const remainingCredits = await getRemainingCredits(userId);
-  const costCredits = getCreditCost({ modelId: model, scene });
+  validateToolTaskInput({
+    mediaType,
+    scene,
+    model,
+    options,
+  });
 
-  if (remainingCredits < costCredits) {
-    throw new Error('insufficient credits');
+  const costCredits = getAICreditCost(getCreditCost({ modelId: model, scene }));
+
+  if (AI_CREDITS_ENABLED) {
+    const remainingCredits = await getRemainingCredits(userId);
+    if (remainingCredits < costCredits) {
+      throw new Error('insufficient credits');
+    }
   }
+
+  await assertGenerationQuota({
+    userId,
+    mediaType,
+  });
 
   const result = await provider.generate({
     params: {
@@ -79,6 +144,7 @@ export async function createToolTask({
   return await createAITask({
     id: getUuid(),
     userId,
+    chatId: chatId ?? null,
     mediaType,
     provider: provider.name,
     model,

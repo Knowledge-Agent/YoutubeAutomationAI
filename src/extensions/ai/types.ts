@@ -79,6 +79,7 @@ export interface AITaskInfo {
   images?: AIImage[];
   videos?: AIVideo[];
   status?: string; // provider task status
+  progress?: number;
   errorCode?: string;
   errorMessage?: string;
   createTime?: Date;

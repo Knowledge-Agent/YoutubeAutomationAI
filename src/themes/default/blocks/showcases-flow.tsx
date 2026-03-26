@@ -65,7 +65,11 @@ export function ShowcasesFlow({
   return (
     <section
       id={section.id || section.name}
-      className={cn('py-24 md:py-36', section.className, className)}
+      className={cn(
+        'landing-shell py-24 md:py-36',
+        section.className,
+        className
+      )}
     >
       <motion.div
         className="container mb-12 text-center"
@@ -80,10 +84,10 @@ export function ShowcasesFlow({
         {section.sr_only_title && (
           <h1 className="sr-only">{section.sr_only_title}</h1>
         )}
-        <h2 className="mx-auto mb-6 max-w-full text-3xl font-bold text-pretty md:max-w-5xl lg:text-4xl">
+        <h2 className="landing-title mx-auto mb-6 max-w-full text-3xl font-bold text-pretty md:max-w-5xl lg:text-4xl">
           {section.title}
         </h2>
-        <p className="text-muted-foreground text-md mx-auto mb-4 line-clamp-3 max-w-full md:max-w-5xl">
+        <p className="landing-copy text-md mx-auto mb-4 line-clamp-3 max-w-full md:max-w-5xl">
           {section.description}
         </p>
         {section.buttons && section.buttons.length > 0 && (
@@ -128,7 +132,7 @@ export function ShowcasesFlow({
                     'relative rounded-lg px-3 py-1.5 text-sm font-medium transition-all',
                     isSelected
                       ? ''
-                      : 'border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground border'
+                      : 'landing-chip border hover:bg-[var(--landing-hover)] hover:text-[var(--landing-ink)]'
                   )}
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -143,10 +147,10 @@ export function ShowcasesFlow({
                 >
                   {isSelected ? (
                     <>
-                      <span className="bg-primary absolute inset-0 rounded-lg p-[2px]">
-                        <span className="bg-background block h-full w-full rounded-[calc(0.5rem-2px)]" />
+                      <span className="absolute inset-0 rounded-lg bg-[linear-gradient(135deg,var(--brand-signal),#ffb067)] p-[2px]">
+                        <span className="block h-full w-full rounded-[calc(0.5rem-2px)] bg-[var(--landing-surface)]" />
                       </span>
-                      <span className="bg-primary relative z-10 bg-clip-text text-transparent">
+                      <span className="relative z-10 text-[var(--landing-ink)]">
                         {group.title}
                       </span>
                     </>
@@ -223,7 +227,7 @@ export function ShowcasesFlow({
         </div>
       ) : (
         <motion.div
-          className="text-muted-foreground container text-center"
+          className="landing-copy container text-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -307,7 +311,7 @@ export function ShowcasesFlow({
                             (filteredItems[selectedIndex] as any).button.size ||
                             'default'
                           }
-                          className="bg-primary hover:bg-primary/90 h-8 border-0 px-3 py-1.5 text-sm font-medium text-white"
+                          className="h-8 border-0 bg-[var(--brand-signal)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[var(--brand-signal-strong)]"
                         >
                           <Link
                             href={

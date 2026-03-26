@@ -34,8 +34,12 @@ interface ApimartTaskResponse {
   status?: string;
   progress?: number;
   result?: {
-    images?: Array<{ url?: string }>;
-    videos?: Array<{ url?: string; thumbnail_url?: string; duration?: number }>;
+    images?: Array<{ url?: string | string[] }>;
+    videos?: Array<{
+      url?: string | string[];
+      thumbnail_url?: string;
+      duration?: number;
+    }>;
     thumbnail_url?: string;
   };
   error?: {
@@ -47,6 +51,12 @@ interface ApimartTaskResponse {
   completed?: number;
   estimated_time?: number;
   actual_time?: number;
+}
+
+interface ApimartTaskQueryResponse {
+  code?: number;
+  message?: string;
+  data?: ApimartTaskResponse;
 }
 
 export class ApimartProvider implements AIProvider {
@@ -120,16 +130,19 @@ export class ApimartProvider implements AIProvider {
     model?: string;
   }): Promise<AITaskResult> {
     const client = new ApimartClient(this.configs.apiKey, this.configs.baseUrl);
-    const response = await client.get<ApimartTaskResponse>(`/tasks/${taskId}`);
+    const response = await client.get<
+      ApimartTaskResponse | ApimartTaskQueryResponse
+    >(`/tasks/${taskId}`);
+    const taskResponse = this.unwrapTaskResponse(response);
 
-    const taskStatus = this.mapTaskStatus(response.status);
+    const taskStatus = this.mapTaskStatus(taskResponse.status);
     const images =
       mediaType === AIMediaType.IMAGE
-        ? await this.normalizeImages(response.result?.images || [])
+        ? await this.normalizeImages(taskResponse.result?.images || [])
         : undefined;
     const videos =
       mediaType === AIMediaType.VIDEO
-        ? await this.normalizeVideos(response.result)
+        ? await this.normalizeVideos(taskResponse.result)
         : undefined;
 
     return {
@@ -138,42 +151,91 @@ export class ApimartProvider implements AIProvider {
       taskInfo: {
         images,
         videos,
-        status: response.status,
-        errorCode: response.error?.code?.toString(),
-        errorMessage: response.error?.message,
-        createTime: response.created
-          ? new Date(response.created * 1000)
+        status: taskResponse.status,
+        progress: taskResponse.progress,
+        errorCode: taskResponse.error?.code?.toString(),
+        errorMessage: taskResponse.error?.message,
+        createTime: taskResponse.created
+          ? new Date(taskResponse.created * 1000)
           : undefined,
       },
       taskResult: response,
     };
   }
 
+  private unwrapTaskResponse(
+    response: ApimartTaskResponse | ApimartTaskQueryResponse
+  ): ApimartTaskResponse {
+    if (
+      response &&
+      typeof response === 'object' &&
+      'data' in response &&
+      response.data &&
+      typeof response.data === 'object'
+    ) {
+      return response.data;
+    }
+
+    return response as ApimartTaskResponse;
+  }
+
   private buildImagePayload(params: AIGenerateParams) {
     const options = params.options || {};
+    const modelDefinition = getToolModelById(params.model || '');
+    const imageUrls = Array.isArray(options.image_urls)
+      ? options.image_urls
+      : Array.isArray(options.image_input)
+        ? options.image_input
+        : undefined;
+    const imageCount =
+      typeof options.n === 'string'
+        ? parseInt(options.n, 10)
+        : options.n || undefined;
+    const safetyTolerance =
+      typeof options.safety_tolerance === 'string'
+        ? parseInt(options.safety_tolerance, 10)
+        : options.safety_tolerance;
+    const isDoubaoSeedream =
+      modelDefinition?.id === 'doubao-seedance-4-0' ||
+      modelDefinition?.id === 'doubao-seedance-4-5' ||
+      modelDefinition?.id === 'doubao-seedream-5-0-lite';
 
     return {
       model: params.model,
       prompt: params.prompt,
       size: options.size,
-      n:
-        typeof options.n === 'string'
-          ? parseInt(options.n, 10)
-          : options.n || undefined,
-      image_urls: Array.isArray(options.image_urls)
-        ? options.image_urls
-        : Array.isArray(options.image_input)
-          ? options.image_input
-          : undefined,
+      n: imageCount,
+      image_urls: imageUrls,
       resolution: options.resolution,
       quality: options.quality,
       mask_url: options.mask_url,
+      response_format: options.response_format,
+      prompt_upsampling: options.prompt_upsampling,
+      safety_tolerance: safetyTolerance,
+      watermark: options.watermark,
+      sequential_image_generation:
+        isDoubaoSeedream && imageUrls?.length && (imageCount || 1) > 1
+          ? 'auto'
+          : options.sequential_image_generation,
+      sequential_image_generation_options:
+        isDoubaoSeedream && imageUrls?.length && (imageCount || 1) > 1
+          ? {
+              max_images: imageCount,
+            }
+          : options.sequential_image_generation_options,
     };
   }
 
   private buildVideoPayload(params: AIGenerateParams) {
     const options = params.options || {};
     const modelDefinition = getToolModelById(params.model || '');
+    const isHailuo = modelDefinition?.id?.startsWith('MiniMax-Hailuo');
+    const supportsSoraStyle = modelDefinition?.id?.startsWith('sora-2');
+    const usesMode =
+      modelDefinition?.id === 'kling-v2-6' ||
+      modelDefinition?.id === 'kling-v3' ||
+      modelDefinition?.id === 'kling-v3-omni';
+    const usesVideoList = modelDefinition?.id === 'kling-v3-omni';
     const imageUrls = Array.isArray(options.image_urls)
       ? options.image_urls
       : Array.isArray(options.image_input)
@@ -184,6 +246,7 @@ export class ApimartProvider implements AIProvider {
       : Array.isArray(options.video_input)
         ? options.video_input
         : undefined;
+    const [firstFrameImage, lastFrameImage] = imageUrls ?? [];
 
     return {
       model: params.model,
@@ -192,20 +255,52 @@ export class ApimartProvider implements AIProvider {
         typeof options.duration === 'string'
           ? parseInt(options.duration, 10)
           : options.duration,
+      mode: usesMode ? options.mode : undefined,
       aspect_ratio: options.aspect_ratio,
       resolution: options.resolution,
+      negative_prompt: options.negative_prompt,
+      seed:
+        typeof options.seed === 'string'
+          ? parseInt(options.seed, 10)
+          : options.seed,
       generation_type: this.getGenerationType({
         mediaType: params.mediaType,
         imageUrls,
         videoUrls,
         explicitScene: options.scene,
       }),
-      image_urls: imageUrls,
-      video_urls: videoUrls,
+      image_urls: isHailuo ? undefined : imageUrls,
+      first_frame_image: isHailuo ? firstFrameImage : undefined,
+      last_frame_image: isHailuo ? lastFrameImage : undefined,
+      video_urls: usesVideoList ? undefined : videoUrls,
+      video_list:
+        usesVideoList && videoUrls?.length
+          ? videoUrls.slice(0, 1).map((url: string) => ({
+              video_url: url,
+              refer_type: 'base',
+              keep_original_sound: 'no',
+            }))
+          : undefined,
+      audio: modelDefinition?.supportedOptions.includes('audio')
+        ? options.audio
+        : undefined,
+      camerafixed: modelDefinition?.supportedOptions.includes('camerafixed')
+        ? options.camerafixed
+        : undefined,
+      prompt_optimizer: modelDefinition?.supportedOptions.includes(
+        'prompt_optimizer'
+      )
+        ? options.prompt_optimizer
+        : undefined,
+      fast_pretreatment: modelDefinition?.supportedOptions.includes(
+        'fast_pretreatment'
+      )
+        ? options.fast_pretreatment
+        : undefined,
       watermark: options.watermark,
       thumbnail: options.thumbnail,
       private: options.private,
-      style: modelDefinition?.id === 'sora-2' ? options.style : undefined,
+      style: supportsSoraStyle ? options.style : undefined,
       storyboard: options.storyboard,
       character_url: options.character_url,
       character_timestamps: options.character_timestamps,
@@ -254,14 +349,20 @@ export class ApimartProvider implements AIProvider {
     }
   }
 
-  private async normalizeImages(items: Array<{ url?: string }>) {
-    const images: AIImage[] = items
-      .filter((item) => item?.url)
-      .map((item) => ({
+  private async normalizeImages(items: Array<{ url?: string | string[] }>) {
+    const images: AIImage[] = items.flatMap((item) => {
+      const urls = Array.isArray(item?.url)
+        ? item.url
+        : item?.url
+          ? [item.url]
+          : [];
+
+      return urls.map((url) => ({
         id: getUuid(),
         createTime: new Date(),
-        imageUrl: item.url,
+        imageUrl: url,
       }));
+    });
 
     if (!this.configs.customStorage || images.length === 0) {
       return images;
@@ -296,15 +397,21 @@ export class ApimartProvider implements AIProvider {
   ): Promise<AIVideo[] | undefined> {
     const items = result?.videos || [];
     const thumbnailUrl = result?.thumbnail_url;
-    const videos: AIVideo[] = items
-      .filter((item) => item?.url)
-      .map((item) => ({
+    const videos: AIVideo[] = items.flatMap((item) => {
+      const urls = Array.isArray(item?.url)
+        ? item.url
+        : item?.url
+          ? [item.url]
+          : [];
+
+      return urls.map((url) => ({
         id: getUuid(),
         createTime: new Date(),
-        videoUrl: item.url,
+        videoUrl: url,
         thumbnailUrl: item.thumbnail_url || thumbnailUrl,
         duration: item.duration,
       }));
+    });
 
     if (!this.configs.customStorage || videos.length === 0) {
       return videos;

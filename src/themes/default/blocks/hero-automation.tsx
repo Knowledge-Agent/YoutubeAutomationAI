@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import Image from 'next/image';
-import { ArrowUp, Loader2, Mail, Sparkles } from 'lucide-react';
+import { ArrowUp, Loader2, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 
 import {
@@ -157,9 +157,6 @@ export function HeroAutomation({
           ],
     [section.prompt_examples]
   );
-  const surfaceTags = Array.isArray((section as any).surface_tags)
-    ? (section as any).surface_tags.filter(Boolean)
-    : ['Script rewrite', 'Storyboard', 'Video remake'];
 
   useEffect(() => {
     if (email) {
@@ -260,13 +257,13 @@ export function HeroAutomation({
     <section
       id={section.id}
       className={cn(
-        'relative overflow-hidden bg-[#f8f8f9] pt-32 pb-16 text-zinc-950 md:pt-40 md:pb-24',
+        'landing-shell relative flex min-h-[calc(100svh-72px)] items-center overflow-hidden pt-20 pb-8 md:pt-24 md:pb-10',
         section.className,
         className
       )}
     >
-      <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_50%_35%,rgba(187,198,255,0.45),transparent_22%),linear-gradient(180deg,#fafafa_0%,#f7f7f8_100%)]" />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_1px_1px,rgba(24,24,27,0.14)_1.2px,transparent_0)] bg-[length:180px_180px] opacity-65" />
+      <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_16%,rgba(255,122,26,0.18),transparent_22%),radial-gradient(circle_at_82%_18%,rgba(30,184,166,0.14),transparent_22%),linear-gradient(180deg,#faf6f0_0%,#f6f3ee_48%,#f0ebe2_100%)]" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_1px_1px,rgba(23,24,28,0.12)_1.15px,transparent_0)] bg-[length:180px_180px] opacity-55" />
       <FloatingParticles particles={decorativeDots} className="-z-10" />
 
       {section.background_image?.src && (
@@ -283,14 +280,14 @@ export function HeroAutomation({
         </div>
       )}
 
-      <div className="relative z-10 container">
+      <div className="relative z-10 container w-full">
         <div className="mx-auto max-w-6xl">
           <div className="mx-auto max-w-5xl text-center">
-            <h1 className="mx-auto max-w-4xl text-4xl leading-[1.04] font-semibold tracking-[-0.045em] text-balance text-zinc-950 sm:text-[3.6rem] lg:text-[4rem]">
+            <h1 className="landing-title mx-auto max-w-4xl text-4xl leading-[1.02] font-semibold tracking-[-0.045em] text-balance sm:text-[3.35rem] lg:text-[3.75rem]">
               {titleParts ? (
                 <>
                   {titleParts[0]}
-                  <span className="bg-linear-to-br from-zinc-800 to-zinc-500 bg-clip-text text-transparent">
+                  <span className="bg-linear-to-br from-[#6f4322] via-[var(--brand-signal)] to-[#ffb067] bg-clip-text text-transparent">
                     {accentText}
                   </span>
                   {titleParts[1]}
@@ -301,12 +298,12 @@ export function HeroAutomation({
             </h1>
 
             <p
-              className="mx-auto mt-5 max-w-2xl text-base leading-8 tracking-tight text-balance text-zinc-500 md:text-lg"
+              className="landing-copy mx-auto mt-4 max-w-2xl text-base leading-7 tracking-tight text-balance md:text-[1.05rem] md:leading-8"
               dangerouslySetInnerHTML={{ __html: section.description ?? '' }}
             />
           </div>
 
-          <div className="relative mx-auto mt-10 max-w-4xl">
+          <div className="relative mx-auto mt-7 max-w-4xl md:mt-8">
             <div
               aria-hidden
               className="pointer-events-none absolute inset-x-14 -top-6 -bottom-6 -z-10 rounded-full bg-[radial-gradient(circle_at_center,rgba(164,180,255,0.28),transparent_62%)] blur-2xl"
@@ -320,47 +317,32 @@ export function HeroAutomation({
               className="inset-x-8 -top-4 -bottom-4 -z-10"
             />
             <form
-              className="relative overflow-hidden rounded-[2rem] border border-zinc-200/80 shadow-[0_24px_60px_rgba(15,23,42,0.08)]"
+              className="landing-surface relative overflow-hidden rounded-[2rem] border shadow-[0_24px_60px_rgba(23,24,28,0.08)]"
               onSubmit={handleWaitlistSubmit}
             >
-              <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,170,64,0.10),transparent_22%),radial-gradient(circle_at_82%_24%,rgba(156,64,255,0.08),transparent_18%)]" />
-
-              <div className="relative flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200/80 px-5 py-3 sm:px-6">
-                <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/80 px-3 py-1 text-xs font-medium tracking-tight text-zinc-500 shadow-xs">
-                  <Sparkles className="size-3.5 text-zinc-900" />
-                  {section.label || 'Early-access waitlist'}
-                </div>
-
-                <div className="hidden flex-wrap items-center gap-2 md:flex">
-                  {surfaceTags.map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-zinc-200 bg-white/70 px-3 py-1 text-[11px] font-medium tracking-tight text-zinc-500 shadow-xs"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,122,26,0.1),transparent_22%),radial-gradient(circle_at_82%_24%,rgba(30,184,166,0.08),transparent_18%)]"
+              />
 
               <div className="relative flex items-center gap-3 px-5 py-4 sm:px-6 sm:py-5">
                 <label htmlFor="hero-email-surface" className="sr-only">
                   Waitlist email
                 </label>
 
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-white/80 text-zinc-900 shadow-xs">
+                <div className="landing-chip flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-xs">
                   <Mail className="size-4" />
                 </div>
 
                 <div className="relative min-w-0 flex-1">
                   {!email && (
                     <div className="pointer-events-none absolute inset-y-0 right-0 left-0 flex items-center">
-                      <span className="truncate text-base font-medium tracking-tight text-zinc-400 sm:text-lg">
+                      <span className="landing-copy truncate text-base font-medium tracking-tight sm:text-lg">
                         {placeholderText ||
                           section.prompt_placeholder ||
                           'Enter your email to join the waitlist'}
                       </span>
-                      <span className="type-caret ml-0.5 inline-block h-6 w-px shrink-0 bg-zinc-400/90" />
+                      <span className="type-caret ml-0.5 inline-block h-6 w-px shrink-0 bg-[color:var(--landing-muted)]" />
                     </div>
                   )}
                   <input
@@ -369,7 +351,7 @@ export function HeroAutomation({
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     placeholder=""
-                    className="relative z-10 h-12 w-full appearance-none border-none bg-transparent p-0 text-base leading-8 font-medium tracking-tight text-zinc-700 caret-zinc-900 shadow-none outline-none focus:ring-0 focus:outline-none sm:text-lg"
+                    className="landing-title relative z-10 h-12 w-full appearance-none border-none bg-transparent p-0 text-base leading-8 font-medium tracking-tight caret-[var(--brand-signal)] shadow-none outline-none focus:ring-0 focus:outline-none sm:text-lg"
                     style={{
                       backgroundColor: 'transparent',
                       WebkitBoxShadow: '0 0 0 1000px transparent inset',
@@ -382,7 +364,7 @@ export function HeroAutomation({
                 <button
                   type="submit"
                   aria-label={section.prompt_button_label || 'Join waitlist'}
-                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--brand-signal)] text-white shadow-lg shadow-[rgba(229,106,17,0.22)] transition hover:bg-[var(--brand-signal-strong)] disabled:cursor-not-allowed disabled:bg-[#d9c5b0]"
                   disabled={submitting}
                 >
                   {submitting ? (

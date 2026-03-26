@@ -37,6 +37,25 @@ export interface ToolOptionDefinition {
   options?: ToolOptionChoice[];
 }
 
+export interface ToolModelTagDefinition {
+  label: string;
+  tone?: 'accent' | 'muted' | 'success';
+}
+
+export interface ToolModelFamilyDefinition {
+  key: string;
+  label: string;
+  description?: string;
+  badge?: string;
+}
+
+export interface ToolModelUiDefinition {
+  family?: ToolModelFamilyDefinition;
+  mark?: string;
+  outputLabel?: string;
+  tags?: ToolModelTagDefinition[];
+}
+
 export interface ToolModelCapabilities {
   streaming?: boolean;
   attachments?: boolean;
@@ -54,8 +73,10 @@ export interface ToolModelDefinition {
   modeSupport: ToolMode[];
   defaultOptions?: Record<string, string | number | boolean | string[]>;
   supportedOptions: string[];
+  optionOverrides?: Record<string, Partial<ToolOptionDefinition>>;
   creditCostByMode?: Partial<Record<ToolMode, number>>;
   capabilities?: ToolModelCapabilities;
+  ui?: ToolModelUiDefinition;
 }
 
 export interface ToolCatalogResponse {

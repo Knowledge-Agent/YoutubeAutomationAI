@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 
 import { Link, usePathname } from '@/core/i18n/navigation';
@@ -21,6 +21,28 @@ function DesktopNavItem({
   item: NavItem;
   pathname: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const openMenu = () => {
+    clearCloseTimer();
+    setOpen(true);
+  };
+
+  const closeMenu = () => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => {
+      setOpen(false);
+    }, 120);
+  };
+
   if (!item.children || item.children.length === 0) {
     const itemUrl = item.url || '';
     const isActive =
@@ -32,8 +54,8 @@ function DesktopNavItem({
         href={itemUrl}
         target={item.target || '_self'}
         className={cn(
-          'text-[1.08rem] font-medium tracking-tight text-zinc-800 transition-colors hover:text-zinc-950',
-          isActive && 'text-zinc-950'
+          'text-[1.08rem] font-medium tracking-tight text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-ink)]',
+          isActive && 'text-[var(--landing-ink)]'
         )}
       >
         {item.title}
@@ -42,37 +64,61 @@ function DesktopNavItem({
   }
 
   return (
-    <div className="group relative flex items-center gap-1 py-2">
+    <div
+      className="relative flex items-center gap-1 py-2"
+      onMouseEnter={openMenu}
+      onMouseLeave={closeMenu}
+    >
       {item.url ? (
         <Link
           href={item.url}
           target={item.target || '_self'}
-          className="text-[1.08rem] font-medium tracking-tight text-zinc-800 transition-colors hover:text-zinc-950"
+          className="text-[1.08rem] font-medium tracking-tight text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-ink)]"
+          onFocus={openMenu}
+          onBlur={closeMenu}
         >
           {item.title}
         </Link>
       ) : (
         <button
           type="button"
-          className="text-[1.08rem] font-medium tracking-tight text-zinc-800 transition-colors hover:text-zinc-950"
+          className="text-[1.08rem] font-medium tracking-tight text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-ink)]"
+          onFocus={openMenu}
+          onBlur={closeMenu}
         >
           {item.title}
         </button>
       )}
-      <ChevronDown className="size-4 text-zinc-400 transition group-hover:text-zinc-600" />
+      <ChevronDown
+        className={cn(
+          'size-4 text-[var(--landing-muted)] transition',
+          open && 'text-[var(--landing-ink)]'
+        )}
+      />
 
-      <div className="pointer-events-none absolute top-full left-1/2 z-30 mt-1 w-56 -translate-x-1/2 rounded-2xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
-        <div className="space-y-1">
-          {item.children.map((subItem, index) => (
-            <Link
-              key={`${subItem.title}-${index}`}
-              href={subItem.url || ''}
-              target={subItem.target || '_self'}
-              className="block rounded-xl px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-950"
-            >
-              {subItem.title}
-            </Link>
-          ))}
+      <div
+        className={cn(
+          'absolute top-full left-1/2 z-30 w-64 -translate-x-1/2 pt-2 transition duration-150',
+          open
+            ? 'pointer-events-auto opacity-100'
+            : 'pointer-events-none opacity-0'
+        )}
+        onMouseEnter={openMenu}
+        onMouseLeave={closeMenu}
+      >
+        <div className="rounded-[1.7rem] border border-[color:var(--landing-line)] bg-[rgb(251_248_242_/_0.96)] p-2 shadow-[0_22px_44px_rgba(23,24,28,0.12)] backdrop-blur-xl">
+          <div className="space-y-1">
+            {item.children.map((subItem, index) => (
+              <Link
+                key={`${subItem.title}-${index}`}
+                href={subItem.url || ''}
+                target={subItem.target || '_self'}
+                className="block rounded-[1.15rem] px-3 py-3 text-sm font-medium text-[var(--landing-muted)] transition hover:bg-[var(--landing-hover)] hover:text-[var(--landing-ink)]"
+              >
+                {subItem.title}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -86,7 +132,7 @@ export function Header({ header }: { header: HeaderType }) {
   const buttons = header.buttons || [];
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-zinc-200 bg-white/92 backdrop-blur-md">
+    <header className="landing-glass fixed inset-x-0 top-0 z-50 border-b shadow-[0_1px_0_rgba(23,24,28,0.04)] backdrop-blur-md">
       <div className="container px-4 md:px-6">
         <div className="flex h-15 items-center justify-between gap-4">
           <div className="flex min-w-0 items-center">
@@ -114,8 +160,8 @@ export function Header({ header }: { header: HeaderType }) {
                   className={cn(
                     'inline-flex h-9.5 items-center justify-center rounded-md px-3.5 text-sm font-medium tracking-tight transition',
                     isPrimary
-                      ? 'bg-zinc-950 text-white shadow-sm hover:bg-zinc-800'
-                      : 'text-zinc-800 hover:text-zinc-950'
+                      ? 'bg-[var(--brand-signal)] text-white shadow-[0_12px_24px_rgba(229,106,17,0.22)] hover:bg-[var(--brand-signal-strong)]'
+                      : 'text-[var(--landing-muted)] hover:text-[var(--landing-ink)]'
                   )}
                 >
                   {button.title}
@@ -132,7 +178,7 @@ export function Header({ header }: { header: HeaderType }) {
             type="button"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             onClick={() => setIsMobileMenuOpen((value) => !value)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-zinc-200 text-zinc-700 transition hover:bg-zinc-100 lg:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[color:var(--landing-line)] text-[var(--landing-muted)] transition hover:bg-[var(--landing-hover)] lg:hidden"
           >
             {isMobileMenuOpen ? (
               <X className="size-5" />
@@ -143,7 +189,7 @@ export function Header({ header }: { header: HeaderType }) {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="border-t border-zinc-200 py-4 lg:hidden">
+          <div className="border-t border-[color:var(--landing-line)] py-4 lg:hidden">
             <nav className="space-y-2">
               {header.nav?.items?.map((item, idx) =>
                 item.children && item.children.length > 0 ? (
@@ -153,12 +199,12 @@ export function Header({ header }: { header: HeaderType }) {
                         href={item.url}
                         target={item.target || '_self'}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block rounded-xl px-3 py-3 text-base font-semibold tracking-tight text-zinc-900 transition hover:bg-zinc-100"
+                        className="block rounded-xl px-3 py-3 text-base font-semibold tracking-tight text-[var(--landing-ink)] transition hover:bg-[var(--landing-hover)]"
                       >
                         {item.title}
                       </Link>
                     ) : (
-                      <p className="px-2 text-sm font-semibold tracking-tight text-zinc-500">
+                      <p className="px-2 text-sm font-semibold tracking-tight text-[var(--landing-muted)]">
                         {item.title}
                       </p>
                     )}
@@ -168,7 +214,7 @@ export function Header({ header }: { header: HeaderType }) {
                         href={subItem.url || ''}
                         target={subItem.target || '_self'}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block rounded-xl px-3 py-3 text-base font-medium tracking-tight text-zinc-800 transition hover:bg-zinc-100"
+                        className="block rounded-xl px-3 py-3 text-base font-medium tracking-tight text-[var(--landing-muted)] transition hover:bg-[var(--landing-hover)] hover:text-[var(--landing-ink)]"
                       >
                         {subItem.title}
                       </Link>
@@ -180,7 +226,7 @@ export function Header({ header }: { header: HeaderType }) {
                     href={item.url || ''}
                     target={item.target || '_self'}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block rounded-xl px-3 py-3 text-base font-medium tracking-tight text-zinc-800 transition hover:bg-zinc-100"
+                    className="block rounded-xl px-3 py-3 text-base font-medium tracking-tight text-[var(--landing-muted)] transition hover:bg-[var(--landing-hover)] hover:text-[var(--landing-ink)]"
                   >
                     {item.title}
                   </Link>
@@ -200,8 +246,8 @@ export function Header({ header }: { header: HeaderType }) {
                         className={cn(
                           'inline-flex h-10 items-center justify-center rounded-md px-3.5 text-sm font-medium tracking-tight transition',
                           isPrimary
-                            ? 'bg-zinc-950 text-white hover:bg-zinc-800'
-                            : 'border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-100'
+                            ? 'bg-[var(--brand-signal)] text-white hover:bg-[var(--brand-signal-strong)]'
+                            : 'border border-[color:var(--landing-line)] bg-[var(--landing-surface)] text-[var(--landing-muted)] hover:bg-[var(--landing-hover)] hover:text-[var(--landing-ink)]'
                         )}
                       >
                         {button.title}

@@ -1,5 +1,7 @@
 import { generateId } from 'ai';
 
+import { AIMediaType } from '@/extensions/ai';
+import { updateAITaskById } from '@/shared/models/ai_task';
 import {
   Chat,
   ChatStatus,
@@ -12,12 +14,14 @@ import {
   createChatMessage,
   NewChatMessage,
 } from '@/shared/models/chat_message';
+import { createToolTask } from '@/shared/services/tool-tasks';
 
 const TOOL_SURFACES = ['image', 'video'] as const;
 const TOOL_MODES = [
   'text-to-image',
   'image-to-image',
   'text-to-video',
+  'image-to-video',
 ] as const;
 
 export type ToolChatSurface = (typeof TOOL_SURFACES)[number];
@@ -29,6 +33,13 @@ export interface ToolChatContext {
   toolMode: ToolChatMode;
   toolModel?: string;
   toolOptions?: Record<string, unknown>;
+}
+
+export interface ToolChatMetadata extends ToolChatContext {
+  model?: string;
+  toolPrompt?: string;
+  latestTaskId?: string;
+  latestTaskStatus?: string;
 }
 
 export function isToolChatSurface(value: string): value is ToolChatSurface {
@@ -65,16 +76,31 @@ function mergeToolMetadata({
   currentMetadata,
   context,
   model,
+  prompt,
+  latestTaskId,
+  latestTaskStatus,
 }: {
   currentMetadata: string | null | undefined;
   context: ToolChatContext;
   model: string;
+  prompt?: string;
+  latestTaskId?: string;
+  latestTaskStatus?: string;
 }) {
+  const current = safeParseMetadata(currentMetadata);
+
   return {
-    ...safeParseMetadata(currentMetadata),
+    ...current,
     ...context,
     model,
+    toolPrompt: prompt ?? current.toolPrompt,
+    latestTaskId: latestTaskId ?? current.latestTaskId,
+    latestTaskStatus: latestTaskStatus ?? current.latestTaskStatus,
   };
+}
+
+function getToolMediaType(surface: ToolChatSurface) {
+  return surface === 'image' ? AIMediaType.IMAGE : AIMediaType.VIDEO;
 }
 
 async function appendToolPromptMessage({
@@ -177,13 +203,16 @@ export async function createOrResumeToolChat({
           currentMetadata: chat.metadata,
           context,
           model,
+          prompt: trimmedPrompt || undefined,
         })
       ),
       updatedAt: new Date(),
     });
   } else {
     const currentTime = new Date();
-    const initialParts = trimmedPrompt ? buildUserMessageParts(trimmedPrompt) : [];
+    const initialParts = trimmedPrompt
+      ? buildUserMessageParts(trimmedPrompt)
+      : [];
 
     chat = await createChat({
       id: generateId().toLowerCase(),
@@ -200,6 +229,7 @@ export async function createOrResumeToolChat({
           currentMetadata: null,
           context,
           model,
+          prompt: trimmedPrompt || undefined,
         })
       ),
       content: trimmedPrompt
@@ -216,7 +246,8 @@ export async function createOrResumeToolChat({
     throw new Error('failed to create or resume chat');
   }
 
-  const shouldAppendPrompt = Boolean(trimmedPrompt) && (appendPrompt || created);
+  const shouldAppendPrompt =
+    Boolean(trimmedPrompt) && (appendPrompt || created);
 
   if (shouldAppendPrompt) {
     await appendToolPromptMessage({
@@ -229,6 +260,7 @@ export async function createOrResumeToolChat({
         currentMetadata: chat.metadata,
         context,
         model,
+        prompt: trimmedPrompt || undefined,
       }),
     });
 
@@ -245,5 +277,96 @@ export async function createOrResumeToolChat({
     chat,
     created,
     appendedPrompt: shouldAppendPrompt,
+  };
+}
+
+export async function startToolChatSession({
+  chatId,
+  userId,
+  prompt,
+  surface,
+  mode,
+  model,
+  toolModel,
+  toolOptions,
+}: {
+  chatId?: string;
+  userId: string;
+  prompt: string;
+  surface: ToolChatSurface;
+  mode: ToolChatMode;
+  model: string;
+  toolModel?: string;
+  toolOptions?: Record<string, unknown>;
+}) {
+  const trimmedPrompt = prompt.trim();
+  if (!trimmedPrompt) {
+    throw new Error('prompt is required');
+  }
+
+  const normalizedToolModel = toolModel || model;
+  const normalizedToolOptions = toolOptions || {};
+
+  if (chatId) {
+    const existingChat = await findChatById(chatId);
+    if (!existingChat) {
+      throw new Error('chat not found');
+    }
+
+    if (existingChat.userId !== userId) {
+      throw new Error('no permission to access this chat');
+    }
+  }
+
+  const task = await createToolTask({
+    userId,
+    mediaType: getToolMediaType(surface),
+    scene: mode,
+    model: normalizedToolModel,
+    prompt: trimmedPrompt,
+    options: normalizedToolOptions,
+  });
+
+  const session = await createOrResumeToolChat({
+    chatId,
+    userId,
+    prompt: trimmedPrompt,
+    surface,
+    mode,
+    model,
+    toolModel: normalizedToolModel,
+    toolOptions: normalizedToolOptions,
+    appendPrompt: true,
+  });
+
+  await updateAITaskById(task.id, {
+    chatId: session.chat.id,
+  });
+
+  const metadata = mergeToolMetadata({
+    currentMetadata: session.chat.metadata,
+    context: {
+      source: 'tool',
+      toolSurface: surface,
+      toolMode: mode,
+      toolModel: normalizedToolModel,
+      toolOptions: normalizedToolOptions,
+    },
+    model,
+    prompt: trimmedPrompt,
+    latestTaskId: task.id,
+    latestTaskStatus: task.status,
+  });
+
+  const chat = await updateChat(session.chat.id, {
+    metadata: JSON.stringify(metadata),
+    updatedAt: new Date(),
+  });
+
+  return {
+    chat,
+    task,
+    created: session.created,
+    appendedPrompt: session.appendedPrompt,
   };
 }

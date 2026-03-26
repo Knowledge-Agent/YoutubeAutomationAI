@@ -1,7 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { AiVideoHubUi } from '@/shared/blocks/tools/ai-video-hub-ui';
-import { AiVideoWorkspaceUi } from '@/shared/blocks/tools/ai-video-workspace-ui';
 import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
 import { getMetadata } from '@/shared/lib/seo';
 
@@ -14,38 +13,26 @@ export const generateMetadata = getMetadata({
 
 export default async function AiVideoGeneratorPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{
-    view?: string;
-    prompt?: string;
-    mode?: 'text-to-video' | 'image-to-video' | 'video-to-video';
-  }>;
 }) {
   const { locale } = await params;
-  const { view, prompt, mode } = await searchParams;
   setRequestLocale(locale);
 
   const t = await getTranslations('ai.video');
-  const isDetailView = view === 'detail';
 
   return (
     <ToolWorkspaceShell
       activeKey="ai-video"
       activeTab="ai-video"
-      workspaceMode={isDetailView ? 'detail' : 'hub'}
+      workspaceMode="hub"
       title={t.raw('page.title')}
       description={t.raw('page.description')}
       actions={['Favorites', 'Assets']}
       contentCard={false}
       showIntroCard={false}
     >
-      {isDetailView ? (
-        <AiVideoWorkspaceUi initialMode={mode} initialPrompt={prompt} />
-      ) : (
-        <AiVideoHubUi />
-      )}
+      <AiVideoHubUi />
     </ToolWorkspaceShell>
   );
 }

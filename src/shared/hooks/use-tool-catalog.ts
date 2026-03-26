@@ -8,12 +8,25 @@ import type {
   ToolSurface,
 } from '@/shared/types/ai-tools';
 
-export function useToolCatalog(surface: ToolSurface) {
-  const [catalog, setCatalog] = useState<ToolCatalogResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+export function useToolCatalog(
+  surface: ToolSurface,
+  initialCatalog?: ToolCatalogResponse | null
+) {
+  const [catalog, setCatalog] = useState<ToolCatalogResponse | null>(
+    initialCatalog ?? null
+  );
+  const [loading, setLoading] = useState(!initialCatalog);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (
+      initialCatalog &&
+      initialCatalog.surface === surface &&
+      initialCatalog.models.length > 0
+    ) {
+      return;
+    }
+
     let cancelled = false;
 
     const fetchCatalog = async () => {
@@ -55,7 +68,7 @@ export function useToolCatalog(surface: ToolSurface) {
     return () => {
       cancelled = true;
     };
-  }, [surface]);
+  }, [initialCatalog, surface]);
 
   const models = useMemo<ToolModelDefinition[]>(
     () => catalog?.models ?? [],

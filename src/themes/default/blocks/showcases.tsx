@@ -33,7 +33,11 @@ export function Showcases({
   return (
     <section
       id={section.id || section.name}
-      className={cn('py-24 md:py-36', section.className, className)}
+      className={cn(
+        'studio-shell relative overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,122,26,0.16),transparent_18%),linear-gradient(180deg,#111318_0%,#151922_100%)] py-24 md:py-36',
+        section.className,
+        className
+      )}
     >
       <motion.div
         className="container mb-12 text-center"
@@ -48,10 +52,10 @@ export function Showcases({
         {section.sr_only_title && (
           <h1 className="sr-only">{section.sr_only_title}</h1>
         )}
-        <h2 className="mx-auto mb-6 max-w-full text-3xl font-bold text-pretty md:max-w-5xl lg:text-4xl">
+        <h2 className="studio-title mx-auto mb-6 max-w-full text-3xl font-bold text-pretty md:max-w-5xl lg:text-4xl">
           {section.title}
         </h2>
-        <p className="text-muted-foreground text-md mx-auto mb-4 max-w-full md:max-w-5xl">
+        <p className="studio-copy text-md mx-auto mb-4 max-w-full md:max-w-5xl">
           {section.description}
         </p>
       </motion.div>
@@ -79,7 +83,7 @@ export function Showcases({
                     'relative rounded-lg px-3 py-1.5 text-sm font-medium transition-all',
                     isSelected
                       ? ''
-                      : 'border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground border'
+                      : 'studio-chip border hover:bg-[var(--studio-hover)] hover:text-[var(--studio-ink)]'
                   )}
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -94,10 +98,10 @@ export function Showcases({
                 >
                   {isSelected ? (
                     <>
-                      <span className="bg-primary absolute inset-0 rounded-lg p-[2px]">
-                        <span className="bg-background block h-full w-full rounded-[calc(0.5rem-2px)]" />
+                      <span className="absolute inset-0 rounded-lg bg-[linear-gradient(135deg,var(--brand-signal),var(--video-accent))] p-[2px]">
+                        <span className="block h-full w-full rounded-[calc(0.5rem-2px)] bg-[var(--studio-panel)]" />
                       </span>
-                      <span className="bg-primary relative z-10 bg-clip-text text-transparent">
+                      <span className="relative z-10 text-[var(--studio-ink)]">
                         {group.title}
                       </span>
                     </>
@@ -126,7 +130,7 @@ export function Showcases({
                   ease: [0.22, 1, 0.36, 1] as const,
                 }}
               >
-                <Card className="dark:hover:shadow-primary/10 overflow-hidden p-0 transition-all hover:shadow-lg">
+                <Card className="studio-surface overflow-hidden border p-0 shadow-[0_18px_42px_rgba(0,0,0,0.28)] transition-all hover:border-white/12 hover:shadow-[0_22px_56px_rgba(0,0,0,0.34)]">
                   <CardContent className="p-0">
                     <motion.div
                       className="relative aspect-16/10 w-full overflow-hidden"
@@ -142,11 +146,11 @@ export function Showcases({
                       />
                     </motion.div>
                     <div className="p-6">
-                      <h3 className="mb-2 line-clamp-1 text-xl font-semibold text-balance">
+                      <h3 className="studio-title mb-2 line-clamp-1 text-xl font-semibold text-balance">
                         {item.title}
                       </h3>
                       <p
-                        className="text-muted-foreground line-clamp-3 text-sm"
+                        className="studio-copy line-clamp-3 text-sm"
                         dangerouslySetInnerHTML={{
                           __html: item.description ?? '',
                         }}
@@ -157,7 +161,7 @@ export function Showcases({
                             asChild
                             variant={(item as any).button.variant || 'default'}
                             size={(item as any).button.size || 'sm'}
-                            className="bg-primary hover:bg-primary/90 h-8 w-full border-0 px-3 py-1.5 text-sm font-medium text-white"
+                            className="h-8 w-full border-0 bg-[var(--brand-signal)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[var(--brand-signal-strong)]"
                           >
                             <Link
                               href={(item as any).button.url || ''}
@@ -190,7 +194,7 @@ export function Showcases({
           })
         ) : (
           <motion.div
-            className="text-muted-foreground col-span-full text-center"
+            className="studio-copy col-span-full text-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}

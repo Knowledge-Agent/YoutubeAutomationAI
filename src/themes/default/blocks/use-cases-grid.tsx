@@ -19,7 +19,7 @@ export function UseCasesGrid({
     <section
       id={section.id}
       className={cn(
-        'bg-[#f8f8f9] py-24 md:py-32',
+        'landing-shell-soft py-24 md:py-32',
         section.className,
         className
       )}
@@ -33,14 +33,14 @@ export function UseCasesGrid({
           className="mx-auto max-w-3xl text-center"
         >
           {section.label && (
-            <span className="inline-flex rounded-full border border-zinc-200 bg-white px-3 py-1 text-[13px] font-medium tracking-tight text-zinc-500">
+            <span className="landing-chip inline-flex rounded-full border px-3 py-1 text-[13px] font-medium tracking-tight">
               {section.label}
             </span>
           )}
-          <h2 className="mx-auto mt-4 max-w-4xl text-[40px] font-medium tracking-tighter text-balance text-zinc-950 md:text-[42px]">
+          <h2 className="landing-title mx-auto mt-4 max-w-4xl text-[40px] font-medium tracking-tighter text-balance md:text-[42px]">
             {section.title}
           </h2>
-          <p className="text-muted-foreground mx-auto mt-4 max-w-3xl text-balance md:text-xl/relaxed">
+          <p className="landing-copy mx-auto mt-4 max-w-3xl text-balance md:text-xl/relaxed">
             {section.description}
           </p>
         </motion.div>
@@ -53,17 +53,17 @@ export function UseCasesGrid({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: idx * 0.06 }}
-              className="flex h-full flex-col rounded-[1.4rem] border border-zinc-200 bg-white p-6 shadow-[0_10px_24px_rgba(15,23,42,0.04)]"
+              className="landing-surface flex h-full flex-col rounded-[1.4rem] border p-6 shadow-[0_10px_24px_rgba(23,24,28,0.06)]"
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-900 shadow-xs">
+              <div className="landing-surface-muted flex h-11 w-11 items-center justify-center rounded-xl border shadow-xs">
                 {item.icon ? (
                   <SmartIcon name={item.icon as string} className="size-5" />
                 ) : null}
               </div>
-              <h3 className="mt-5 text-xl font-semibold tracking-tight text-zinc-950">
+              <h3 className="landing-title mt-5 text-xl font-semibold tracking-tight">
                 {item.title}
               </h3>
-              <p className="mt-3 grow text-sm leading-7 text-zinc-500">
+              <p className="landing-copy mt-3 grow text-sm leading-7">
                 {item.description}
               </p>
 
@@ -72,7 +72,7 @@ export function UseCasesGrid({
                   {item.examples.map((example: string) => (
                     <span
                       key={example}
-                      className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs text-zinc-500"
+                      className="landing-chip-soft rounded-full border px-3 py-1 text-xs"
                     >
                       {example}
                     </span>

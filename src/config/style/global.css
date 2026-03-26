@@ -119,6 +119,85 @@ pre {
 }
 
 @layer utilities {
+  .landing-shell {
+    background-color: var(--landing-canvas);
+    color: var(--landing-ink);
+  }
+
+  .landing-shell-soft {
+    background-color: var(--landing-surface-soft);
+    color: var(--landing-ink);
+  }
+
+  .landing-surface {
+    background-color: var(--landing-surface);
+    border-color: var(--landing-line);
+    color: var(--landing-ink);
+  }
+
+  .landing-surface-muted {
+    background-color: var(--landing-hover);
+    border-color: var(--landing-line);
+    color: var(--landing-ink);
+  }
+
+  .landing-glass {
+    background-color: rgb(251 248 242 / 0.78);
+    border-color: rgb(23 24 28 / 0.08);
+    color: var(--landing-ink);
+  }
+
+  .landing-title {
+    color: var(--landing-ink);
+  }
+
+  .landing-copy {
+    color: var(--landing-muted);
+  }
+
+  .landing-chip {
+    background-color: var(--landing-surface);
+    border-color: var(--landing-line);
+    color: var(--landing-muted);
+  }
+
+  .landing-chip-soft {
+    background-color: var(--landing-hover);
+    border-color: var(--landing-line);
+    color: var(--landing-muted);
+  }
+
+  .studio-shell {
+    background-color: var(--studio-bg);
+    color: var(--studio-ink);
+  }
+
+  .studio-surface {
+    background-color: rgb(26 29 36 / 0.96);
+    border-color: var(--studio-line);
+    color: var(--studio-ink);
+  }
+
+  .studio-surface-strong {
+    background-color: rgb(35 39 51 / 0.98);
+    border-color: var(--studio-line);
+    color: var(--studio-ink);
+  }
+
+  .studio-title {
+    color: var(--studio-ink);
+  }
+
+  .studio-copy {
+    color: var(--studio-muted);
+  }
+
+  .studio-chip {
+    background-color: var(--studio-panel-strong);
+    border-color: var(--studio-line);
+    color: var(--studio-muted);
+  }
+
   .particle-float {
     animation: particle-float var(--particle-duration, 18s) ease-in-out infinite;
     animation-delay: var(--particle-delay, 0s);

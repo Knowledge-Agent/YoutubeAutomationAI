@@ -20,12 +20,11 @@ export default function LandingLayout({
 }) {
   const pathname = usePathname();
   const isWorkspaceRoute =
-    pathname === '/tools' ||
     pathname.startsWith('/ai-video-generator') ||
     pathname.startsWith('/ai-image-generator');
 
   if (isWorkspaceRoute) {
-    return <div className="min-h-screen bg-[#101117]">{children}</div>;
+    return <div className="min-h-screen bg-[var(--studio-bg)]">{children}</div>;
   }
 
   return (

@@ -7,7 +7,6 @@
   "page": {
     "show_sections": [
       "hero_automation",
-      "tools_overview",
       "workflow_pillars",
       "use_cases",
       "why_platform",
@@ -260,64 +259,6 @@
             "url": "/#hero",
             "target": "_self",
             "variant": "outline"
-          }
-        ]
-      },
-      "tools_overview": {
-        "block": "showcases",
-        "id": "tools-overview",
-        "title": "Start With Focused AI Tools",
-        "description": "Browse the first two tools in the stack. We start with AI video and AI image generation, then expand into more workflow-specific operators.",
-        "groups": [
-          {
-            "name": "all",
-            "title": "All"
-          },
-          {
-            "name": "ai-video",
-            "title": "AI Video"
-          },
-          {
-            "name": "ai-image",
-            "title": "AI Image"
-          }
-        ],
-        "items": [
-          {
-            "title": "AI Video",
-            "description": "Generate concept clips, remake drafts, and visual sequences for YouTube automation workflows.",
-            "url": "/ai-video-generator",
-            "target": "_self",
-            "group": "ai-video",
-            "image": {
-              "src": "/preview.png",
-              "alt": "AI video tool overview card"
-            },
-            "button": {
-              "title": "Open Tool",
-              "url": "/ai-video-generator",
-              "target": "_self",
-              "icon": "ArrowRight",
-              "variant": "default"
-            }
-          },
-          {
-            "title": "AI Image",
-            "description": "Generate thumbnails, references, and storyboard frames to support faster creative iteration.",
-            "url": "/ai-image-generator",
-            "target": "_self",
-            "group": "ai-image",
-            "image": {
-              "src": "/imgs/features/landing-page.png",
-              "alt": "AI image tool overview card"
-            },
-            "button": {
-              "title": "Open Tool",
-              "url": "/ai-image-generator",
-              "target": "_self",
-              "icon": "ArrowRight",
-              "variant": "default"
-            }
           }
         ]
       }

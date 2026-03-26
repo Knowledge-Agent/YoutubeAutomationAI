@@ -24,6 +24,16 @@ export interface ContextValue {
   setIsShowSignModal: (show: boolean) => void;
   isShowPaymentModal: boolean;
   setIsShowPaymentModal: (show: boolean) => void;
+  generationLimitModal: {
+    open: boolean;
+    title: string;
+    description: string;
+  };
+  showGenerationLimitModal: (payload: {
+    title: string;
+    description: string;
+  }) => void;
+  hideGenerationLimitModal: () => void;
   configs: Record<string, string>;
   fetchConfigs: () => Promise<void>;
   fetchUserCredits: () => Promise<void>;
@@ -50,6 +60,29 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   // show payment modal
   const [isShowPaymentModal, setIsShowPaymentModal] = useState(false);
+  const [generationLimitModal, setGenerationLimitModal] = useState({
+    open: false,
+    title: '',
+    description: '',
+  });
+
+  const showGenerationLimitModal = useCallback(
+    ({ title, description }: { title: string; description: string }) => {
+      setGenerationLimitModal({
+        open: true,
+        title,
+        description,
+      });
+    },
+    []
+  );
+
+  const hideGenerationLimitModal = useCallback(() => {
+    setGenerationLimitModal((current) => ({
+      ...current,
+      open: false,
+    }));
+  }, []);
 
   const fetchConfigs = useCallback(async () => {
     try {
@@ -157,6 +190,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       setIsShowSignModal,
       isShowPaymentModal,
       setIsShowPaymentModal,
+      generationLimitModal,
+      showGenerationLimitModal,
+      hideGenerationLimitModal,
       configs,
       fetchConfigs,
       fetchUserCredits,
@@ -168,6 +204,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       isCheckSign,
       isShowSignModal,
       isShowPaymentModal,
+      generationLimitModal,
+      showGenerationLimitModal,
+      hideGenerationLimitModal,
       configs,
       fetchConfigs,
       fetchUserCredits,

@@ -8,7 +8,7 @@ export function BrandLogo({ brand }: { brand: BrandType }) {
     <Link
       href={brand.url || ''}
       target={brand.target || '_self'}
-      className={`flex items-center gap-2 text-zinc-950 ${brand.className}`}
+      className={`flex items-center gap-2 text-[color:inherit] ${brand.className || ''}`}
     >
       {brand.logo && (
         <Image
@@ -21,7 +21,7 @@ export function BrandLogo({ brand }: { brand: BrandType }) {
         />
       )}
       {brand.title && (
-        <span className="text-base font-medium tracking-tight text-zinc-950">
+        <span className="text-base font-medium tracking-tight text-[color:inherit]">
           {brand.title}
         </span>
       )}

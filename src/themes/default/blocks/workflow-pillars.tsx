@@ -20,7 +20,7 @@ export function WorkflowPillars({
     <section
       id={section.id}
       className={cn(
-        'bg-[#f8f8f9] py-24 md:py-32',
+        'landing-shell py-24 md:py-32',
         section.className,
         className
       )}
@@ -33,10 +33,10 @@ export function WorkflowPillars({
           transition={{ duration: 0.45 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <h2 className="mx-auto mt-4 max-w-4xl text-[40px] font-medium tracking-tighter text-balance text-zinc-950 md:text-[42px]">
+          <h2 className="landing-title mx-auto mt-4 max-w-4xl text-[40px] font-medium tracking-tighter text-balance md:text-[42px]">
             {section.title}
           </h2>
-          <p className="text-muted-foreground mx-auto mt-4 max-w-3xl text-balance md:text-xl/relaxed">
+          <p className="landing-copy mx-auto mt-4 max-w-3xl text-balance md:text-xl/relaxed">
             {section.description}
           </p>
         </motion.div>
@@ -50,23 +50,23 @@ export function WorkflowPillars({
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: idx * 0.08 }}
               className={cn(
-                'grid items-center gap-8 rounded-[2rem] border border-zinc-200 bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.04)] md:grid-cols-[0.92fr_1.08fr] md:p-8',
+                'landing-surface grid items-center gap-8 rounded-[2rem] border p-5 shadow-[0_16px_40px_rgba(23,24,28,0.06)] md:grid-cols-[0.92fr_1.08fr] md:p-8',
                 idx % 2 === 1 &&
                   'md:[&>*:first-child]:order-2 md:[&>*:last-child]:order-1'
               )}
             >
               <div className="space-y-5 px-1">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-900 shadow-xs">
+                <div className="landing-surface-muted flex h-11 w-11 items-center justify-center rounded-xl border shadow-xs">
                   {item.icon ? (
                     <SmartIcon name={item.icon as string} className="size-5" />
                   ) : null}
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="max-w-xl text-3xl font-semibold tracking-tight text-zinc-950 md:text-[2.15rem]">
+                  <h3 className="landing-title max-w-xl text-3xl font-semibold tracking-tight md:text-[2.15rem]">
                     {item.title}
                   </h3>
-                  <p className="max-w-xl text-base leading-8 text-zinc-500 md:text-lg">
+                  <p className="landing-copy max-w-xl text-base leading-8 md:text-lg">
                     {item.description}
                   </p>
                 </div>
@@ -76,7 +76,7 @@ export function WorkflowPillars({
                     {item.keywords.slice(0, 4).map((keyword: string) => (
                       <span
                         key={keyword}
-                        className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs text-zinc-500"
+                        className="landing-chip-soft rounded-full border px-3 py-1 text-xs"
                       >
                         {keyword}
                       </span>
@@ -85,7 +85,7 @@ export function WorkflowPillars({
                 )}
               </div>
 
-              <div className="overflow-hidden rounded-[1.6rem] border border-zinc-200 bg-zinc-50 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
+              <div className="landing-surface-muted overflow-hidden rounded-[1.6rem] border shadow-[0_10px_24px_rgba(23,24,28,0.06)]">
                 <div className="aspect-[16/10] overflow-hidden">
                   <LazyImage
                     src={item.image?.src ?? '/imgs/features/landing-page.png'}
@@ -99,9 +99,9 @@ export function WorkflowPillars({
         </div>
 
         {stages.length > 0 && (
-          <div className="mt-16 rounded-[1.75rem] border border-zinc-200 bg-zinc-50/80 p-6 md:p-8">
+          <div className="landing-surface-muted mt-16 rounded-[1.75rem] border p-6 md:p-8">
             <div className="mb-6 max-w-2xl">
-              <p className="text-sm font-medium tracking-tight text-zinc-500">
+              <p className="landing-copy text-sm font-medium tracking-tight">
                 Workflow at a glance
               </p>
             </div>
@@ -109,15 +109,15 @@ export function WorkflowPillars({
               {stages.map((stage: any, idx: number) => (
                 <div
                   key={stage.title || idx}
-                  className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-[0_6px_18px_rgba(15,23,42,0.04)]"
+                  className="landing-surface rounded-2xl border p-5 shadow-[0_6px_18px_rgba(23,24,28,0.06)]"
                 >
-                  <div className="mb-3 inline-flex rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-500">
+                  <div className="landing-chip-soft mb-3 inline-flex rounded-full border px-2.5 py-1 text-xs font-medium">
                     {stage.badge || `Stage ${idx + 1}`}
                   </div>
-                  <p className="text-base font-semibold text-zinc-950">
+                  <p className="landing-title text-base font-semibold">
                     {stage.title}
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-zinc-500">
+                  <p className="landing-copy mt-2 text-sm leading-6">
                     {stage.description}
                   </p>
                 </div>

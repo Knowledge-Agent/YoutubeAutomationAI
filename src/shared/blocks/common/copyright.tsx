@@ -13,12 +13,12 @@ export function Copyright({ brand }: { brand: BrandType }) {
   }, []);
 
   return (
-    <div className="text-sm text-zinc-500">
+    <div className="text-sm text-[color:inherit] opacity-70">
       © {currentYear || 2024}{' '}
       <a
         href={brand?.url || envConfigs.app_url}
         target={brand?.target || ''}
-        className="cursor-pointer text-zinc-900 transition hover:text-zinc-700"
+        className="cursor-pointer text-[color:inherit] opacity-100 transition hover:text-[var(--brand-signal)]"
       >
         {brand?.title || envConfigs.app_name}
       </a>

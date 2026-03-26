@@ -438,6 +438,21 @@ export const userRole = table(
   ]
 );
 
+export const project = table(
+  'project',
+  {
+    id: varchar191('id').primaryKey(),
+    userId: varchar191('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    status: varchar('status', { length: 50 }).notNull(),
+    title: varchar('title', { length: 255 }).notNull().default(''),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => [index('idx_project_user_status').on(table.userId, table.status)]
+);
+
 export const aiTask = table(
   'ai_task',
   {
@@ -445,6 +460,9 @@ export const aiTask = table(
     userId: varchar191('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
+    chatId: varchar191('chat_id').references(() => chat.id, {
+      onDelete: 'cascade',
+    }),
     mediaType: varchar('media_type', { length: 50 }).notNull(),
     provider: varchar('provider', { length: 50 }).notNull(),
     model: varchar191('model').notNull(),
@@ -465,6 +483,7 @@ export const aiTask = table(
     // Composite: Query user's AI tasks by status
     // Can also be used for: WHERE userId = ? (left-prefix)
     index('idx_ai_task_user_media_type').on(table.userId, table.mediaType),
+    index('idx_ai_task_chat_created').on(table.chatId, table.createdAt),
     // Composite: Query user's AI tasks by media type and provider
     // Can also be used for: WHERE mediaType = ? AND provider = ? (left-prefix)
     index('idx_ai_task_media_type_status').on(table.mediaType, table.status),
@@ -478,6 +497,9 @@ export const chat = table(
     userId: varchar191('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
+    projectId: varchar191('project_id').references(() => project.id, {
+      onDelete: 'set null',
+    }),
     status: varchar('status', { length: 50 }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
@@ -488,7 +510,10 @@ export const chat = table(
     metadata: longtext('metadata'),
     content: longtext('content'),
   },
-  (table) => [index('idx_chat_user_status').on(table.userId, table.status)]
+  (table) => [
+    index('idx_chat_user_status').on(table.userId, table.status),
+    index('idx_chat_project_status').on(table.projectId, table.status),
+  ]
 );
 
 export const chatMessage = table(
@@ -513,5 +538,30 @@ export const chatMessage = table(
   (table) => [
     index('idx_chat_message_chat_id').on(table.chatId, table.status),
     index('idx_chat_message_user_id').on(table.userId, table.status),
+  ]
+);
+
+export const projectFavorite = table(
+  'project_favorite',
+  {
+    id: varchar191('id').primaryKey(),
+    userId: varchar191('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    projectId: varchar191('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    taskId: varchar191('task_id')
+      .notNull()
+      .references(() => aiTask.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => [
+    index('idx_project_favorite_project_created').on(
+      table.projectId,
+      table.createdAt
+    ),
+    index('idx_project_favorite_user_project').on(table.userId, table.projectId),
   ]
 );

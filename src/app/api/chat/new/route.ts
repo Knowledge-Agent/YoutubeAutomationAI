@@ -7,6 +7,7 @@ import {
   createChatMessage,
   NewChatMessage,
 } from '@/shared/models/chat_message';
+import { createUserProject } from '@/shared/models/project';
 import { getUserInfo } from '@/shared/models/user';
 
 export async function POST(req: Request) {
@@ -30,6 +31,10 @@ export async function POST(req: Request) {
 
     // todo: auto generate title
     const title = message.text.substring(0, 100);
+    const project = await createUserProject({
+      userId: user.id,
+      title,
+    });
 
     const chatId = generateId().toLowerCase();
     const currentTime = new Date();
@@ -44,6 +49,7 @@ export async function POST(req: Request) {
     const chat: NewChat = {
       id: chatId,
       userId: user.id,
+      projectId: project.id,
       status: ChatStatus.CREATED,
       createdAt: currentTime,
       updatedAt: currentTime,

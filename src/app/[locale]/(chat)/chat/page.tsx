@@ -1,4 +1,6 @@
-import { redirect } from '@/core/i18n/navigation';
+import { setRequestLocale } from 'next-intl/server';
+
+import { ChatGenerator } from '@/shared/blocks/chat/generator';
 
 export default async function ChatPage({
   params,
@@ -6,6 +8,7 @@ export default async function ChatPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
-  redirect({ href: '/tools', locale });
+  return <ChatGenerator />;
 }

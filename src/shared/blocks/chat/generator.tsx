@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 import { useRouter } from '@/core/i18n/navigation';
 import { LocaleSelector } from '@/shared/blocks/common';
 import { PromptInputMessage } from '@/shared/components/ai-elements/prompt-input';
-import { SidebarTrigger } from '@/shared/components/ui/sidebar';
 import { useAppContext } from '@/shared/contexts/app';
 import { useChatContext } from '@/shared/contexts/chat';
 
@@ -39,10 +38,26 @@ export function ChatGenerator() {
     setError(null);
 
     try {
-      const resp: Response = await fetch('/api/chat/new', {
+      const isToolChat = Boolean(toolSurface && toolMode);
+      const resp: Response = await fetch(
+        isToolChat ? '/api/chat/from-tool' : '/api/chat/new',
+        {
         method: 'POST',
-        body: JSON.stringify({ message: msg, body: body }),
-      });
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+            isToolChat
+              ? {
+                  prompt: msg.text,
+                  surface: toolSurface,
+                  mode: toolMode,
+                  model: body.model,
+                }
+              : { message: msg, body: body }
+          ),
+        }
+      );
       if (!resp.ok) {
         throw new Error(`request failed with status: ${resp.status}`);
       }
@@ -56,9 +71,15 @@ export function ChatGenerator() {
         throw new Error('failed to create chat');
       }
 
-      setChats([data, ...chats]);
+      setChats([
+        {
+          ...data,
+          model: body.model,
+        },
+        ...chats,
+      ]);
 
-      const path = `/chat/${id}`;
+      const path = data.path || `/chat/${id}`;
       router.push(path, {
         locale,
       });
@@ -110,7 +131,6 @@ export function ChatGenerator() {
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       <header className="bg-background sticky top-0 z-10 flex w-full items-center gap-2 px-4 py-3">
-        <SidebarTrigger className="size-7" />
         <div className="flex-1"></div>
         <LocaleSelector />
       </header>

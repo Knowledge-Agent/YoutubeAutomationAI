@@ -28,3 +28,4 @@ export * from '../sign/sign-user';
 export * from './audio-player';
 
 export * from './error-boundary';
+export * from './generation-limit-modal';
