@@ -208,6 +208,12 @@ export async function getSettingGroups() {
       tab: 'storage',
     },
     {
+      name: 'apimart',
+      title: 'APIMart',
+      description: `Custom <a href="https://docs.apimart.ai/en" class="text-primary" target="_blank">APIMart</a> settings`,
+      tab: 'ai',
+    },
+    {
       name: 'openrouter',
       title: t('groups.openrouter'),
       description: `Custom <a href="https://openrouter.ai" class="text-primary" target="_blank">OpenRouter</a> settings`,
@@ -240,21 +246,21 @@ export async function getSettingGroups() {
     {
       name: 'adsense',
       title: t('groups.adsense'),
-      description: 'Configure your AdSense settings',
+      description: 'custom your adsense settings',
       tab: 'ads',
     },
     {
       name: 'affonso',
       title: t('groups.affonso'),
       description:
-        'Configure your <a href="https://affonso.io" class="text-primary" target="_blank">Affonso</a> settings',
+        'custom your <a href="https://affonso.io" class="text-primary" target="_blank">Affonso</a> settings',
       tab: 'affiliate',
     },
     {
       name: 'promotekit',
       title: t('groups.promotekit'),
       description:
-        'Configure your <a href="https://www.promotekit.com" class="text-primary" target="_blank">PromoteKit</a> settings',
+        'custom your <a href="https://www.promotekit.com" class="text-primary" target="_blank">PromoteKit</a> settings',
       tab: 'affiliate',
     },
     {
@@ -289,7 +295,7 @@ export async function getSettings() {
       name: 'app_description',
       title: 'App Description',
       placeholder:
-        'Reference analysis, script rewrites, storyboard planning, and production handoffs for faceless channel teams.',
+        'Turn long videos into viral-ready shorts with AI clipping, hook optimization, and remix workflows.',
       type: 'textarea',
       group: 'appinfo',
       tab: 'general',
@@ -748,6 +754,23 @@ export async function getSettings() {
       placeholder: '',
       group: 'r2',
       tab: 'storage',
+    },
+    {
+      name: 'apimart_api_key',
+      title: 'APIMart API Key',
+      type: 'password',
+      placeholder: 'sk-xxx',
+      group: 'apimart',
+      tab: 'ai',
+    },
+    {
+      name: 'apimart_base_url',
+      title: 'APIMart Base URL',
+      type: 'url',
+      placeholder: 'https://api.apimart.ai/v1',
+      tip: 'Leave empty to use the default APIMart API URL',
+      group: 'apimart',
+      tab: 'ai',
     },
     {
       name: 'openrouter_api_key',

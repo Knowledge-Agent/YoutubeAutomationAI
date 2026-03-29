@@ -6,6 +6,8 @@ export interface ChatModel {
 
 export interface Chat {
   id: string;
+  projectId?: string | null;
+  projectTitle?: string | null;
   title: string;
   createdAt: Date;
   model: string;

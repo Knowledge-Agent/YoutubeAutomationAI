@@ -327,16 +327,20 @@ export function Pricing({
   return (
     <section
       id={section.id}
-      className={cn('py-24 md:py-36', section.className, className)}
+      className={cn(
+        'landing-shell py-24 md:py-36',
+        section.className,
+        className
+      )}
     >
       <div className="mx-auto mb-12 px-4 text-center md:px-8">
         {section.sr_only_title && (
           <h1 className="sr-only">{section.sr_only_title}</h1>
         )}
-        <h2 className="mb-6 text-3xl font-bold text-pretty lg:text-4xl">
+        <h2 className="landing-title mb-6 text-3xl font-bold text-pretty lg:text-4xl">
           {section.title}
         </h2>
-        <p className="text-muted-foreground mx-auto mb-4 max-w-xl lg:max-w-none lg:text-lg">
+        <p className="landing-copy mx-auto mb-4 max-w-xl lg:max-w-none lg:text-lg">
           {section.description}
         </p>
       </div>
@@ -388,12 +392,15 @@ export function Pricing({
             const currencies = getCurrenciesFromItem(item);
 
             return (
-              <Card key={idx} className="relative">
+              <Card
+                key={idx}
+                className="landing-surface relative border shadow-[0_16px_36px_rgba(23,24,28,0.07)]"
+              >
                 {item.label && (
-                  <span className="absolute inset-x-0 -top-3 mx-auto flex h-6 w-fit items-center rounded-full bg-linear-to-br/increasing from-purple-400 to-amber-300 px-3 py-1 text-xs font-medium text-amber-950 ring-1 ring-white/20 ring-offset-1 ring-offset-gray-950/5 ring-inset">
-                    {item.label}
-                  </span>
-                )}
+                    <span className="absolute inset-x-0 -top-3 mx-auto flex h-6 w-fit items-center rounded-full bg-[linear-gradient(135deg,var(--brand-signal),#ffb067)] px-3 py-1 text-xs font-medium text-white ring-1 ring-white/20 ring-offset-1 ring-offset-gray-950/5 ring-inset">
+                      {item.label}
+                    </span>
+                  )}
 
                 <CardHeader>
                   <CardTitle className="font-medium">
@@ -402,7 +409,7 @@ export function Pricing({
 
                   <div className="my-3 flex items-baseline gap-2">
                     {displayedItem.original_price && (
-                      <span className="text-muted-foreground text-sm line-through">
+                      <span className="landing-copy text-sm line-through">
                         {displayedItem.original_price}
                       </span>
                     )}
@@ -412,7 +419,7 @@ export function Pricing({
                         {displayedItem.price}
                       </span>{' '}
                       {displayedItem.unit ? (
-                        <span className="text-muted-foreground text-sm font-normal">
+                        <span className="landing-copy text-sm font-normal">
                           {displayedItem.unit}
                         </span>
                       ) : (
@@ -429,7 +436,7 @@ export function Pricing({
                       >
                         <SelectTrigger
                           size="sm"
-                          className="border-muted-foreground/30 bg-background/50 h-6 min-w-[60px] px-2 text-xs"
+                          className="h-6 min-w-[60px] border-[color:var(--landing-line)] bg-[var(--landing-surface)] px-2 text-xs"
                         >
                           <SelectValue placeholder="Currency" />
                         </SelectTrigger>
@@ -452,7 +459,7 @@ export function Pricing({
                     {item.description}
                   </CardDescription>
                   {item.tip && (
-                    <span className="text-muted-foreground text-sm">
+                    <span className="landing-copy text-sm">
                       {item.tip}
                     </span>
                   )}
@@ -474,7 +481,7 @@ export function Pricing({
                       className={cn(
                         'focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
                         'mt-4 h-9 w-full px-4 py-2',
-                        'bg-primary text-primary-foreground hover:bg-primary/90 border-[0.5px] border-white/25 shadow-md shadow-black/20'
+                        'bg-[var(--brand-signal)] text-white hover:bg-[var(--brand-signal-strong)] border-[0.5px] border-white/25 shadow-md shadow-[rgba(229,106,17,0.18)]'
                       )}
                     >
                       {isLoading && item.product_id === productId ? (

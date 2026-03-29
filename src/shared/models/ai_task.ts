@@ -1,4 +1,4 @@
-import { and, count, desc, eq, sql } from 'drizzle-orm';
+import { and, count, desc, eq, gte, lt, sql } from 'drizzle-orm';
 
 import { db } from '@/core/db';
 import { aiTask, credit } from '@/config/db/schema';
@@ -107,11 +107,13 @@ export async function updateAITaskById(id: string, updateAITask: UpdateAITask) {
 
 export async function getAITasksCount({
   userId,
+  chatId,
   status,
   mediaType,
   provider,
 }: {
   userId?: string;
+  chatId?: string;
   status?: string;
   mediaType?: string;
   provider?: string;
@@ -122,6 +124,7 @@ export async function getAITasksCount({
     .where(
       and(
         userId ? eq(aiTask.userId, userId) : undefined,
+        chatId ? eq(aiTask.chatId, chatId) : undefined,
         mediaType ? eq(aiTask.mediaType, mediaType) : undefined,
         provider ? eq(aiTask.provider, provider) : undefined,
         status ? eq(aiTask.status, status) : undefined
@@ -131,8 +134,35 @@ export async function getAITasksCount({
   return result?.count || 0;
 }
 
+export async function getAITasksCountByDateRange({
+  userId,
+  mediaType,
+  dateFrom,
+  dateTo,
+}: {
+  userId: string;
+  mediaType: string;
+  dateFrom: Date;
+  dateTo: Date;
+}): Promise<number> {
+  const [result] = await db()
+    .select({ count: count() })
+    .from(aiTask)
+    .where(
+      and(
+        eq(aiTask.userId, userId),
+        eq(aiTask.mediaType, mediaType),
+        gte(aiTask.createdAt, dateFrom),
+        lt(aiTask.createdAt, dateTo)
+      )
+    );
+
+  return result?.count || 0;
+}
+
 export async function getAITasks({
   userId,
+  chatId,
   status,
   mediaType,
   provider,
@@ -141,6 +171,7 @@ export async function getAITasks({
   getUser = false,
 }: {
   userId?: string;
+  chatId?: string;
   status?: string;
   mediaType?: string;
   provider?: string;
@@ -154,6 +185,7 @@ export async function getAITasks({
     .where(
       and(
         userId ? eq(aiTask.userId, userId) : undefined,
+        chatId ? eq(aiTask.chatId, chatId) : undefined,
         mediaType ? eq(aiTask.mediaType, mediaType) : undefined,
         provider ? eq(aiTask.provider, provider) : undefined,
         status ? eq(aiTask.status, status) : undefined

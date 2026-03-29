@@ -1,22 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UIMessage, UseChatHelpers } from '@ai-sdk/react';
-import { BrainCircuitIcon, GlobeIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import {
   PromptInput,
-  PromptInputActionAddAttachments,
-  PromptInputActionMenu,
-  PromptInputActionMenuContent,
-  PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
-  PromptInputButton,
   PromptInputFooter,
-  PromptInputHeader,
   PromptInputSelect,
   PromptInputSelectContent,
   PromptInputSelectItem,
@@ -27,21 +18,14 @@ import {
   PromptInputTools,
   type PromptInputMessage,
 } from '@/shared/components/ai-elements/prompt-input';
-import { Label } from '@/shared/components/ui/label';
-import { Switch } from '@/shared/components/ui/switch';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/shared/components/ui/tooltip';
-import { useChatContext } from '@/shared/contexts/chat';
-import { ChatModel } from '@/shared/types/chat';
+import { useToolCatalog } from '@/shared/hooks/use-tool-catalog';
 
 export function ChatInput({
   handleSubmit,
   status,
   error,
   onInputChange,
+  initialInput,
 }: {
   handleSubmit: (
     message: PromptInputMessage,
@@ -50,42 +34,35 @@ export function ChatInput({
   status?: UseChatHelpers<UIMessage>['status'];
   error?: string | null;
   onInputChange?: (value: string) => void;
+  initialInput?: string;
 }) {
   const t = useTranslations('ai.chat.generator');
-
-  // todo: get models from api
-  const models: ChatModel[] = [
-    {
-      title: 'Kimi K2 Thinking',
-      name: 'moonshotai/kimi-k2-thinking',
-    },
-    {
-      title: 'Deepseek R1',
-      name: 'deepseek/deepseek-r1',
-    },
-    {
-      title: 'GPT-5',
-      name: 'openai/gpt-5',
-    },
-    {
-      title: 'Claude 4.5 Sonnet',
-      name: 'anthropic/claude-4.5-sonnet',
-    },
-  ];
-
-  const [model, setModel] = useState<string>(models[0].name);
+  const { models, loading } = useToolCatalog('chat');
+  const [model, setModel] = useState<string>('');
   const [input, setInput] = useState('');
-  const [webSearch, setWebSearch] = useState(false);
-  const [reasoning, setReasoning] = useState(false);
   const selectedModelLabel =
-    models.find((item) => item.name === model)?.title ?? models[0]?.title ?? '';
+    models.find((item) => item.id === model)?.label ??
+    models[0]?.label ??
+    'Select model';
+
+  useEffect(() => {
+    if (!model && models[0]?.id) {
+      setModel(models[0].id);
+    }
+  }, [model, models]);
+
+  useEffect(() => {
+    if (initialInput) {
+      setInput(initialInput);
+    }
+  }, [initialInput]);
 
   return (
     <div className="w-full">
       <PromptInput
         onSubmit={async (message) => {
           try {
-            handleSubmit(message, { model, webSearch, reasoning });
+            handleSubmit(message, { model });
             setInput('');
           } catch (err) {
             // Allow parent to control error display/state. Do not clear input.
@@ -93,13 +70,8 @@ export function ChatInput({
         }}
         className="mt-4"
         globalDrop
-        multiple
+        multiple={false}
       >
-        {/* <PromptInputHeader>
-        <PromptInputAttachments>
-          {(attachment) => <PromptInputAttachment data={attachment} />}
-        </PromptInputAttachments>
-      </PromptInputHeader> */}
         <PromptInputBody>
           <PromptInputTextarea
             className="overflow-hidden p-4 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -114,38 +86,6 @@ export function ChatInput({
         </PromptInputBody>
         <PromptInputFooter>
           <PromptInputTools>
-            {/* <PromptInputActionMenu>
-            <PromptInputActionMenuTrigger />
-            <PromptInputActionMenuContent>
-              <PromptInputActionAddAttachments />
-            </PromptInputActionMenuContent>
-          </PromptInputActionMenu>
-          <PromptInputButton
-            variant={webSearch ? 'default' : 'ghost'}
-            onClick={() => setWebSearch(!webSearch)}
-          >
-            <GlobeIcon size={16} />
-            <span>Search</span>
-          </PromptInputButton> */}
-            <div className="flex items-center">
-              <Switch
-                id="prompt-reasoning-switch"
-                checked={reasoning}
-                onCheckedChange={setReasoning}
-                // className="peer sr-only"
-              />
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Label
-                    htmlFor="prompt-reasoning-switch"
-                    className="text-muted-foreground hover:text-foreground peer-data-[state=checked]:text-primary inline-flex cursor-pointer items-center rounded-md p-2 transition-colors"
-                  >
-                    <BrainCircuitIcon size={16} />
-                  </Label>
-                </TooltipTrigger>
-                <TooltipContent sideOffset={6}>Reasoning</TooltipContent>
-              </Tooltip>
-            </div>
             <PromptInputSelect
               onValueChange={(value) => {
                 setModel(value);
@@ -154,20 +94,20 @@ export function ChatInput({
             >
               <PromptInputSelectTrigger>
                 <PromptInputSelectValue>
-                  {selectedModelLabel}
+                  {loading ? 'Loading models...' : selectedModelLabel}
                 </PromptInputSelectValue>
               </PromptInputSelectTrigger>
               <PromptInputSelectContent>
                 {models.map((model) => (
-                  <PromptInputSelectItem key={model.name} value={model.name}>
-                    {model.title}
+                  <PromptInputSelectItem key={model.id} value={model.id}>
+                    {model.label}
                   </PromptInputSelectItem>
                 ))}
               </PromptInputSelectContent>
             </PromptInputSelect>
           </PromptInputTools>
           <PromptInputSubmit
-            disabled={!input || status === 'submitted'}
+            disabled={!input || status === 'submitted' || !model}
             status={status}
           />
         </PromptInputFooter>

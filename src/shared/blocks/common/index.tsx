@@ -11,7 +11,6 @@ export * from './top-banner';
 export * from './theme-toggler';
 
 export * from './copyright';
-export * from './built-with';
 
 export * from './page-header';
 export * from './section-header';
@@ -29,3 +28,4 @@ export * from '../sign/sign-user';
 export * from './audio-player';
 
 export * from './error-boundary';
+export * from './generation-limit-modal';

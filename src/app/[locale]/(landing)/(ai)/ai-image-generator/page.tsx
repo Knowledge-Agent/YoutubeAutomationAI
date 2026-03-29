@@ -1,9 +1,8 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { getThemePage } from '@/core/theme';
-import { ImageGenerator } from '@/shared/blocks/generator';
+import { AiImageHubUi } from '@/shared/blocks/tools/ai-image-hub-ui';
+import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
 import { getMetadata } from '@/shared/lib/seo';
-import { DynamicPage } from '@/shared/types/blocks/landing';
 
 export const revalidate = 3600;
 
@@ -20,28 +19,20 @@ export default async function AiImageGeneratorPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // get ai image data
   const t = await getTranslations('ai.image');
 
-  // build page sections
-  const page: DynamicPage = {
-    sections: {
-      hero: {
-        title: t.raw('page.title'),
-        description: t.raw('page.description'),
-        background_image: {
-          src: '/imgs/bg/tree.jpg',
-          alt: 'hero background',
-        },
-      },
-      generator: {
-        component: <ImageGenerator srOnlyTitle={t.raw('generator.title')} />,
-      },
-    },
-  };
-
-  // load page component
-  const Page = await getThemePage('dynamic-page');
-
-  return <Page locale={locale} page={page} />;
+  return (
+    <ToolWorkspaceShell
+      activeKey="ai-image"
+      activeTab="ai-image"
+      workspaceMode="hub"
+      title={t.raw('page.title')}
+      description={t.raw('page.description')}
+      actions={['Favorites', 'Assets']}
+      contentCard={false}
+      showIntroCard={false}
+    >
+      <AiImageHubUi />
+    </ToolWorkspaceShell>
+  );
 }

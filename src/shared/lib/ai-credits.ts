@@ -1,24 +1,10 @@
-function parseEnvFlag(value: string | undefined, fallback: boolean) {
-  if (value === undefined) {
-    return fallback;
+export const AI_CREDITS_ENABLED =
+  process.env.NEXT_PUBLIC_AI_CREDITS_ENABLED === 'true';
+
+export function getAICreditCost(credits?: number | null) {
+  if (!AI_CREDITS_ENABLED) {
+    return 0;
   }
 
-  const normalized = value.trim().toLowerCase();
-
-  if (normalized === 'true' || normalized === '1' || normalized === 'yes') {
-    return true;
-  }
-
-  if (normalized === 'false' || normalized === '0' || normalized === 'no') {
-    return false;
-  }
-
-  return fallback;
+  return typeof credits === 'number' ? credits : 0;
 }
-
-// Credits are enabled by default because the current AI generation APIs enforce
-// credit checks on the backend. This flag only controls client-side UX.
-export const AI_CREDITS_ENABLED = parseEnvFlag(
-  process.env.NEXT_PUBLIC_AI_CREDITS_ENABLED,
-  true
-);

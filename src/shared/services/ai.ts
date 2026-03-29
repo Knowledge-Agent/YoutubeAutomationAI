@@ -1,5 +1,6 @@
 import {
   AIManager,
+  ApimartProvider,
   FalProvider,
   GeminiProvider,
   KieProvider,
@@ -12,6 +13,16 @@ import { Configs, getAllConfigs } from '@/shared/models/config';
  */
 export function getAIManagerWithConfigs(configs: Configs) {
   const aiManager = new AIManager();
+
+  if (configs.apimart_api_key) {
+    aiManager.addProvider(
+      new ApimartProvider({
+        apiKey: configs.apimart_api_key,
+        baseUrl: configs.apimart_base_url,
+      }),
+      true
+    );
+  }
 
   if (configs.kie_api_key) {
     aiManager.addProvider(

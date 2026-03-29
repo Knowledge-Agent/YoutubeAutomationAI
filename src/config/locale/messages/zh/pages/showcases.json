@@ -1,140 +1,148 @@
 {
   "metadata": {
-    "title": "工作流案例",
-    "description": "看看 YouTube Automation AI 如何支撑研究、写稿、分镜与频道运营。"
+    "title": "案例展示",
+    "description": "精选 AI 创作者工具与产品"
   },
   "page": {
-    "title": "工作流案例",
+    "title": "案例展示",
     "sections": {
       "showcases": {
         "id": "showcases",
-        "title": "团队如何使用 YouTube Automation AI",
-        "description": "适用于无露脸频道、agency 与内容改编团队的真实使用场景。",
+        "title": "精选 AI 创作者工具与产品",
+        "description": "简单、快速、高效。",
         "groups": [
           {
             "name": "all",
-            "title": "全部"
+            "title": "所有项目"
           },
           {
-            "name": "research",
-            "title": "研究"
+            "name": "ai-chatbot",
+            "title": "AI 聊天机器人"
           },
           {
-            "name": "writing",
-            "title": "写稿"
+            "name": "ai-image",
+            "title": "AI 图片"
           },
           {
-            "name": "storyboard",
-            "title": "分镜"
+            "name": "ai-video",
+            "title": "AI 视频"
           },
           {
-            "name": "production",
-            "title": "制作"
+            "name": "ai-audio",
+            "title": "AI 音频"
           },
           {
-            "name": "operations",
-            "title": "运营"
+            "name": "ai-music",
+            "title": "AI 音乐"
+          },
+          {
+            "name": "ai-coding",
+            "title": "AI 编程"
+          },
+          {
+            "name": "other",
+            "title": "其他"
           }
         ],
         "items": [
           {
-            "title": "原视频拆解看板",
-            "description": "把一条表现好的视频拆成下一条内容可复用的研究 brief。",
-            "url": "/blog",
-            "target": "_self",
+            "title": "ThinkAny",
+            "description": "AI 搜索引擎",
+            "url": "https://thinkany.ai",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/7.png",
-              "alt": "原视频拆解看板"
+              "alt": "案例展示"
             },
-            "group": "research"
+            "group": "ai-chatbot"
           },
           {
-            "title": "开头改写冲刺",
-            "description": "在完整写稿前先优化开头与 retention 节奏。",
-            "url": "/blog",
-            "target": "_self",
+            "title": "HeyBeauty",
+            "description": "AI 虚拟试妆",
+            "url": "https://heybeauty.ai",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/5.png",
-              "alt": "开头改写冲刺"
+              "alt": "案例展示"
             },
-            "group": "writing"
+            "group": "ai-image"
           },
           {
-            "title": "分镜草稿队列",
-            "description": "为无露脸视频生成场景提示词与镜头想法。",
-            "url": "/blog",
-            "target": "_self",
+            "title": "AI Wallpaper",
+            "description": "AI 壁纸生成器",
+            "url": "https://aiwallpaper.shop",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/1.png",
-              "alt": "分镜草稿队列"
+              "alt": "案例展示"
             },
-            "group": "storyboard"
+            "group": "ai-image"
           },
           {
-            "title": "长视频改短视频工作流",
-            "description": "把一个来源素材映射成多种 YouTube 可交付内容。",
-            "url": "/blog",
-            "target": "_self",
+            "title": "AI Cover",
+            "description": "AI 封面生成器",
+            "url": "https://aicover.design",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/2.png",
-              "alt": "长视频改短视频工作流"
+              "alt": "案例展示"
             },
-            "group": "production"
+            "group": "ai-image"
           },
           {
-            "title": "Agency 客户交接包",
-            "description": "把脚本、参考资料和修订说明打包给剪辑和客户。",
-            "url": "/pricing",
-            "target": "_self",
+            "title": "GPTs Works",
+            "description": "GPTs 导航",
+            "url": "https://gpts.works",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/3.png",
-              "alt": "Agency 客户交接包"
+              "alt": "案例展示"
             },
-            "group": "operations"
+            "group": "other"
           },
           {
-            "title": "封面与素材规划",
-            "description": "在进入制作前先让视觉概念和脚本保持一致。",
-            "url": "/blog",
-            "target": "_self",
+            "title": "Melodisco",
+            "description": "AI 音乐播放器",
+            "url": "https://melodis.co",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/4.png",
-              "alt": "封面与素材规划"
+              "alt": "案例展示"
             },
-            "group": "storyboard"
+            "group": "ai-music"
           },
           {
-            "title": "Niche 研究工作流",
-            "description": "在决定下一条内容前先比较主题、格式和 hook。",
-            "url": "/blog",
-            "target": "_self",
+            "title": "Pagen",
+            "description": "AI 落地页生成器",
+            "url": "https://pagen.so",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/6.png",
-              "alt": "Niche 研究工作流"
+              "alt": "案例展示"
             },
-            "group": "research"
+            "group": "ai-coding"
           },
           {
-            "title": "自动化运营栈",
-            "description": "把研究、提示词与制作步骤连成一套可重复系统。",
-            "url": "/docs",
-            "target": "_self",
+            "title": "SoraFM",
+            "description": "AI 视频生成器",
+            "url": "https://sorafm.trys.ai",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/8.png",
-              "alt": "自动化运营栈"
+              "alt": "案例展示"
             },
-            "group": "operations"
+            "group": "ai-video"
           },
           {
-            "title": "产品定位与转化表达",
-            "description": "用更清晰的工作流表达解释你的 YouTube automation 方案。",
-            "url": "/#hero",
-            "target": "_self",
+            "title": "PodLM",
+            "description": "AI 播客生成器",
+            "url": "https://podlm.ai",
+            "target": "_blank",
             "image": {
               "src": "/imgs/cases/9.png",
-              "alt": "产品定位与转化表达"
+              "alt": "案例展示"
             },
-            "group": "production"
+            "group": "ai-audio"
           }
         ]
       }

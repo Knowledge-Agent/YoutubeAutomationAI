@@ -1,15 +1,15 @@
 {
   "metadata": {
     "title": "价格",
-    "description": "选择适合你 YouTube automation 工作流的套餐。"
+    "description": "选择方案，立即开始"
   },
   "page": {
-    "title": "YouTube Automation AI 价格",
+    "title": "价格",
     "sections": {
       "pricing": {
         "id": "pricing",
         "title": "价格",
-        "description": "根据你的研究、脚本改写、分镜生成和制作交接频率，选择合适的积分方案。",
+        "description": "选择适合你的积分与工作区方案。",
         "groups": [
           {
             "name": "one-time",
@@ -29,14 +29,16 @@
         "items": [
           {
             "title": "入门版",
-            "description": "验证一条可复用的频道工作流。",
+            "description": "开启你的第一个 SaaS 创业项目。",
             "features_title": "包含",
             "features": [
-              "100 积分，可用于原视频分析、脚本改写与分镜草稿",
-              "参考笔记、转录拆解与镜头提示词",
-              "可导出给剪辑与运营的制作 brief",
-              "适合单一无露脸频道格式的专注工作流",
-              "邮件支持"
+              "100 积分，有效期 1 个月",
+              "NextJS 项目模板",
+              "SEO 友好结构",
+              "支持 Stripe 支付",
+              "Supabase 数据存储",
+              "Google Oauth & 一键登录",
+              "多语言（i18n）支持"
             ],
             "interval": "one-time",
             "amount": 9900,
@@ -54,30 +56,32 @@
             ],
             "unit": "",
             "is_featured": false,
-            "tip": "一次付费，适合试水和单次上线验证。",
+            "tip": "一次付费，畅享无限项目部署！",
             "button": {
-              "title": "选择入门版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "starter",
-            "product_name": "YouTube Automation AI 入门版",
+            "product_name": "入门版",
             "credits": 100,
             "valid_days": 30,
             "group": "one-time"
           },
           {
             "title": "标准版",
-            "description": "支持成长中的团队或 agency 工作流。",
+            "description": "快速交付你的 SaaS 创业项目。",
             "label": "热门",
             "features_title": "包含入门版功能，此外",
             "features": [
               "200 积分，有效期 3 个月",
-              "适合重复内容格式的工作流模板",
-              "为编剧、分镜和剪辑准备的共享交接说明",
-              "修订与新生成任务享受更高优先级",
-              "研究、写稿与剪辑之间更顺畅的协作",
-              "优先邮件支持"
+              "支持 Vercel 或 Cloudflare 部署",
+              "自动生成隐私政策&服务条款",
+              "集成 Google Analytics",
+              "集成 Google Search Console",
+              "Discord 技术社区",
+              "首个上线项目技术支持",
+              "终身免费更新"
             ],
             "interval": "one-time",
             "amount": 19900,
@@ -95,27 +99,29 @@
             ],
             "unit": "",
             "is_featured": true,
-            "tip": "一次付费，适合有稳定发布节奏的团队。",
+            "tip": "一次付费，畅享无限项目部署！",
             "button": {
-              "title": "选择标准版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "standard",
-            "product_name": "YouTube Automation AI 标准版",
+            "product_name": "标准版",
             "credits": 200,
             "valid_days": 90,
             "group": "one-time"
           },
           {
             "title": "高级版",
-            "description": "适合更高频的视频复刻与内容运营。",
+            "description": "交付任意 AI SaaS 创业项目。",
             "features_title": "包含标准版功能，此外",
             "features": [
               "300 积分，有效期 1 年",
-              "更高吞吐量的无露脸频道规划能力",
-              "脚本、视觉提示、素材与修订说明的高级打包",
-              "更清晰的审核、批注与质检视图",
+              "内置 AI 业务功能",
+              "用户中心",
+              "积分系统",
+              "为你的 SaaS 售卖 API",
+              "后台管理系统",
               "优先技术支持"
             ],
             "interval": "one-time",
@@ -134,28 +140,30 @@
             ],
             "unit": "",
             "is_featured": false,
-            "tip": "一次付费，适合 agency 和多频道团队。",
+            "tip": "一次付费，畅享无限项目部署！",
             "button": {
-              "title": "选择高级版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "premium",
-            "product_name": "YouTube Automation AI 高级版",
+            "product_name": "高级版",
             "credits": 300,
             "valid_days": 365,
             "group": "one-time"
           },
           {
             "title": "入门版",
-            "description": "让一个频道每个月稳定推进。",
+            "description": "开启你的第一个 SaaS 创业项目。",
             "features_title": "包含",
             "features": [
-              "100 月度积分，可用于研究、改写与分镜任务",
-              "参考笔记、转录拆解与镜头提示词",
-              "可导出给剪辑与运营的制作 brief",
-              "适合单一无露脸频道格式的专注工作流",
-              "邮件支持"
+              "100 积分，有效期 1 个月",
+              "NextJS 项目模板",
+              "SEO 友好结构",
+              "支持 Stripe 支付",
+              "Supabase 数据存储",
+              "Google Oauth & 一键登录",
+              "多语言（i18n）支持"
             ],
             "interval": "month",
             "amount": 8900,
@@ -164,14 +172,14 @@
             "original_price": "$99",
             "unit": "/ 月",
             "is_featured": false,
-            "tip": "按月付费，适合持续的小规模试验。",
+            "tip": "按月付费，畅享无限项目部署！",
             "button": {
-              "title": "选择入门版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "starter-monthly",
-            "product_name": "YouTube Automation AI 入门版包月",
+            "product_name": "入门版包月",
             "credits": 100,
             "valid_days": 30,
             "group": "monthly",
@@ -179,16 +187,18 @@
           },
           {
             "title": "标准版",
-            "description": "每月支撑多位创作者或多个客户项目。",
+            "description": "快速交付你的 SaaS 创业项目。",
             "label": "热门",
             "features_title": "包含入门版功能，此外",
             "features": [
-              "200 月度积分，适合活跃发布周期",
-              "适合重复内容格式的工作流模板",
-              "为编剧、分镜和剪辑准备的共享交接说明",
-              "修订与新生成任务享受更高优先级",
-              "研究、写稿与剪辑之间更顺畅的协作",
-              "优先邮件支持"
+              "200 积分，有效期 1 个月",
+              "支持 Vercel 或 Cloudflare 部署",
+              "自动生成隐私政策&服务条款",
+              "集成 Google Analytics",
+              "集成 Google Search Console",
+              "Discord 技术社区",
+              "首个上线项目技术支持",
+              "终身免费更新"
             ],
             "interval": "month",
             "amount": 16900,
@@ -197,14 +207,14 @@
             "original_price": "$199",
             "unit": "/ 月",
             "is_featured": true,
-            "tip": "按月付费，适合稳定产出的团队。",
+            "tip": "按月付费，极速上线你的 SaaS 项目。",
             "button": {
-              "title": "选择标准版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "standard-monthly",
-            "product_name": "YouTube Automation AI 标准版包月",
+            "product_name": "标准版包月",
             "credits": 200,
             "valid_days": 30,
             "group": "monthly",
@@ -212,13 +222,15 @@
           },
           {
             "title": "高级版",
-            "description": "为更高频的运营节奏保留充足余量。",
+            "description": "交付任意 AI SaaS 创业项目。",
             "features_title": "包含标准版功能，此外",
             "features": [
-              "300 月度积分，适合更大的制作排期",
-              "更高吞吐量的无露脸频道规划能力",
-              "脚本、视觉提示、素材与修订说明的高级打包",
-              "更清晰的审核、批注与质检视图",
+              "300 积分，有效期 1 个月",
+              "内置 AI 业务功能",
+              "用户中心",
+              "积分系统",
+              "为你的 SaaS 售卖 API",
+              "后台管理系统",
               "优先技术支持"
             ],
             "interval": "month",
@@ -228,14 +240,14 @@
             "original_price": "$299",
             "unit": "/ 月",
             "is_featured": false,
-            "tip": "按月付费，适合有持续需求的 agency。",
+            "tip": "按月付费，助你交付任何 AI SaaS 项目。",
             "button": {
-              "title": "选择高级版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "premium-monthly",
-            "product_name": "YouTube Automation AI 高级版包月",
+            "product_name": "高级版包月",
             "credits": 300,
             "valid_days": 30,
             "group": "monthly",
@@ -243,14 +255,16 @@
           },
           {
             "title": "入门版",
-            "description": "用更低年成本维护一条频道工作流。",
+            "description": "开启你的第一个 SaaS 创业项目。",
             "features_title": "包含",
             "features": [
-              "1200 年度积分，可用于研究、改写与分镜任务",
-              "参考笔记、转录拆解与镜头提示词",
-              "可导出给剪辑与运营的制作 brief",
-              "适合单一无露脸频道格式的专注工作流",
-              "邮件支持"
+              "100 积分，有效期 1 年",
+              "NextJS 项目模板",
+              "SEO 友好结构",
+              "支持 Stripe 支付",
+              "Supabase 数据存储",
+              "Google Oauth & 一键登录",
+              "多语言（i18n）支持"
             ],
             "interval": "year",
             "amount": 82800,
@@ -259,14 +273,14 @@
             "original_price": "$89",
             "unit": "/ 月",
             "is_featured": false,
-            "tip": "按年付费，最适合长期运营单一频道。",
+            "tip": "按年付费，畅享无限项目部署！",
             "button": {
-              "title": "选择入门版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "starter-yearly",
-            "product_name": "YouTube Automation AI 入门版包年",
+            "product_name": "入门版包年",
             "credits": 1200,
             "valid_days": 365,
             "group": "yearly",
@@ -274,16 +288,18 @@
           },
           {
             "title": "标准版",
-            "description": "给成长中的团队预留一整年的内容产能。",
+            "description": "快速交付你的 SaaS 创业项目。",
             "label": "热门",
             "features_title": "包含入门版功能，此外",
             "features": [
-              "2400 年度积分，适合活跃发布日历",
-              "适合重复内容格式的工作流模板",
-              "为编剧、分镜和剪辑准备的共享交接说明",
-              "修订与新生成任务享受更高优先级",
-              "研究、写稿与剪辑之间更顺畅的协作",
-              "优先邮件支持"
+              "200 积分，有效期 1 年",
+              "支持 Vercel 或 Cloudflare 部署",
+              "自动生成隐私政策&服务条款",
+              "集成 Google Analytics",
+              "集成 Google Search Console",
+              "Discord 技术社区",
+              "首个上线项目技术支持",
+              "终身免费更新"
             ],
             "interval": "year",
             "amount": 154800,
@@ -292,14 +308,14 @@
             "original_price": "$169",
             "unit": "/ 月",
             "is_featured": true,
-            "tip": "按年付费，适合固定节奏的团队。",
+            "tip": "按年付费，极速上线你的 SaaS 项目。",
             "button": {
-              "title": "选择标准版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "standard-yearly",
-            "product_name": "YouTube Automation AI 标准版包年",
+            "product_name": "标准版包年",
             "credits": 2400,
             "valid_days": 365,
             "group": "yearly",
@@ -307,13 +323,15 @@
           },
           {
             "title": "高级版",
-            "description": "全年支撑多频道或多客户并行推进。",
+            "description": "交付任意 AI SaaS 创业项目。",
             "features_title": "包含标准版功能，此外",
             "features": [
-              "3600 年度积分，适合高频规划与修订",
-              "更高吞吐量的无露脸频道规划能力",
-              "脚本、视觉提示、素材与修订说明的高级打包",
-              "更清晰的审核、批注与质检视图",
+              "300 积分，有效期 1 年",
+              "内置 AI 业务功能",
+              "用户中心",
+              "积分系统",
+              "为你的 SaaS 售卖 API",
+              "后台管理系统",
               "优先技术支持"
             ],
             "interval": "year",
@@ -323,14 +341,14 @@
             "original_price": "$249",
             "unit": "/ 月",
             "is_featured": false,
-            "tip": "按年付费，适合 agency 和多频道团队。",
+            "tip": "按年付费，助你交付任何 AI SaaS 项目。",
             "button": {
-              "title": "选择高级版",
+              "title": "选择方案",
               "url": "/#pricing",
               "icon": "RiFlashlightFill"
             },
             "product_id": "premium-yearly",
-            "product_name": "YouTube Automation AI 高级版包年",
+            "product_name": "高级版包年",
             "credits": 3600,
             "valid_days": 365,
             "group": "yearly",

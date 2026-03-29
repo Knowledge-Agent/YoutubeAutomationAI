@@ -1,4 +1,9 @@
-import { R2Provider, S3Provider, StorageManager } from '@/extensions/storage';
+import {
+  OSSProvider,
+  R2Provider,
+  S3Provider,
+  StorageManager,
+} from '@/extensions/storage';
 import { Configs, getAllConfigs } from '@/shared/models/config';
 
 /**
@@ -6,6 +11,7 @@ import { Configs, getAllConfigs } from '@/shared/models/config';
  */
 export function getStorageServiceWithConfigs(configs: Configs) {
   const storageManager = new StorageManager();
+  let hasDefaultProvider = false;
 
   // Add R2 provider if configured
   if (
@@ -30,9 +36,31 @@ export function getStorageServiceWithConfigs(configs: Configs) {
       }),
       true // Set R2 as default
     );
+    hasDefaultProvider = true;
   }
 
-  // Add S3 provider if configured (future support)
+  if (
+    configs.aliyun_oss_region &&
+    configs.aliyun_oss_access_key_id &&
+    configs.aliyun_oss_access_key_secret &&
+    configs.aliyun_oss_bucket
+  ) {
+    storageManager.addProvider(
+      new OSSProvider({
+        region: configs.aliyun_oss_region,
+        accessKeyId: configs.aliyun_oss_access_key_id,
+        secretAccessKey: configs.aliyun_oss_access_key_secret,
+        bucket: configs.aliyun_oss_bucket,
+        uploadPath: configs.aliyun_oss_upload_path,
+        endpoint: configs.aliyun_oss_endpoint,
+        publicDomain: configs.aliyun_oss_public_domain,
+      }),
+      !hasDefaultProvider
+    );
+    hasDefaultProvider = true;
+  }
+
+  // Add S3 provider if configured
   if (configs.s3_access_key && configs.s3_secret_key && configs.s3_bucket) {
     storageManager.addProvider(
       new S3Provider({
@@ -42,7 +70,8 @@ export function getStorageServiceWithConfigs(configs: Configs) {
         secretAccessKey: configs.s3_secret_key,
         bucket: configs.s3_bucket,
         publicDomain: configs.s3_domain,
-      })
+      }),
+      !hasDefaultProvider
     );
   }
 

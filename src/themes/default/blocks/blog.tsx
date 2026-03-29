@@ -28,16 +28,20 @@ export function Blog({
   return (
     <section
       id={section.id}
-      className={cn('py-14 md:py-20', section.className, className)}
+      className={cn(
+        'landing-shell-soft py-14 md:py-20',
+        section.className,
+        className
+      )}
     >
       <div className="mx-auto mb-6 max-w-4xl px-4 text-center md:mb-8">
         {section.sr_only_title && (
           <h1 className="sr-only">{section.sr_only_title}</h1>
         )}
-        <h2 className="mb-3 text-3xl font-bold text-pretty lg:text-4xl">
+        <h2 className="landing-title mb-3 text-3xl font-bold text-pretty lg:text-4xl">
           {section.title}
         </h2>
-        <p className="text-muted-foreground mx-auto max-w-3xl text-sm leading-7 md:text-base lg:text-lg">
+        <p className="landing-copy mx-auto max-w-3xl text-sm leading-7 md:text-base lg:text-lg">
           {section.description}
         </p>
       </div>
@@ -61,10 +65,10 @@ export function Blog({
                   href={href}
                   className={cn(
                     'rounded-full border px-3 py-1.5 text-sm font-medium transition-colors md:px-4',
-                    'hover:border-foreground/30 hover:bg-foreground/5',
+                    'hover:border-[color:var(--landing-line)] hover:bg-[var(--landing-hover)]',
                     isActive
                       ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                      : 'border-border bg-background text-muted-foreground'
+                      : 'landing-chip'
                   )}
                 >
                   {category.title}
@@ -83,7 +87,7 @@ export function Blog({
                 target={item.target || '_self'}
                 className="w-full p-4 md:w-1/3"
               >
-                <div className="border-border flex flex-col overflow-clip rounded-xl border">
+                <div className="landing-surface flex flex-col overflow-clip rounded-xl border shadow-[0_10px_24px_rgba(23,24,28,0.06)]">
                   {item.image && (
                     <div>
                       <img
@@ -94,14 +98,14 @@ export function Blog({
                     </div>
                   )}
                   <div className="px-4 py-4 md:px-4 md:py-4 lg:px-4 lg:py-4">
-                    <h3 className="mb-3 text-lg font-semibold md:mb-4 md:text-xl lg:mb-6">
+                    <h3 className="landing-title mb-3 text-lg font-semibold md:mb-4 md:text-xl lg:mb-6">
                       {item.title}
                     </h3>
-                    <p className="text-muted-foreground mb-3 md:mb-4 lg:mb-6">
+                    <p className="landing-copy mb-3 md:mb-4 lg:mb-6">
                       {item.description}
                     </p>
 
-                    <div className="text-muted-foreground flex items-center text-xs">
+                    <div className="landing-copy flex items-center text-xs">
                       {item.created_at && (
                         <div className="flex items-center gap-2">
                           <Calendar className="size-4" />
@@ -140,7 +144,7 @@ export function Blog({
             ))}
           </div>
         ) : (
-          <div className="text-muted-foreground text-md py-8">
+          <div className="landing-copy text-md py-8">
             {t('no_content')}
           </div>
         )}

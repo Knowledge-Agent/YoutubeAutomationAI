@@ -20,37 +20,37 @@ export function Faq({
   return (
     <section
       id={section.id}
-      className={cn('py-16 md:py-24', section.className, className)}
+      className={cn(
+        'landing-shell-soft py-24 md:py-32',
+        section.className,
+        className
+      )}
     >
-      <div className={`mx-auto max-w-full px-4 md:max-w-3xl md:px-8`}>
+      <div className="container mx-auto max-w-5xl px-4">
         <ScrollAnimation>
-          <div className="mx-auto max-w-2xl text-center text-balance">
-            <h2 className="text-foreground mb-4 text-3xl font-semibold tracking-tight md:text-4xl">
+          <div className="mx-auto max-w-3xl text-center text-balance">
+            <h2 className="landing-title mx-auto max-w-4xl text-[40px] font-medium tracking-tighter text-balance md:text-[42px]">
               {section.title}
             </h2>
-            <p className="text-muted-foreground mb-6 md:mb-12 lg:mb-16">
+            <p className="landing-copy mx-auto mt-4 max-w-3xl md:text-xl/relaxed">
               {section.description}
             </p>
           </div>
         </ScrollAnimation>
 
         <ScrollAnimation delay={0.2}>
-          <div className="mx-auto mt-12 max-w-full">
-            <Accordion
-              type="single"
-              collapsible
-              className="bg-muted dark:bg-muted/50 w-full rounded-2xl p-1"
-            >
+          <div className="landing-surface mx-auto mt-12 max-w-4xl rounded-[1.75rem] border p-1.5 shadow-[0_10px_24px_rgba(23,24,28,0.06)]">
+            <Accordion type="single" collapsible className="w-full">
               {section.items?.map((item, idx) => (
                 <div className="group" key={idx}>
                   <AccordionItem
                     value={item.question || item.title || ''}
-                    className="data-[state=open]:bg-card dark:data-[state=open]:bg-muted peer rounded-xl border-none px-7 py-1 data-[state=open]:border-none data-[state=open]:shadow-sm"
+                    className="peer rounded-[1.1rem] border-none px-5 py-1 data-[state=open]:bg-[var(--landing-canvas)]"
                   >
                     <AccordionTrigger
                       id={`faq-trigger-${idx + 1}`}
                       aria-controls={`faq-content-${idx + 1}`}
-                      className="cursor-pointer text-base hover:no-underline"
+                      className="landing-title cursor-pointer text-left text-base font-medium hover:no-underline"
                     >
                       {item.question || item.title || ''}
                     </AccordionTrigger>
@@ -58,18 +58,18 @@ export function Faq({
                       id={`faq-content-${idx + 1}`}
                       aria-labelledby={`faq-trigger-${idx + 1}`}
                     >
-                      <p className="text-base">
+                      <p className="landing-copy text-base leading-7">
                         {item.answer || item.description || ''}
                       </p>
                     </AccordionContent>
                   </AccordionItem>
-                  <hr className="mx-7 border-dashed group-last:hidden peer-data-[state=open]:opacity-0" />
+                  <hr className="mx-5 border-[color:var(--landing-line)] group-last:hidden peer-data-[state=open]:opacity-0" />
                 </div>
               ))}
             </Accordion>
 
             <p
-              className="text-muted-foreground mt-6 px-8"
+              className="landing-copy px-6 pt-4 pb-5 text-sm leading-6"
               dangerouslySetInnerHTML={{ __html: section.tip || '' }}
             />
           </div>

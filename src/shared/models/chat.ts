@@ -82,6 +82,31 @@ export async function findChatById(id: string): Promise<Chat> {
   return result;
 }
 
+export async function findLatestChatByProjectId({
+  projectId,
+  userId,
+  status = ChatStatus.CREATED,
+}: {
+  projectId: string;
+  userId: string;
+  status?: ChatStatus;
+}): Promise<Chat | undefined> {
+  const [result] = await db()
+    .select()
+    .from(chat)
+    .where(
+      and(
+        eq(chat.projectId, projectId),
+        eq(chat.userId, userId),
+        status ? eq(chat.status, status) : undefined
+      )
+    )
+    .orderBy(desc(chat.updatedAt), desc(chat.createdAt))
+    .limit(1);
+
+  return result;
+}
+
 export async function updateChat(
   id: string,
   updateChat: UpdateChat

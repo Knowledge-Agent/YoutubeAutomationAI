@@ -19,12 +19,12 @@ export function WhyAutomation({
     <section
       id={section.id}
       className={cn(
-        'bg-[#060816] py-20 text-white md:py-28',
+        'landing-shell py-24 md:py-32',
         section.className,
         className
       )}
     >
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="container mx-auto max-w-7xl px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -32,10 +32,10 @@ export function WhyAutomation({
           transition={{ duration: 0.45 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <h2 className="text-3xl font-semibold text-balance sm:text-4xl md:text-5xl">
+          <h2 className="landing-title mx-auto max-w-4xl text-[40px] font-medium tracking-tighter text-balance md:text-[42px]">
             {section.title}
           </h2>
-          <p className="mt-4 text-lg leading-8 text-slate-400">
+          <p className="landing-copy mx-auto mt-4 max-w-3xl text-balance md:text-xl/relaxed">
             {section.description}
           </p>
         </motion.div>
@@ -48,15 +48,17 @@ export function WhyAutomation({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: idx * 0.08 }}
-              className="group rounded-3xl border border-white/10 bg-white/5 p-6 transition-colors hover:border-orange-500/40 hover:bg-white/[0.07]"
+              className="landing-surface-muted flex h-full flex-col rounded-[1.4rem] border p-6 shadow-[0_8px_22px_rgba(23,24,28,0.05)] transition-shadow hover:shadow-[0_12px_28px_rgba(23,24,28,0.07)]"
             >
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-500/30 bg-gradient-to-br from-orange-500/20 to-red-500/20 text-orange-300">
+              <div className="landing-surface mb-4 flex h-11 w-11 items-center justify-center rounded-xl border shadow-xs">
                 {item.icon ? (
-                  <SmartIcon name={item.icon as string} className="size-6" />
+                  <SmartIcon name={item.icon as string} className="size-5" />
                 ) : null}
               </div>
-              <h3 className="text-xl font-semibold text-white">{item.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-400">
+              <h3 className="landing-title text-xl font-semibold tracking-tight">
+                {item.title}
+              </h3>
+              <p className="landing-copy mt-3 grow text-sm leading-7">
                 {item.description}
               </p>
               {Array.isArray(item.keywords) && item.keywords.length > 0 && (
@@ -64,7 +66,7 @@ export function WhyAutomation({
                   {item.keywords.map((keyword: string) => (
                     <span
                       key={keyword}
-                      className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1 text-xs text-orange-300"
+                      className="landing-chip rounded-full border px-3 py-1 text-xs"
                     >
                       {keyword}
                     </span>

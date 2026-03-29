@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
 import { useAppContext } from '@/shared/contexts/app';
+import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
 import { cn } from '@/shared/lib/utils';
 import { User as UserType } from '@/shared/models/user';
 import { NavItem, UserNav } from '@/shared/types/blocks/common';
@@ -174,7 +175,7 @@ export function SignUser({
               </>
             )}
 
-            {userNav?.show_credits && (
+            {AI_CREDITS_ENABLED && userNav?.show_credits && (
               <>
                 <DropdownMenuItem asChild>
                   <Link

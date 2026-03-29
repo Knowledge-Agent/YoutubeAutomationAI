@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { UIMessage, UseChatHelpers } from '@ai-sdk/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -8,7 +9,6 @@ import { toast } from 'sonner';
 import { useRouter } from '@/core/i18n/navigation';
 import { LocaleSelector } from '@/shared/blocks/common';
 import { PromptInputMessage } from '@/shared/components/ai-elements/prompt-input';
-import { SidebarTrigger } from '@/shared/components/ui/sidebar';
 import { useAppContext } from '@/shared/contexts/app';
 import { useChatContext } from '@/shared/contexts/chat';
 
@@ -17,6 +17,7 @@ import { ChatInput } from './input';
 export function ChatGenerator() {
   const router = useRouter();
   const locale = useLocale();
+  const searchParams = useSearchParams();
 
   const t = useTranslations('ai.chat.generator');
 
@@ -25,6 +26,9 @@ export function ChatGenerator() {
 
   const [status, setStatus] = useState<UseChatHelpers<UIMessage>['status']>();
   const [error, setError] = useState<string | null>(null);
+  const initialPrompt = searchParams.get('prompt') || '';
+  const toolSurface = searchParams.get('surface') || undefined;
+  const toolMode = searchParams.get('mode') || undefined;
 
   const fetchNewChat = async (
     msg: PromptInputMessage,
@@ -34,10 +38,26 @@ export function ChatGenerator() {
     setError(null);
 
     try {
-      const resp: Response = await fetch('/api/chat/new', {
+      const isToolChat = Boolean(toolSurface && toolMode);
+      const resp: Response = await fetch(
+        isToolChat ? '/api/chat/from-tool' : '/api/chat/new',
+        {
         method: 'POST',
-        body: JSON.stringify({ message: msg, body: body }),
-      });
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+            isToolChat
+              ? {
+                  prompt: msg.text,
+                  surface: toolSurface,
+                  mode: toolMode,
+                  model: body.model,
+                }
+              : { message: msg, body: body }
+          ),
+        }
+      );
       if (!resp.ok) {
         throw new Error(`request failed with status: ${resp.status}`);
       }
@@ -51,9 +71,15 @@ export function ChatGenerator() {
         throw new Error('failed to create chat');
       }
 
-      setChats([data, ...chats]);
+      setChats([
+        {
+          ...data,
+          model: body.model,
+        },
+        ...chats,
+      ]);
 
-      const path = `/chat/${id}`;
+      const path = data.path || `/chat/${id}`;
       router.push(path, {
         locale,
       });
@@ -91,7 +117,11 @@ export function ChatGenerator() {
       return;
     }
 
-    await fetchNewChat(message, body);
+    await fetchNewChat(message, {
+      ...body,
+      ...(toolSurface ? { toolSurface } : {}),
+      ...(toolMode ? { toolMode } : {}),
+    });
   };
 
   useEffect(() => {
@@ -101,7 +131,6 @@ export function ChatGenerator() {
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       <header className="bg-background sticky top-0 z-10 flex w-full items-center gap-2 px-4 py-3">
-        <SidebarTrigger className="size-7" />
         <div className="flex-1"></div>
         <LocaleSelector />
       </header>
@@ -110,6 +139,7 @@ export function ChatGenerator() {
         <ChatInput
           error={error}
           handleSubmit={handleSubmit}
+          initialInput={initialPrompt}
           onInputChange={() => {
             if (status === 'error') {
               setStatus(undefined);

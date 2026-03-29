@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { AITaskStatus } from '@/extensions/ai';
 import { AudioPlayer, Empty, LazyImage } from '@/shared/blocks/common';
 import { TableCard } from '@/shared/blocks/table';
+import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
 import { AITask, getAITasks, getAITasksCount } from '@/shared/models/ai_task';
 import { getUserInfo } from '@/shared/models/user';
 import { Button, Tab } from '@/shared/types/blocks/common';
@@ -45,7 +46,15 @@ export default async function AiTasksPage({
       { name: 'model', title: t('fields.model'), type: 'label' },
       // { name: 'options', title: t('fields.options'), type: 'copy' },
       { name: 'status', title: t('fields.status'), type: 'label' },
-      { name: 'costCredits', title: t('fields.cost_credits'), type: 'label' },
+      ...(AI_CREDITS_ENABLED
+        ? [
+            {
+              name: 'costCredits',
+              title: t('fields.cost_credits'),
+              type: 'label',
+            } as const,
+          ]
+        : []),
       {
         name: 'result',
         title: t('fields.result'),
@@ -87,6 +96,22 @@ export default async function AiTasksPage({
                       className="h-32 w-auto"
                     />
                   ))}
+                </div>
+              );
+            } else if (taskInfo.videos && taskInfo.videos.length > 0) {
+              return (
+                <div className="flex flex-col gap-2">
+                  {taskInfo.videos.map((video: any, index: number) =>
+                    video.videoUrl ? (
+                      <video
+                        key={index}
+                        src={video.videoUrl}
+                        controls
+                        preload="metadata"
+                        className="h-32 w-auto rounded-md"
+                      />
+                    ) : null
+                  )}
                 </div>
               );
             } else {

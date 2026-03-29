@@ -30,7 +30,7 @@ export const envConfigs: ConfigMap = {
   app_preview_image:
     process.env.NEXT_PUBLIC_APP_PREVIEW_IMAGE ?? '/og-image.png',
   theme: process.env.NEXT_PUBLIC_THEME ?? 'default',
-  appearance: process.env.NEXT_PUBLIC_APPEARANCE ?? 'dark',
+  appearance: process.env.NEXT_PUBLIC_APPEARANCE ?? 'light',
   locale: process.env.NEXT_PUBLIC_DEFAULT_LOCALE ?? 'en',
   database_url: process.env.DATABASE_URL ?? '',
   database_auth_token: process.env.DATABASE_AUTH_TOKEN ?? '',
@@ -51,6 +51,13 @@ export const envConfigs: ConfigMap = {
   db_max_connections: process.env.DB_MAX_CONNECTIONS || '1',
   auth_url: process.env.AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '',
   auth_secret: process.env.AUTH_SECRET ?? '', // openssl rand -base64 32
+  aliyun_oss_region: process.env.ALIYUN_OSS_REGION ?? '',
+  aliyun_oss_access_key_id: process.env.ALIYUN_OSS_ACCESS_KEY_ID ?? '',
+  aliyun_oss_access_key_secret: process.env.ALIYUN_OSS_ACCESS_KEY_SECRET ?? '',
+  aliyun_oss_bucket: process.env.ALIYUN_OSS_BUCKET ?? '',
+  aliyun_oss_public_domain: process.env.ALIYUN_OSS_PUBLIC_DOMAIN ?? '',
+  aliyun_oss_upload_path: process.env.ALIYUN_OSS_UPLOAD_PATH ?? '',
+  aliyun_oss_endpoint: process.env.ALIYUN_OSS_ENDPOINT ?? '',
   version: packageJson.version,
   locale_detect_enabled:
     process.env.NEXT_PUBLIC_LOCALE_DETECT_ENABLED ?? 'false',

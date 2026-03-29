@@ -18,7 +18,7 @@ export function FeaturesList({
     // Prevent horizontal scrolling
     <section
       className={cn(
-        'overflow-x-hidden py-16 md:py-24',
+        'landing-shell overflow-x-hidden py-16 md:py-24',
         section.className,
         className
       )}
@@ -36,12 +36,12 @@ export function FeaturesList({
           </ScrollAnimation>
           <div className="w-full min-w-0 flex-1">
             <ScrollAnimation delay={0.1}>
-              <h2 className="text-foreground text-4xl font-semibold text-balance break-words">
+              <h2 className="landing-title text-4xl font-semibold text-balance break-words">
                 {section.title}
               </h2>
             </ScrollAnimation>
             <ScrollAnimation delay={0.2}>
-              <p className="text-md text-muted-foreground my-6 text-balance break-words">
+              <p className="landing-copy text-md my-6 text-balance break-words">
                 {section.description}
               </p>
             </ScrollAnimation>
@@ -62,7 +62,9 @@ export function FeaturesList({
                         className={cn(
                           'focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
                           'h-9 px-4 py-2',
-                          'bg-background ring-foreground/10 hover:bg-muted/50 dark:ring-foreground/15 dark:hover:bg-muted/50 border border-transparent shadow-sm ring-1 shadow-black/15 duration-200'
+                          idx === 0
+                            ? 'bg-[var(--brand-signal)] text-white shadow-[0_12px_24px_rgba(229,106,17,0.18)] hover:bg-[var(--brand-signal-strong)]'
+                            : 'landing-surface border shadow-[0_10px_22px_rgba(23,24,28,0.06)] hover:bg-[var(--landing-hover)]'
                         )}
                       >
                         {button.icon && (
@@ -80,18 +82,18 @@ export function FeaturesList({
 
         <ScrollAnimation delay={0.1}>
           {/* Prevent horizontal scrolling, min-w-0 and break-words */}
-          <div className="relative grid min-w-0 grid-cols-1 gap-x-3 gap-y-6 border-t pt-12 break-words sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+          <div className="relative grid min-w-0 grid-cols-1 gap-x-3 gap-y-6 border-t border-[color:var(--landing-line)] pt-12 break-words sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {section.items?.map((item, idx) => (
               <div className="min-w-0 space-y-3 break-words" key={idx}>
                 <div className="flex min-w-0 items-center gap-2">
                   {item.icon && (
                     <SmartIcon name={item.icon as string} size={16} />
                   )}
-                  <h3 className="min-w-0 text-sm font-medium break-words">
+                  <h3 className="landing-title min-w-0 text-sm font-medium break-words">
                     {item.title}
                   </h3>
                 </div>
-                <p className="text-muted-foreground min-w-0 text-sm break-words">
+                <p className="landing-copy min-w-0 text-sm break-words">
                   {item.description ?? ''}
                 </p>
               </div>

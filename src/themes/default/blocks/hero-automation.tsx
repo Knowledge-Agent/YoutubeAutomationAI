@@ -1,28 +1,132 @@
 'use client';
 
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import Image from 'next/image';
-import { useEffect, useState, type FormEvent } from 'react';
-import {
-  ArrowRight,
-  CheckCircle2,
-  Loader2,
-  Mail,
-  SendHorizonal,
-} from 'lucide-react';
+import { ArrowUp, Loader2, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { Link } from '@/core/i18n/navigation';
-import { SmartIcon } from '@/shared/blocks/common';
-import { Button } from '@/shared/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/components/ui/dialog';
+  FloatingParticles,
+  type FloatingParticle,
+} from '@/shared/components/ui/floating-particles';
 import { cn } from '@/shared/lib/utils';
 import { Section } from '@/shared/types/blocks/landing';
+
+const decorativeDots: FloatingParticle[] = [
+  { left: '5%', top: '14%', size: '2px', duration: '21s', delay: '-2s' },
+  { left: '18%', top: '8%', size: '2.5px', duration: '17s', delay: '-6s' },
+  { left: '30%', top: '22%', size: '3px', duration: '20s', delay: '-11s' },
+  { left: '43%', top: '13%', size: '2px', duration: '16s', delay: '-4s' },
+  { left: '54%', top: '28%', size: '3px', duration: '19s', delay: '-8s' },
+  { left: '69%', top: '18%', size: '2px', duration: '22s', delay: '-13s' },
+  { left: '87%', top: '20%', size: '2.5px', duration: '18s', delay: '-9s' },
+  { left: '13%', top: '48%', size: '2px', duration: '20s', delay: '-15s' },
+  { left: '46%', top: '57%', size: '1.5px', duration: '14s', delay: '-5s' },
+  { left: '63%', top: '52%', size: '2px', duration: '23s', delay: '-10s' },
+  { left: '78%', top: '44%', size: '3px', duration: '17s', delay: '-7s' },
+  { left: '92%', top: '60%', size: '2px', duration: '19s', delay: '-12s' },
+  {
+    left: '9%',
+    top: '24%',
+    size: '4px',
+    duration: '28s',
+    delay: '-6s',
+    opacity: 0.14,
+    blur: '0.2px',
+    variant: 'drift',
+  },
+  {
+    left: '58%',
+    top: '36%',
+    size: '4px',
+    duration: '31s',
+    delay: '-12s',
+    opacity: 0.16,
+    blur: '0.2px',
+    variant: 'drift',
+  },
+  {
+    left: '84%',
+    top: '66%',
+    size: '3.5px',
+    duration: '26s',
+    delay: '-18s',
+    opacity: 0.14,
+    blur: '0.2px',
+    variant: 'drift',
+  },
+  {
+    left: '24%',
+    top: '78%',
+    size: '3px',
+    duration: '30s',
+    delay: '-10s',
+    opacity: 0.12,
+    variant: 'drift',
+  },
+];
+
+const inputParticles: FloatingParticle[] = [
+  {
+    left: '8%',
+    top: '20%',
+    size: '3px',
+    duration: '11s',
+    delay: '-3s',
+    opacity: 0.24,
+  },
+  {
+    left: '18%',
+    top: '74%',
+    size: '2.5px',
+    duration: '14s',
+    delay: '-7s',
+    opacity: 0.18,
+    variant: 'drift',
+  },
+  {
+    left: '31%',
+    top: '12%',
+    size: '3px',
+    duration: '12s',
+    delay: '-5s',
+    opacity: 0.22,
+  },
+  {
+    left: '44%',
+    top: '82%',
+    size: '2px',
+    duration: '10s',
+    delay: '-6s',
+    opacity: 0.16,
+    variant: 'drift',
+  },
+  {
+    left: '58%',
+    top: '18%',
+    size: '3.5px',
+    duration: '13s',
+    delay: '-9s',
+    opacity: 0.2,
+  },
+  {
+    left: '71%',
+    top: '76%',
+    size: '2.5px',
+    duration: '15s',
+    delay: '-2s',
+    opacity: 0.18,
+    variant: 'drift',
+  },
+  {
+    left: '86%',
+    top: '28%',
+    size: '3px',
+    duration: '12s',
+    delay: '-4s',
+    opacity: 0.24,
+  },
+];
 
 export function HeroAutomation({
   section,
@@ -33,52 +137,64 @@ export function HeroAutomation({
 }) {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [placeholderText, setPlaceholderText] = useState('');
 
-  const keyPoints = Array.isArray(section.key_points)
-    ? section.key_points.filter(Boolean)
-    : [];
-  const socialProof = Array.isArray(section.social_proof)
-    ? section.social_proof.filter(Boolean)
-    : [];
-  const metrics = Array.isArray(section.metrics) ? section.metrics : [];
-  const workflowSteps = Array.isArray(section.workflow_steps)
-    ? section.workflow_steps
-    : [];
+  const accentText =
+    typeof section.title_emphasis === 'string' ? section.title_emphasis : '';
+  const titleParts =
+    accentText && section.title?.includes(accentText)
+      ? section.title.split(accentText, 2)
+      : null;
+  const placeholderExamples = useMemo(
+    () =>
+      Array.isArray(section.prompt_examples) &&
+      section.prompt_examples.length > 0
+        ? section.prompt_examples
+        : [
+            'founder@yourchannel.com',
+            'creator@yourbrand.ai',
+            'team@facelessstudio.co',
+          ],
+    [section.prompt_examples]
+  );
 
   useEffect(() => {
-    const syncWaitlistState = () => {
-      const hash = window.location.hash.replace('#', '');
-      setWaitlistOpen(hash === 'hero-waitlist' || hash === 'join-waitlist');
-    };
-
-    syncWaitlistState();
-    window.addEventListener('hashchange', syncWaitlistState);
-
-    return () => {
-      window.removeEventListener('hashchange', syncWaitlistState);
-    };
-  }, []);
-
-  const updateWaitlistOpen = (open: boolean) => {
-    setWaitlistOpen(open);
-
-    if (typeof window === 'undefined') {
+    if (email) {
+      setPlaceholderText('');
       return;
     }
 
-    const url = new URL(window.location.href);
-    if (open) {
-      url.hash = 'hero-waitlist';
-    } else if (
-      url.hash === '#hero-waitlist' ||
-      url.hash === '#join-waitlist'
-    ) {
-      url.hash = '';
-    }
+    let exampleIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
-    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
-  };
+    const tick = () => {
+      const current = placeholderExamples[exampleIndex] || '';
+
+      if (!deleting) {
+        charIndex += 1;
+        setPlaceholderText(current.slice(0, charIndex));
+        if (charIndex >= current.length) {
+          deleting = true;
+          timeoutId = setTimeout(tick, 1400);
+          return;
+        }
+      } else {
+        charIndex -= 1;
+        setPlaceholderText(current.slice(0, Math.max(0, charIndex)));
+        if (charIndex <= 0) {
+          deleting = false;
+          exampleIndex = (exampleIndex + 1) % placeholderExamples.length;
+        }
+      }
+
+      timeoutId = setTimeout(tick, deleting ? 36 : 62);
+    };
+
+    timeoutId = setTimeout(tick, 300);
+    return () => clearTimeout(timeoutId);
+  }, [email, placeholderExamples]);
 
   const handleWaitlistSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -129,7 +245,6 @@ export function HeroAutomation({
       }
 
       setEmail('');
-      updateWaitlistOpen(false);
       toast.success(message || 'Thanks! You are on the waitlist.');
     } catch (error: any) {
       toast.error(error?.message || 'submit failed');
@@ -142,20 +257,21 @@ export function HeroAutomation({
     <section
       id={section.id}
       className={cn(
-        'relative flex min-h-screen overflow-hidden bg-[#060816] pt-24 pb-10 text-white md:pt-32',
+        'landing-shell relative flex min-h-[calc(100svh-72px)] items-center overflow-hidden pt-20 pb-8 md:pt-24 md:pb-10',
         section.className,
         className
       )}
     >
-      <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_top,_rgba(249,115,22,0.22),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.16),_transparent_28%),linear-gradient(180deg,_#050816_0%,_#090d1f_45%,_#04060f_100%)]" />
+      <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_16%,rgba(255,122,26,0.18),transparent_22%),radial-gradient(circle_at_82%_18%,rgba(30,184,166,0.14),transparent_22%),linear-gradient(180deg,#faf6f0_0%,#f6f3ee_48%,#f0ebe2_100%)]" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_1px_1px,rgba(23,24,28,0.12)_1.15px,transparent_0)] bg-[length:180px_180px] opacity-55" />
+      <FloatingParticles particles={decorativeDots} className="-z-10" />
 
       {section.background_image?.src && (
-        <div className="absolute inset-0 -z-10 hidden overflow-hidden md:block">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#060816]/70 via-[#060816]/88 to-[#060816]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden h-[26rem] overflow-hidden md:block">
           <Image
             src={section.background_image.src}
             alt={section.background_image.alt || ''}
-            className="object-cover opacity-25"
+            className="object-cover opacity-[0.03]"
             fill
             sizes="100vw"
             quality={70}
@@ -164,250 +280,104 @@ export function HeroAutomation({
         </div>
       )}
 
-      <div className="relative z-10 container flex flex-1 flex-col justify-center">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8">
-          <div className="mx-auto max-w-4xl text-center">
-            {section.label && (
-              <span className="mb-5 inline-flex items-center rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-1.5 text-sm font-medium text-orange-300">
-                {section.label}
-              </span>
-            )}
-
-            <h1 className="text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl md:text-6xl">
-              {section.title}
+      <div className="relative z-10 container w-full">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto max-w-5xl text-center">
+            <h1 className="landing-title mx-auto max-w-4xl text-4xl leading-[1.02] font-semibold tracking-[-0.045em] text-balance sm:text-[3.35rem] lg:text-[3.75rem]">
+              {titleParts ? (
+                <>
+                  {titleParts[0]}
+                  <span className="bg-linear-to-br from-[#6f4322] via-[var(--brand-signal)] to-[#ffb067] bg-clip-text text-transparent">
+                    {accentText}
+                  </span>
+                  {titleParts[1]}
+                </>
+              ) : (
+                section.title
+              )}
             </h1>
 
             <p
-              className="mx-auto mt-6 max-w-3xl text-base leading-7 text-pretty text-slate-300 sm:text-lg"
+              className="landing-copy mx-auto mt-4 max-w-2xl text-base leading-7 tracking-tight text-balance md:text-[1.05rem] md:leading-8"
               dangerouslySetInnerHTML={{ __html: section.description ?? '' }}
             />
-
-            {section.buttons && section.buttons.length > 0 && (
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                {section.buttons.map((button, idx) => {
-                  const isWaitlistButton = (button.url || '').includes(
-                    '#hero-waitlist'
-                  );
-
-                  return (
-                    <Button
-                      key={idx}
-                      size={button.size || 'lg'}
-                      variant={button.variant || 'default'}
-                      className={cn(
-                        'h-12 rounded-xl px-6 text-sm',
-                        idx === 0 &&
-                          'bg-primary text-primary-foreground hover:bg-primary/90 border-[0.5px] border-white/25 shadow-md ring-1 shadow-black/20 ring-(--ring-color) [--ring-color:color-mix(in_oklab,var(--color-foreground)15%,var(--color-primary))]'
-                      )}
-                      asChild={!isWaitlistButton}
-                      onClick={
-                        isWaitlistButton
-                          ? () => updateWaitlistOpen(true)
-                          : undefined
-                      }
-                    >
-                      {isWaitlistButton ? (
-                        <>
-                          {button.icon && (
-                            <SmartIcon
-                              name={button.icon as string}
-                              className="size-4"
-                            />
-                          )}
-                          <span>{button.title}</span>
-                        </>
-                      ) : (
-                        <Link
-                          href={button.url ?? ''}
-                          target={button.target ?? '_self'}
-                        >
-                          {button.icon && (
-                            <SmartIcon
-                              name={button.icon as string}
-                              className="size-4"
-                            />
-                          )}
-                          <span>{button.title}</span>
-                        </Link>
-                      )}
-                    </Button>
-                  );
-                })}
-              </div>
-            )}
-
-            {section.submit?.action && (
-              <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-slate-400">
-                Click <span className="font-semibold text-orange-300">Join Waitlist</span>{' '}
-                to leave your email and get early-access invites.
-              </p>
-            )}
-
-            {socialProof.length > 0 && (
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                {socialProof.map((item: string, idx: number) => (
-                  <span
-                    key={idx}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] xl:gap-8">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur md:p-8">
-              <div className="flex items-center gap-2 text-sm font-medium text-orange-300">
-                <ArrowRight className="size-4" />
-                <span>{section.workflow_label || 'Workflow Blueprint'}</span>
-              </div>
+          <div className="relative mx-auto mt-7 max-w-4xl md:mt-8">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-14 -top-6 -bottom-6 -z-10 rounded-full bg-[radial-gradient(circle_at_center,rgba(164,180,255,0.28),transparent_62%)] blur-2xl"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-10 top-1/2 -z-10 h-28 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(193,206,255,0.22),transparent_68%)] blur-3xl"
+            />
+            <FloatingParticles
+              particles={inputParticles}
+              className="inset-x-8 -top-4 -bottom-4 -z-10"
+            />
+            <form
+              className="landing-surface relative overflow-hidden rounded-[2rem] border shadow-[0_24px_60px_rgba(23,24,28,0.08)]"
+              onSubmit={handleWaitlistSubmit}
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,122,26,0.1),transparent_22%),radial-gradient(circle_at_82%_24%,rgba(30,184,166,0.08),transparent_18%)]"
+              />
 
-              {section.workflow_title && (
-                <h2 className="mt-4 max-w-3xl text-2xl leading-tight font-semibold text-white md:text-3xl xl:max-w-2xl">
-                  {section.workflow_title}
-                </h2>
-              )}
+              <div className="relative flex items-center gap-3 px-5 py-4 sm:px-6 sm:py-5">
+                <label htmlFor="hero-email-surface" className="sr-only">
+                  Waitlist email
+                </label>
 
-              {workflowSteps.length > 0 && (
-                <div className="mt-6 grid gap-4 md:grid-cols-2">
-                  {workflowSteps.map((step: any, idx: number) => (
-                    <div
-                      key={idx}
-                      className="flex h-full min-h-[180px] flex-col rounded-2xl border border-white/10 bg-slate-950/50 p-5 xl:p-6"
-                    >
-                      <div className="mb-3 inline-flex rounded-full border border-orange-500/30 bg-orange-500/10 px-2.5 py-1 text-xs font-semibold text-orange-300">
-                        Step {idx + 1}
-                      </div>
-                      <div className="flex flex-1 flex-col gap-4">
-                        {step.icon && (
-                          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-orange-300">
-                            <SmartIcon
-                              name={step.icon as string}
-                              className="size-4"
-                            />
-                          </div>
-                        )}
-                        <div className="space-y-2">
-                          <p className="text-base leading-snug font-semibold text-white">
-                            {step.title}
-                          </p>
-                          <p className="text-sm leading-6 text-slate-400">
-                            {step.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                <div className="landing-chip flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-xs">
+                  <Mail className="size-4" />
                 </div>
-              )}
-            </div>
 
-            <div className="grid content-start gap-6">
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur md:p-8">
-                {section.audience && (
-                  <p className="text-sm font-medium text-orange-300">
-                    {section.audience}
-                  </p>
-                )}
-
-                {keyPoints.length > 0 && (
-                  <ul className="mt-4 space-y-3 xl:max-w-xl">
-                    {keyPoints.map((point: string, idx: number) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-orange-400" />
-                        <span className="text-sm leading-6 text-slate-300">
-                          {point}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              {metrics.length > 0 && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {metrics.map((metric: any, idx: number) => (
-                    <div
-                      key={idx}
-                      className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur"
-                    >
-                      <p className="text-3xl font-semibold text-white">
-                        {metric.value || metric.title}
-                      </p>
-                      <p className="mt-2 text-sm leading-6 text-slate-400">
-                        {metric.label || metric.description}
-                      </p>
+                <div className="relative min-w-0 flex-1">
+                  {!email && (
+                    <div className="pointer-events-none absolute inset-y-0 right-0 left-0 flex items-center">
+                      <span className="landing-copy truncate text-base font-medium tracking-tight sm:text-lg">
+                        {placeholderText ||
+                          section.prompt_placeholder ||
+                          'Enter your email to join the waitlist'}
+                      </span>
+                      <span className="type-caret ml-0.5 inline-block h-6 w-px shrink-0 bg-[color:var(--landing-muted)]" />
                     </div>
-                  ))}
+                  )}
+                  <input
+                    id="hero-email-surface"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder=""
+                    className="landing-title relative z-10 h-12 w-full appearance-none border-none bg-transparent p-0 text-base leading-8 font-medium tracking-tight caret-[var(--brand-signal)] shadow-none outline-none focus:ring-0 focus:outline-none sm:text-lg"
+                    style={{
+                      backgroundColor: 'transparent',
+                      WebkitBoxShadow: '0 0 0 1000px transparent inset',
+                      boxShadow: 'none',
+                    }}
+                    required
+                  />
                 </div>
-              )}
-            </div>
+
+                <button
+                  type="submit"
+                  aria-label={section.prompt_button_label || 'Join waitlist'}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--brand-signal)] text-white shadow-lg shadow-[rgba(229,106,17,0.22)] transition hover:bg-[var(--brand-signal-strong)] disabled:cursor-not-allowed disabled:bg-[#d9c5b0]"
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <ArrowUp className="size-4" />
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-
-      <Dialog open={waitlistOpen} onOpenChange={updateWaitlistOpen}>
-        <DialogContent className="border-white/10 bg-[#0b1126] p-0 text-white shadow-2xl sm:max-w-xl">
-          <div className="rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(249,115,22,0.18),_transparent_38%),linear-gradient(180deg,_rgba(11,17,38,1)_0%,_rgba(8,12,28,1)_100%)] p-6 sm:p-8">
-            <DialogHeader className="text-left">
-              <DialogTitle className="text-2xl font-semibold text-white">
-                {section.submit?.button?.title || 'Join Waitlist'}
-              </DialogTitle>
-              <DialogDescription className="text-sm leading-6 text-slate-400">
-                Get early access to the long-video-to-shorts workflow. Leave your email and we will send invites in batches.
-              </DialogDescription>
-            </DialogHeader>
-
-            <form className="mt-6 space-y-4" onSubmit={handleWaitlistSubmit}>
-              <label htmlFor="hero-waitlist-email" className="sr-only">
-                Email address
-              </label>
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur has-[input:focus]:ring-2 has-[input:focus]:ring-orange-400/40">
-                <Mail className="pointer-events-none absolute inset-y-0 left-4 my-auto size-4 text-slate-400" />
-                <input
-                  id="hero-waitlist-email"
-                  type="email"
-                  name="email"
-                  required
-                  aria-required="true"
-                  placeholder={
-                    section.submit?.input?.placeholder ||
-                    'Enter your email for early access'
-                  }
-                  className="h-12 w-full bg-transparent pr-4 pl-11 text-sm text-white placeholder:text-slate-500 focus:outline-none"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-              </div>
-
-              {section.submit?.hint && (
-                <p
-                  className="text-sm leading-6 text-slate-400"
-                  dangerouslySetInnerHTML={{ __html: section.submit.hint }}
-                />
-              )}
-
-              <Button
-                type="submit"
-                size="lg"
-                className="h-12 w-full rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 border-[0.5px] border-white/25 px-6 shadow-md ring-1 shadow-black/20 ring-(--ring-color) [--ring-color:color-mix(in_oklab,var(--color-foreground)15%,var(--color-primary))]"
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <>
-                    <span>{section.submit?.button?.title || 'Join Waitlist'}</span>
-                    <SendHorizonal className="size-4" />
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 }

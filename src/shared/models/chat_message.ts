@@ -71,6 +71,33 @@ export async function getChatMessages({
   return result;
 }
 
+export async function getRecentChatMessages({
+  userId,
+  chatId,
+  status,
+  limit = 30,
+}: {
+  userId?: string;
+  chatId: string;
+  status?: ChatMessageStatus;
+  limit?: number;
+}): Promise<ChatMessage[]> {
+  const result = await db()
+    .select()
+    .from(chatMessage)
+    .where(
+      and(
+        userId ? eq(chatMessage.userId, userId) : undefined,
+        chatId ? eq(chatMessage.chatId, chatId) : undefined,
+        status ? eq(chatMessage.status, status) : undefined
+      )
+    )
+    .orderBy(desc(chatMessage.createdAt))
+    .limit(limit);
+
+  return result.reverse();
+}
+
 export async function getChatMessagesCount({
   userId,
   chatId,
