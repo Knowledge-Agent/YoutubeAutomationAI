@@ -1,5 +1,5 @@
 import { AIMediaType } from '@/extensions/ai';
-import { respData, respErr } from '@/shared/lib/resp';
+import { respData, respErr, respJson } from '@/shared/lib/resp';
 import { getUserInfo } from '@/shared/models/user';
 import { getToolModelById } from '@/shared/services/apimart/catalog';
 import {
@@ -7,6 +7,7 @@ import {
   isToolChatSurface,
   startToolChatSession,
 } from '@/shared/services/chat-tool-link';
+import { GenerationQuotaExceededError } from '@/shared/services/generation-quota';
 import { validateToolTaskInput } from '@/shared/services/tool-tasks';
 
 export async function POST(req: Request) {
@@ -76,6 +77,14 @@ export async function POST(req: Request) {
       metadata: result.chat.metadata ? JSON.parse(result.chat.metadata) : null,
     });
   } catch (e: any) {
+    if (e instanceof GenerationQuotaExceededError) {
+      return respJson(-2, 'daily_generation_limit_reached', {
+        mediaType: e.mediaType,
+        limit: e.limit,
+        currentCount: e.currentCount,
+      });
+    }
+
     console.log('create tool session failed:', e);
     return respErr(`create tool session failed: ${e.message}`);
   }

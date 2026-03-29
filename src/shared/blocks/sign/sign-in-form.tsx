@@ -12,6 +12,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useAppContext } from '@/shared/contexts/app';
+import { User } from '@/shared/models/user';
 
 import { SocialProviders } from './social-providers';
 
@@ -29,7 +30,13 @@ export function SignInForm({
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { configs } = useAppContext();
+  const { configs, fetchUserInfo, setIsShowSignModal, setUser } =
+    useAppContext();
+
+  const extractSessionUser = (data: any): User | null => {
+    const user = data?.user ?? data?.data?.user ?? null;
+    return user && typeof user === 'object' ? (user as User) : null;
+  };
 
   const isGoogleAuthEnabled = configs.google_auth_enabled === 'true';
   const isGithubAuthEnabled = configs.github_auth_enabled === 'true';
@@ -85,7 +92,21 @@ export function SignInForm({
             // Do NOT reset loading here; navigation may not have completed yet.
           },
           onSuccess: (ctx) => {
-            // Keep loading=true until navigation completes.
+            void (async () => {
+              try {
+                const res: any = await authClient.getSession();
+                const fresh = extractSessionUser(res?.data ?? res);
+                if (fresh?.id) {
+                  setUser(fresh);
+                  await fetchUserInfo();
+                }
+              } catch {
+                // ignore
+              } finally {
+                setIsShowSignModal(false);
+                setLoading(false);
+              }
+            })();
           },
           onError: (e: any) => {
             const status = e?.error?.status;

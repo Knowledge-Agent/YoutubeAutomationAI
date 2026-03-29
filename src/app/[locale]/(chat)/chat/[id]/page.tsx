@@ -48,7 +48,6 @@ export default async function ChatDetailPage({
     chatId: id,
     userId: viewer.id,
     status: ChatMessageStatus.CREATED,
-    limit: 100,
   });
 
   const initialMessages: UIMessage[] = messages.map((message) => ({
@@ -85,9 +84,7 @@ export default async function ChatDetailPage({
       : '';
   const task = latestTaskId ? await findAITaskById(latestTaskId) : null;
   const tasks = await getAITasks({
-    chatId: id,
     userId: viewer.id,
-    limit: 50,
   });
   const initialTask =
     task && task.userId === viewer.id

@@ -471,17 +471,13 @@ export function ChatHeader() {
               href="/ai-video-generator"
               className="flex items-center gap-3"
             >
-              <span className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-white/12 bg-[#192130] shadow-[0_12px_24px_rgba(0,0,0,0.3)]">
-                <span className="absolute inset-0 bg-gradient-to-br from-[var(--brand-signal)] via-[#ff8b4d] to-[var(--video-accent)] opacity-90" />
-                <span className="absolute inset-[1px] rounded-[15px] bg-[#10131d]/80" />
-                <Image
-                  src="/logo-mark.svg"
-                  alt="YouTube Automation AI"
-                  width={18}
-                  height={18}
-                  className="relative z-10 h-[18px] w-[18px]"
-                />
-              </span>
+              <Image
+                src="/logo-mark.svg"
+                alt="YouTube Automation AI"
+                width={36}
+                height={36}
+                className="h-9 w-9 object-contain"
+              />
               <div className="min-w-0">
                 <div className="truncate text-[1.15rem] font-semibold tracking-[-0.04em] text-[var(--studio-ink)]">
                   YouTube Automation AI
@@ -508,11 +504,6 @@ export function ChatHeader() {
           />
           <aside className="fixed top-[68px] bottom-0 left-0 z-40 w-[286px] border-r border-[color:var(--studio-line)] bg-[rgb(15_16_22_/_0.98)] px-4 py-5 shadow-[0_24px_70px_rgba(0,0,0,0.42)] backdrop-blur-xl">
             <div className="flex h-full flex-col">
-              <button className="mb-6 flex h-12 items-center justify-center gap-3 rounded-2xl border border-[color:var(--brand-signal-soft)] bg-[color:var(--brand-signal-soft)] text-[15px] font-semibold text-[var(--brand-signal)] shadow-[0_14px_28px_rgba(229,106,17,0.12)]">
-                <span className="text-[24px] leading-none font-light">+</span>
-                <span>Create New</span>
-              </button>
-
               <div className="space-y-2">
                 {drawerPrimaryNav.map((item) => (
                   <DrawerNavItem
@@ -536,12 +527,6 @@ export function ChatHeader() {
                     onNavigate={() => setDrawerOpen(false)}
                   />
                 ))}
-              </div>
-
-              <div className="mt-auto pt-6">
-                <button className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--brand-signal)] text-base font-semibold text-white shadow-lg shadow-[rgba(229,106,17,0.2)]">
-                  Upgrade Now
-                </button>
               </div>
             </div>
           </aside>

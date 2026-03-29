@@ -1,39 +1,39 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
+import { ArrowLeft, ArrowRight, RefreshCw } from 'lucide-react';
 
-import { ToolPromptCard } from './tool-prompt-card';
 import { type ToolControlValue } from './tool-control-bar';
+import { ToolPromptCard } from './tool-prompt-card';
 import { useStartToolChat } from './use-start-tool-chat';
 
 const featuredRows = [
   {
-    title: 'Dreamy Fashion Editorial Sets',
+    title: 'Creator Headshots for Thumbnail Packs',
     image:
       'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80',
-    accent: 'SOFT EDITORIAL',
-    subtitle: 'Pollo Image 1.6',
+    accent: 'THUMBNAIL FACES',
+    subtitle: 'Channel branding',
   },
   {
-    title: 'Stylized Character Posters in Minutes',
+    title: 'Stylized Channel Mascots in One Pass',
     image:
       'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
-    accent: 'ANIME LOOKS',
+    accent: 'CHARACTER POSTERS',
     subtitle: 'Popular preset',
   },
   {
-    title: 'Photoreal Product Shots With Better Lighting',
+    title: 'Cinematic Environment Plates for B-Roll',
     image:
       'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
-    accent: 'PRODUCT HERO',
-    subtitle: 'Commercial quality',
+    accent: 'SCENE BACKDROPS',
+    subtitle: 'Landscape prompt',
   },
   {
-    title: 'Consistent Scene Design for Storyboards',
+    title: 'Storyboard Reference Sheets for Scene Planning',
     image:
       'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=80',
-    accent: 'STORY PANELS',
+    accent: 'SHOT BOARDS',
     subtitle: 'Story visuals',
   },
 ];
@@ -116,7 +116,7 @@ export function AiImageHubUi() {
                     <div className="text-sm font-medium text-[var(--studio-ink)]">
                       {card.subtitle}
                     </div>
-                    <div className="mt-1 text-[20px] font-semibold leading-none tracking-tight text-[var(--image-accent)]">
+                    <div className="mt-1 text-[20px] leading-none font-semibold tracking-tight text-[var(--image-accent)]">
                       {card.accent}
                     </div>
                   </div>
@@ -132,7 +132,7 @@ export function AiImageHubUi() {
                   ) : null}
                 </div>
               </div>
-              <p className="studio-title mt-3 text-[15px] font-medium leading-6">
+              <p className="studio-title mt-3 text-[15px] leading-6 font-medium">
                 {card.title}
               </p>
             </div>
@@ -153,14 +153,20 @@ export function AiImageHubUi() {
           {toolCards.map((image, index) => (
             <div
               key={image + index}
-              className="overflow-hidden rounded-[22px] border border-[color:var(--studio-line)] bg-[var(--studio-panel-strong)] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
+              className="group overflow-hidden rounded-[22px] border border-[color:var(--studio-line)] bg-[var(--studio-panel-strong)] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
             >
-              <div className="relative aspect-[4/5] overflow-hidden">
+              <div className="relative aspect-[4/5] overflow-hidden bg-black">
                 <img
                   src={image}
                   alt={`Image tool ${index + 1}`}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.05]"
                 />
+                <div className="absolute inset-0 bg-[rgba(7,8,12,0.66)] opacity-0 backdrop-blur-md transition duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
+                  <div className="rounded-full border border-white/12 bg-white/10 px-4 py-2 text-sm font-medium tracking-[0.12em] text-white/92 uppercase shadow-[0_12px_32px_rgba(0,0,0,0.32)]">
+                    Coming Soon
+                  </div>
+                </div>
               </div>
             </div>
           ))}

@@ -65,6 +65,16 @@ export function AssistantWorkspaceComposer({
   }, [aui, initialValue, inputKey]);
 
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
+    if (
+      submitDisabled &&
+      event.key === 'Enter' &&
+      !event.shiftKey &&
+      !event.nativeEvent.isComposing
+    ) {
+      event.preventDefault();
+      return;
+    }
+
     if (!onSubmitIntent) {
       return;
     }
@@ -85,6 +95,11 @@ export function AssistantWorkspaceComposer({
   };
 
   const handleSubmitCapture: FormEventHandler<HTMLFormElement> = (event) => {
+    if (submitDisabled) {
+      event.preventDefault();
+      return;
+    }
+
     if (!onSubmitIntent) {
       return;
     }

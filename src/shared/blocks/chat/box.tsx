@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UIMessage } from '@ai-sdk/react';
+import { ThreadPrimitive } from '@assistant-ui/react';
 import { DefaultChatTransport } from 'ai';
-import { ArrowUp, FolderOpen, Star } from 'lucide-react';
+import { ArrowUp, FolderOpen, LoaderCircle, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
 import {
@@ -24,6 +25,7 @@ import { useAppContext } from '@/shared/contexts/app';
 import { useChatContext } from '@/shared/contexts/chat';
 import { useToolCatalog } from '@/shared/hooks/use-tool-catalog';
 import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
+import { getGenerationLimitCopy } from '@/shared/lib/generation-limit';
 import { cn } from '@/shared/lib/utils';
 import type { ToolMode } from '@/shared/types/ai-tools';
 import { Chat } from '@/shared/types/chat';
@@ -361,6 +363,7 @@ export function ChatBox({
   const [toolModeState, setToolModeState] = useState(toolMode);
   const [toolModelId, setToolModelId] = useState(toolModelFromMetadata);
   const [isGeneratingTask, setIsGeneratingTask] = useState(false);
+  const toolGenerationLockRef = useRef(false);
   const [draftSourceTaskId, setDraftSourceTaskId] = useState<string>(
     seededTasks[0]?.id ?? ''
   );
@@ -437,6 +440,10 @@ export function ChatBox({
       taskModelId: string;
       options: Record<string, unknown>;
     }) => {
+      if (toolGenerationLockRef.current) {
+        return;
+      }
+
       if (!isToolChat || !chatState?.id) {
         return;
       }
@@ -475,6 +482,7 @@ export function ChatBox({
       }
 
       try {
+        toolGenerationLockRef.current = true;
         setIsGeneratingTask(true);
         const shouldKeepCurrentTaskVisible = selectedTask?.status === 'success';
         const shouldAutoSelectNewTask = !shouldKeepCurrentTaskVisible;
@@ -526,16 +534,11 @@ export function ChatBox({
           json.code === -2 ||
           json.message === 'daily_generation_limit_reached'
         ) {
-          showGenerationLimitModal({
-            title:
-              toolSurface === 'image'
-                ? 'Daily image limit reached'
-                : 'Daily video limit reached',
-            description:
-              toolSurface === 'image'
-                ? 'You can generate up to 3 images per day. Super admins are not limited.'
-                : 'You can generate up to 1 video per day. Super admins are not limited.',
-          });
+          showGenerationLimitModal(
+            getGenerationLimitCopy(
+              toolSurface === 'image' ? 'image' : 'video'
+            )
+          );
           setTasks((current) =>
             current.filter((task) => task.id !== optimisticTask.id)
           );
@@ -573,6 +576,7 @@ export function ChatBox({
         );
         toast.error(error.message || 'failed to start generation');
       } finally {
+        toolGenerationLockRef.current = false;
         setIsGeneratingTask(false);
       }
     },
@@ -1004,26 +1008,43 @@ export function ChatBox({
             runtime={runtime}
             composerActionSlot={
               isToolChat ? (
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    if (toolInputIntent === 'generate') {
-                      void handleGenerateToolTask();
-                      return;
-                    }
+                <>
+                  <ThreadPrimitive.If running={false}>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        if (toolInputIntent === 'generate') {
+                          void handleGenerateToolTask();
+                          return;
+                        }
 
-                    const form = event.currentTarget.closest('form');
-                    form?.requestSubmit();
-                  }}
-                  className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-zinc-950 shadow-lg shadow-black/20 transition hover:bg-zinc-100 disabled:bg-white/6 disabled:text-zinc-500"
-                  disabled={
-                    toolInputIntent === 'generate'
-                      ? !canGenerateToolTask
-                      : false
-                  }
-                >
-                  <ArrowUp className="size-4.5" />
-                </button>
+                        const form = event.currentTarget.closest('form');
+                        form?.requestSubmit();
+                      }}
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-zinc-950 shadow-lg shadow-black/20 transition hover:bg-zinc-100 disabled:bg-white/6 disabled:text-zinc-500"
+                      disabled={
+                        toolInputIntent === 'generate'
+                          ? !canGenerateToolTask
+                          : isGeneratingTask
+                      }
+                    >
+                      {isGeneratingTask ? (
+                        <LoaderCircle className="size-4.5 animate-spin" />
+                      ) : (
+                        <ArrowUp className="size-4.5" />
+                      )}
+                    </button>
+                  </ThreadPrimitive.If>
+                  <ThreadPrimitive.If running>
+                    <button
+                      type="button"
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-white/8 text-zinc-400 shadow-lg shadow-black/20"
+                      disabled
+                    >
+                      <LoaderCircle className="size-4.5 animate-spin" />
+                    </button>
+                  </ThreadPrimitive.If>
+                </>
               ) : undefined
             }
             composerFooter={
@@ -1042,7 +1063,7 @@ export function ChatBox({
                 : 'Ask about scripts, workflows, prompts, or growth ideas'
             }
             composerShowAttachmentButton
-            composerSubmitDisabled={false}
+            composerSubmitDisabled={isGeneratingTask}
             composerSubmitIntent={
               isToolChat ? handleToolInputSubmitIntent : undefined
             }

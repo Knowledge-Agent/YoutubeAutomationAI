@@ -35,6 +35,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAppContext } from '@/shared/contexts/app';
 import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
+import { getGenerationLimitCopy } from '@/shared/lib/generation-limit';
 import { cn } from '@/shared/lib/utils';
 
 interface VideoGeneratorProps {
@@ -560,11 +561,7 @@ export function VideoGenerator({
 
       const { code, message, data } = await resp.json();
       if (code === -2 || message === 'daily_generation_limit_reached') {
-        showGenerationLimitModal({
-          title: 'Daily video limit reached',
-          description:
-            'You can generate up to 1 video per day. Super admins are not limited.',
-        });
+        showGenerationLimitModal(getGenerationLimitCopy('video'));
         resetTaskState();
         return;
       }

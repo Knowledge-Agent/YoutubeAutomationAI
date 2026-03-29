@@ -3,11 +3,10 @@
 import { useEffect, useMemo } from 'react';
 import { ArrowUp, ImageIcon, ImagePlus, Video } from 'lucide-react';
 
-import { ImageUploader } from '@/shared/blocks/common';
+import { ChatReferenceImageSlots } from '@/shared/blocks/chat/reference-image-slots';
 import { useToolCatalog } from '@/shared/hooks/use-tool-catalog';
 import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
 import { cn } from '@/shared/lib/utils';
-import { getToolOptionDefinition } from '@/shared/services/apimart/catalog';
 import type { ToolMode, ToolSurface } from '@/shared/types/ai-tools';
 
 import {
@@ -87,10 +86,6 @@ export function ToolPromptCard({
   const imageReferenceRequired =
     normalizedControls.mode === 'image-to-image' ||
     normalizedControls.mode === 'image-to-video';
-  const imageReferenceOption = getToolOptionDefinition(
-    'image_urls',
-    selectedModel
-  );
   const imageUrls = Array.isArray(normalizedControls.options.image_urls)
     ? (normalizedControls.options.image_urls as string[])
     : [];
@@ -99,21 +94,6 @@ export function ToolPromptCard({
     hasPrompt && (!imageReferenceRequired || imageUrls.length > 0);
   const creditCost =
     selectedModel?.creditCostByMode?.[normalizedControls.mode as ToolMode] ?? 0;
-  const blockedReason =
-    imageReferenceRequired && imageUrls.length === 0
-      ? normalizedControls.mode === 'image-to-video'
-        ? 'Upload at least one reference image for image-to-video.'
-        : 'Upload at least one reference image for image-to-image.'
-      : undefined;
-  const imageReferenceTitle =
-    normalizedControls.mode === 'image-to-video'
-      ? 'Reference Frames'
-      : 'Reference Images';
-  const imageReferenceHint =
-    normalizedControls.mode === 'image-to-video'
-      ? 'Upload the key frame you want to animate'
-      : 'Upload reference images';
-
   const isHero = variant === 'hero';
 
   return (
@@ -121,7 +101,7 @@ export function ToolPromptCard({
       className={cn(
         'relative overflow-hidden border border-[color:var(--studio-line)] bg-[rgb(27_29_36_/_0.94)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
         isHero
-          ? 'rounded-[38px] px-6 pt-6 pb-5 md:px-7 md:pt-7 md:pb-6'
+          ? '-mt-px rounded-[38px] rounded-tl-[6px] px-6 pt-6 pb-5 md:rounded-tl-[8px] md:px-7 md:pt-7 md:pb-6'
           : 'rounded-[28px] px-4 py-4',
         className
       )}
@@ -137,7 +117,10 @@ export function ToolPromptCard({
 
       <div
         className={cn(
-          'relative flex flex-col justify-between gap-6',
+          'relative flex flex-col',
+          imageReferenceRequired
+            ? 'justify-start gap-1.5'
+            : 'justify-between gap-6',
           isHero && 'min-h-[278px]'
         )}
       >
@@ -167,7 +150,9 @@ export function ToolPromptCard({
               className={cn(
                 'w-full resize-none border-none !bg-transparent p-0 font-medium tracking-tight text-[var(--studio-ink)] outline-none placeholder:text-[color:var(--studio-muted)] focus:ring-0 focus:outline-none',
                 isHero
-                  ? 'min-h-[168px] pt-4 text-[20px] leading-9'
+                  ? imageReferenceRequired
+                    ? 'min-h-[92px] pt-4 text-[20px] leading-9'
+                    : 'min-h-[168px] pt-4 text-[20px] leading-9'
                   : 'min-h-[128px] pt-2 text-[17px] leading-8'
               )}
             />
@@ -175,31 +160,30 @@ export function ToolPromptCard({
         </div>
 
         {imageReferenceRequired ? (
-          <div className="relative rounded-[24px] border border-[color:var(--studio-line)] bg-[rgb(23_25_32_/_0.72)] p-3">
-            <ImageUploader
-              allowMultiple
-              className="w-full"
-              defaultPreviews={imageUrls}
-              emptyHint={imageReferenceHint}
-              maxImages={imageReferenceOption?.maxItems ?? 4}
+          <div
+            className={cn(
+              'flex items-start',
+              isHero ? 'pt-0' : 'pt-0'
+            )}
+          >
+            <ChatReferenceImageSlots
+              value={imageUrls}
               maxSizeMB={8}
-              onChange={(items) =>
+              className="gap-2.5"
+              onChange={(nextUrls) =>
                 onControlsChange({
                   ...normalizedControls,
                   options: {
                     ...normalizedControls.options,
-                    image_urls: items
-                      .filter((item) => item.status === 'uploaded' && item.url)
-                      .map((item) => item.url as string),
+                    image_urls: nextUrls,
                   },
                 })
               }
-              title={imageReferenceTitle}
             />
           </div>
         ) : null}
 
-        <div className="flex flex-wrap items-end gap-2.5">
+        <div className="flex flex-wrap items-end gap-2">
           <ToolControlBar
             surface={surface}
             value={normalizedControls}
@@ -228,12 +212,6 @@ export function ToolPromptCard({
             </button>
           </div>
         </div>
-
-        {blockedReason ? (
-          <p className="text-xs leading-5 text-[var(--brand-signal)]">
-            {blockedReason}
-          </p>
-        ) : null}
       </div>
     </div>
   );

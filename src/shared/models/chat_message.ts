@@ -36,7 +36,7 @@ export async function getChatMessages({
   chatId,
   status,
   page = 1,
-  limit = 30,
+  limit,
   getUser = false,
 }: {
   userId?: string;
@@ -46,7 +46,7 @@ export async function getChatMessages({
   limit?: number;
   getUser?: boolean;
 }): Promise<ChatMessage[]> {
-  const result = await db()
+  let query = db()
     .select()
     .from(chatMessage)
     .where(
@@ -56,9 +56,13 @@ export async function getChatMessages({
         status ? eq(chatMessage.status, status) : undefined
       )
     )
-    .orderBy(asc(chatMessage.createdAt))
-    .limit(limit)
-    .offset((page - 1) * limit);
+    .orderBy(asc(chatMessage.createdAt));
+
+  if (typeof limit === 'number') {
+    query = query.limit(limit).offset((page - 1) * limit);
+  }
+
+  const result = await query;
 
   if (getUser) {
     return appendUserToResult(result);

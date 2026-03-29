@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useRouter } from '@/core/i18n/navigation';
 import { useAppContext } from '@/shared/contexts/app';
 import { useToolCatalog } from '@/shared/hooks/use-tool-catalog';
+import { getGenerationLimitCopy } from '@/shared/lib/generation-limit';
 import type { ToolMode, ToolSurface } from '@/shared/types/ai-tools';
 
 type SupportedToolSurface = Exclude<ToolSurface, 'chat'>;
@@ -14,16 +15,7 @@ function showGenerationQuotaModal(
   showModal: (payload: { title: string; description: string }) => void,
   mediaType: 'image' | 'video'
 ) {
-  showModal({
-    title:
-      mediaType === 'image'
-        ? 'Daily image limit reached'
-        : 'Daily video limit reached',
-    description:
-      mediaType === 'image'
-        ? 'You can generate up to 3 images per day. Super admins are not limited.'
-        : 'You can generate up to 1 video per day. Super admins are not limited.',
-  });
+  showModal(getGenerationLimitCopy(mediaType));
 }
 
 export function useStartToolChat(surface: SupportedToolSurface) {
@@ -53,7 +45,7 @@ export function useStartToolChat(surface: SupportedToolSurface) {
         return;
       }
 
-      if (!user && process.env.NODE_ENV === 'production') {
+      if (!user) {
         setIsShowSignModal(true);
         return;
       }

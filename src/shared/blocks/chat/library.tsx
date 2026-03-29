@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import NextImage from 'next/image';
 import { useParams } from 'next/navigation';
-import { Clock3, MessageSquarePlus, Search, Sparkles } from 'lucide-react';
+import { Clock3, MessageSquarePlus, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Link, useRouter } from '@/core/i18n/navigation';
@@ -74,11 +75,13 @@ export function ChatLibrary() {
     <aside className="hidden w-[296px] shrink-0 border-r border-[color:var(--studio-line)] bg-[#0d0e14] lg:flex lg:flex-col">
       <div className="border-b border-[color:var(--studio-line)] px-5 py-4">
         <Link href="/ai-video-generator" className="flex items-center gap-3">
-          <span className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-white/12 bg-[#192130] shadow-[0_12px_24px_rgba(0,0,0,0.3)]">
-            <span className="absolute inset-0 bg-gradient-to-br from-[var(--brand-signal)] via-[#ff8b4d] to-[var(--video-accent)] opacity-90" />
-            <span className="absolute inset-[1px] rounded-[15px] bg-[#10131d]/80" />
-            <Sparkles className="relative z-10 size-4 text-white" />
-          </span>
+          <NextImage
+            src="/logo-mark.svg"
+            alt="YouTube Automation AI"
+            width={36}
+            height={36}
+            className="h-9 w-9 object-contain"
+          />
           <div className="min-w-0">
             <div className="truncate text-[1.05rem] font-semibold tracking-[-0.04em] text-[var(--studio-ink)]">
               YouTube Automation AI

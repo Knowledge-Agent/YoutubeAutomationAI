@@ -11,6 +11,7 @@ import {
   FolderOpen,
   ImageIcon,
   LoaderCircle,
+  LogOut,
   Menu,
   PencilLine,
   Plus,
@@ -22,8 +23,16 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { Link, usePathname } from '@/core/i18n/navigation';
+import { Link, usePathname, useRouter } from '@/core/i18n/navigation';
 import { SignModal } from '@/shared/blocks/sign/sign-modal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/components/ui/dropdown-menu';
 import { Input } from '@/shared/components/ui/input';
 import { useAppContext } from '@/shared/contexts/app';
 import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
@@ -33,6 +42,7 @@ import {
   setStoredProjectSelection,
 } from '@/shared/lib/project-selection';
 import { cn } from '@/shared/lib/utils';
+import { signOut } from '@/core/auth/client';
 
 const topTabs = [
   {
@@ -202,6 +212,7 @@ export function ToolWorkspaceShell({
   showIntroCard?: boolean;
   chromeStyle?: 'default' | 'studio';
 }) {
+  const router = useRouter();
   const pathname = usePathname();
   const { user, setIsShowSignModal } = useAppContext();
   const [projectOpen, setProjectOpen] = useState(false);
@@ -320,7 +331,7 @@ export function ToolWorkspaceShell({
   }, [projectOpen]);
 
   const requireProjectAccess = useCallback(() => {
-    if (user || process.env.NODE_ENV !== 'production') {
+    if (user) {
       return true;
     }
 
@@ -510,22 +521,13 @@ export function ToolWorkspaceShell({
               href={workspaceDefaultHref}
               className="flex items-center gap-3"
             >
-              <span className="relative inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-xl border border-white/12 bg-[#192130] shadow-[0_12px_24px_rgba(0,0,0,0.3)]">
-                <span
-                  className={cn(
-                    'absolute inset-0 bg-gradient-to-br opacity-90',
-                    activeTabStyle.surface
-                  )}
-                />
-                <span className="absolute inset-[1px] rounded-[15px] bg-[#10131d]/80" />
-                <Image
-                  src="/logo-mark.svg"
-                  alt="YouTube Automation AI"
-                  width={16}
-                  height={16}
-                  className="relative z-10 h-4 w-4"
-                />
-              </span>
+              <Image
+                src="/logo-mark.svg"
+                alt="YouTube Automation AI"
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
+              />
               <span className="text-[1.15rem] font-semibold tracking-[-0.04em] text-[var(--studio-ink)] lg:text-[1.3rem]">
                 YouTube Automation AI
               </span>
@@ -534,12 +536,60 @@ export function ToolWorkspaceShell({
 
           <div className="flex items-center gap-3">
             {user ? (
-              <Link
-                href="/chat/history"
-                className={cn(headerControlClass, 'hidden px-4 md:inline-flex')}
-              >
-                History
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className={cn(
+                      headerControlClass,
+                      'hidden max-w-[240px] px-4 md:inline-flex'
+                    )}
+                  >
+                    <span className="truncate">{user.name || user.email}</span>
+                    <ChevronDown className="size-4 text-[var(--studio-muted)]" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-60 border-[color:var(--studio-line)] bg-[rgb(23_25_32_/_0.98)] text-[var(--studio-ink)] shadow-[0_24px_60px_rgba(0,0,0,0.38)] backdrop-blur-xl"
+                >
+                  <DropdownMenuLabel className="px-3 py-2">
+                    <div className="truncate text-sm font-semibold text-[var(--studio-ink)]">
+                      {user.name || 'User'}
+                    </div>
+                    <div className="truncate text-xs font-normal text-[var(--studio-muted)]">
+                      {user.email}
+                    </div>
+                  </DropdownMenuLabel>
+                  {AI_CREDITS_ENABLED ? (
+                    <>
+                      <DropdownMenuSeparator className="bg-[color:var(--studio-line)]" />
+                      <DropdownMenuItem className="px-3 py-2 text-[var(--studio-ink)] focus:bg-[var(--studio-hover)] focus:text-[var(--studio-ink)]">
+                        <Coins className="size-4 text-[var(--brand-signal)]" />
+                        <span>
+                          Credits: {user.credits?.remainingCredits ?? 0}
+                        </span>
+                      </DropdownMenuItem>
+                    </>
+                  ) : null}
+                  <DropdownMenuSeparator className="bg-[color:var(--studio-line)]" />
+                  <DropdownMenuItem
+                    className="px-3 py-2 text-[var(--studio-ink)] focus:bg-[var(--studio-hover)] focus:text-[var(--studio-ink)]"
+                    onClick={() =>
+                      signOut({
+                        fetchOptions: {
+                          onSuccess: () => {
+                            router.refresh();
+                          },
+                        },
+                      })
+                    }
+                  >
+                    <LogOut className="size-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : null}
           </div>
         </div>
@@ -709,7 +759,7 @@ export function ToolWorkspaceShell({
                             <span className="relative z-10 block text-[17px] font-semibold tracking-tight">
                               {tab.title}
                             </span>
-                            {isActive ? (
+                            {isActive && !useConnectedWorkspacePanel ? (
                               <div className="absolute inset-x-7 bottom-0 h-[3px] rounded-full bg-white/20" />
                             ) : null}
                           </>

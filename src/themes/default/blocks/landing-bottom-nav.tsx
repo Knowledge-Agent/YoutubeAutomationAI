@@ -2,8 +2,17 @@ import { Link } from '@/core/i18n/navigation';
 import { BrandLogo } from '@/shared/blocks/common';
 import { Header as HeaderType } from '@/shared/types/blocks/landing';
 
-export function LandingBottomNav({ header }: { header: HeaderType }) {
+export function LandingBottomNav({
+  header,
+  headline,
+}: {
+  header: HeaderType;
+  headline?: string;
+}) {
   const navItems = header.nav?.items || [];
+  const copy =
+    headline ||
+    'YouTube Automation AI for Faceless Channels, Script Rewrite, Storyboards & Video Remake Workflows';
 
   return (
     <section className="border-t border-[color:var(--studio-line)] bg-[#0f1118]">
@@ -16,8 +25,7 @@ export function LandingBottomNav({ header }: { header: HeaderType }) {
               </div>
             ) : null}
             <p className="text-sm leading-6 text-[var(--studio-muted)]">
-              Browse the tools directly from the homepage, then jump to the blog
-              whenever you want the long-form workflow breakdowns.
+              {copy}
             </p>
           </div>
 

@@ -5,6 +5,7 @@ import { ReactNode } from 'react';
 import { usePathname } from '@/core/i18n/navigation';
 import { ChatLibrary } from '@/shared/blocks/chat/library';
 import { LocaleDetector } from '@/shared/blocks/common';
+import { SignModal } from '@/shared/blocks/sign/sign-modal';
 import { ChatContextProvider } from '@/shared/contexts/chat';
 
 export default function ChatLayout({ children }: { children: ReactNode }) {
@@ -20,6 +21,7 @@ export default function ChatLayout({ children }: { children: ReactNode }) {
           {children}
         </main>
         <LocaleDetector />
+        <SignModal callbackUrl={pathname || '/'} />
       </div>
     </ChatContextProvider>
   );
