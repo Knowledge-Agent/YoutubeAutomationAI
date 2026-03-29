@@ -62,7 +62,6 @@ export default async function LandingPage({
     buildOrganizationStructuredData(),
     faqStructuredData,
   ]);
-
   const Page = await getThemePage('dynamic-page');
 
   return (
