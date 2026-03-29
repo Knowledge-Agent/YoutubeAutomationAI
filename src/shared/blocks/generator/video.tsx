@@ -34,10 +34,15 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAppContext } from '@/shared/contexts/app';
+import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
+import { getGenerationLimitCopy } from '@/shared/lib/generation-limit';
+import { cn } from '@/shared/lib/utils';
 
 interface VideoGeneratorProps {
   maxSizeMB?: number;
   srOnlyTitle?: string;
+  embedded?: boolean;
+  className?: string;
 }
 
 interface GeneratedVideo {
@@ -206,6 +211,8 @@ function extractVideoUrls(result: any): string[] {
 export function VideoGenerator({
   maxSizeMB = 50,
   srOnlyTitle,
+  embedded = false,
+  className,
 }: VideoGeneratorProps) {
   const t = useTranslations('ai.video.generator');
 
@@ -234,8 +241,13 @@ export function VideoGenerator({
   );
   const [isMounted, setIsMounted] = useState(false);
 
-  const { user, isCheckSign, setIsShowSignModal, fetchUserCredits } =
-    useAppContext();
+  const {
+    user,
+    isCheckSign,
+    setIsShowSignModal,
+    fetchUserCredits,
+    showGenerationLimitModal,
+  } = useAppContext();
 
   useEffect(() => {
     setIsMounted(true);
@@ -419,7 +431,9 @@ export function VideoGenerator({
           toast.error(errorMessage);
           resetTaskState();
 
-          fetchUserCredits();
+          if (AI_CREDITS_ENABLED) {
+            fetchUserCredits();
+          }
 
           return true;
         }
@@ -431,12 +445,14 @@ export function VideoGenerator({
         toast.error(`Query task failed: ${error.message}`);
         resetTaskState();
 
-        fetchUserCredits();
+        if (AI_CREDITS_ENABLED) {
+          fetchUserCredits();
+        }
 
         return true;
       }
     },
-    [generationStartTime, resetTaskState]
+    [fetchUserCredits, generationStartTime, resetTaskState]
   );
 
   useEffect(() => {
@@ -481,7 +497,7 @@ export function VideoGenerator({
       return;
     }
 
-    if (remainingCredits < costCredits) {
+    if (AI_CREDITS_ENABLED && remainingCredits < costCredits) {
       toast.error('Insufficient credits. Please top up to keep creating.');
       return;
     }
@@ -544,6 +560,11 @@ export function VideoGenerator({
       }
 
       const { code, message, data } = await resp.json();
+      if (code === -2 || message === 'daily_generation_limit_reached') {
+        showGenerationLimitModal(getGenerationLimitCopy('video'));
+        resetTaskState();
+        return;
+      }
       if (code !== 0) {
         throw new Error(message || 'Failed to create a video task');
       }
@@ -570,7 +591,9 @@ export function VideoGenerator({
           toast.success('Video generated successfully');
           setProgress(100);
           resetTaskState();
-          await fetchUserCredits();
+          if (AI_CREDITS_ENABLED) {
+            await fetchUserCredits();
+          }
           return;
         }
       }
@@ -578,7 +601,9 @@ export function VideoGenerator({
       setTaskId(newTaskId);
       setProgress(25);
 
-      await fetchUserCredits();
+      if (AI_CREDITS_ENABLED) {
+        await fetchUserCredits();
+      }
     } catch (error: any) {
       console.error('Failed to generate video:', error);
       toast.error(`Failed to generate video: ${error.message}`);
@@ -620,10 +645,10 @@ export function VideoGenerator({
   };
 
   return (
-    <section className="py-16 md:py-24">
-      <div className="container">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <section className={cn(embedded ? 'py-0' : 'py-16 md:py-24', className)}>
+      <div className={cn(embedded ? '' : 'container')}>
+        <div className={cn(embedded ? '' : 'mx-auto max-w-6xl')}>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <Card>
               <CardHeader>
                 {srOnlyTitle && <h2 className="sr-only">{srOnlyTitle}</h2>}
@@ -790,24 +815,15 @@ export function VideoGenerator({
                   </Button>
                 )}
 
-                {!isMounted ? (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-primary">
-                      {t('credits_cost', { credits: costCredits })}
-                    </span>
-                    <span>{t('credits_remaining', { credits: 0 })}</span>
-                  </div>
-                ) : user && remainingCredits > 0 ? (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-primary">
-                      {t('credits_cost', { credits: costCredits })}
-                    </span>
-                    <span>
-                      {t('credits_remaining', { credits: remainingCredits })}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
+                {AI_CREDITS_ENABLED ? (
+                  !isMounted ? (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-primary">
+                        {t('credits_cost', { credits: costCredits })}
+                      </span>
+                      <span>{t('credits_remaining', { credits: 0 })}</span>
+                    </div>
+                  ) : user && remainingCredits > 0 ? (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-primary">
                         {t('credits_cost', { credits: costCredits })}
@@ -816,14 +832,27 @@ export function VideoGenerator({
                         {t('credits_remaining', { credits: remainingCredits })}
                       </span>
                     </div>
-                    <Link href="/pricing">
-                      <Button variant="outline" className="w-full" size="lg">
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        {t('buy_credits')}
-                      </Button>
-                    </Link>
-                  </div>
-                )}
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-primary">
+                          {t('credits_cost', { credits: costCredits })}
+                        </span>
+                        <span>
+                          {t('credits_remaining', {
+                            credits: remainingCredits,
+                          })}
+                        </span>
+                      </div>
+                      <Link href="/pricing">
+                        <Button variant="outline" className="w-full" size="lg">
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          {t('buy_credits')}
+                        </Button>
+                      </Link>
+                    </div>
+                  )
+                ) : null}
 
                 {isGenerating && (
                   <div className="space-y-2 rounded-lg border p-4">

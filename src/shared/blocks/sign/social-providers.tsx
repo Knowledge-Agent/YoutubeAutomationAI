@@ -4,12 +4,13 @@ import { useLocale, useTranslations } from 'next-intl';
 import { RiGithubFill, RiGoogleFill } from 'react-icons/ri';
 import { toast } from 'sonner';
 
-import { signIn } from '@/core/auth/client';
+import { authClient, signIn } from '@/core/auth/client';
 import { useRouter } from '@/core/i18n/navigation';
 import { defaultLocale } from '@/config/locale';
 import { Button } from '@/shared/components/ui/button';
 import { useAppContext } from '@/shared/contexts/app';
 import { cn } from '@/shared/lib/utils';
+import { User } from '@/shared/models/user';
 import { Button as ButtonType } from '@/shared/types/blocks/common';
 
 export function SocialProviders({
@@ -24,12 +25,17 @@ export function SocialProviders({
   setLoading: (loading: boolean) => void;
 }) {
   const t = useTranslations('common.sign');
+  const locale = useLocale();
   const router = useRouter();
 
-  const { setIsShowSignModal } = useAppContext();
+  const { fetchUserInfo, setIsShowSignModal, setUser } = useAppContext();
+
+  const extractSessionUser = (data: any): User | null => {
+    const user = data?.user ?? data?.data?.user ?? null;
+    return user && typeof user === 'object' ? (user as User) : null;
+  };
 
   if (callbackUrl) {
-    const locale = useLocale();
     if (
       locale !== defaultLocale &&
       callbackUrl.startsWith('/') &&
@@ -53,8 +59,21 @@ export function SocialProviders({
           // Do NOT reset loading here; navigation may not have completed yet.
         },
         onSuccess: (ctx) => {
-          // Close modal if any; navigation will proceed.
-          setIsShowSignModal(false);
+          void (async () => {
+            try {
+              const res: any = await authClient.getSession();
+              const fresh = extractSessionUser(res?.data ?? res);
+              if (fresh?.id) {
+                setUser(fresh);
+                await fetchUserInfo();
+              }
+            } catch {
+              // ignore
+            } finally {
+              setIsShowSignModal(false);
+              setLoading(false);
+            }
+          })();
         },
         onError: (e: any) => {
           toast.error(e?.error?.message || 'sign in failed');

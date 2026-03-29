@@ -1,91 +1,127 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
 import { UIMessage } from 'ai';
+import { setRequestLocale } from 'next-intl/server';
 
+import { redirect } from '@/core/i18n/navigation';
 import { ChatBox } from '@/shared/blocks/chat/box';
-import { Loader } from '@/shared/components/ai-elements/loader';
-import { Chat } from '@/shared/types/chat';
+import { findAITaskById } from '@/shared/models/ai_task';
+import { getAITasks } from '@/shared/models/ai_task';
+import { ChatMessageStatus, getChatMessages } from '@/shared/models/chat_message';
+import { findChatById } from '@/shared/models/chat';
+import { findProjectById } from '@/shared/models/project';
+import { getUserInfo } from '@/shared/models/user';
 
-export default function ChatPage() {
-  const params = useParams();
+function safeParseJson(value: string | null | undefined) {
+  if (!value) {
+    return null;
+  }
 
-  const [initialChat, setInitialChat] = useState<Chat | null>(null);
-  const [initialMessages, setInitialMessages] = useState<UIMessage[] | null>(
-    null
-  );
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
 
-  const fetchChat = async (chatId: string) => {
-    try {
-      const resp = await fetch('/api/chat/info', {
-        method: 'POST',
-        body: JSON.stringify({ chatId }),
-      });
-      if (!resp.ok) {
-        throw new Error(`request failed with status: ${resp.status}`);
-      }
-      const { code, message, data } = await resp.json();
-      if (code !== 0) {
-        throw new Error(message);
-      }
+export default async function ChatDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  setRequestLocale(locale);
 
-      setInitialChat({
-        id: data.id,
-        title: data.title,
-        createdAt: data.createdAt,
-        model: data.model,
-        provider: data.provider,
-        parts: data.parts ? JSON.parse(data.parts) : [],
-        metadata: data.metadata ? JSON.parse(data.metadata) : undefined,
-        content: data.content ? JSON.parse(data.content) : undefined,
-      } as Chat);
+  const user = await getUserInfo();
+  if (!user) {
+    redirect({
+      href: `/sign-in?callbackUrl=${encodeURIComponent(`/chat/${id}`)}`,
+      locale,
+    });
+  }
+  const viewer = user!;
 
-      if (data.id) {
-        fetchMessages(data.id);
-      }
-    } catch (e: any) {
-      console.log('fetch chat failed:', e);
-    }
+  const chat = await findChatById(id);
+  if (!chat || chat.userId !== viewer.id) {
+    redirect({ href: '/chat', locale });
+  }
+
+  const messages = await getChatMessages({
+    chatId: id,
+    userId: viewer.id,
+    status: ChatMessageStatus.CREATED,
+  });
+
+  const initialMessages: UIMessage[] = messages.map((message) => ({
+    id: message.id,
+    role: message.role as UIMessage['role'],
+    parts: safeParseJson(message.parts) ?? [],
+  }));
+
+  const initialChat = {
+    id: chat.id,
+    projectId: chat.projectId,
+    title: chat.title,
+    createdAt: chat.createdAt,
+    model: chat.model,
+    provider: chat.provider,
+    parts: safeParseJson(chat.parts),
+    metadata: safeParseJson(chat.metadata),
+    content: safeParseJson(chat.content),
+  };
+  const project =
+    chat.projectId ? await findProjectById(chat.projectId) : undefined;
+  const initialChatWithProject = {
+    ...initialChat,
+    projectTitle: project?.title || chat.title || 'Untitled Project',
   };
 
-  const fetchMessages = async (chatId: string) => {
-    try {
-      const resp = await fetch('/api/chat/messages', {
-        method: 'POST',
-        body: JSON.stringify({ chatId, page: 1, limit: 100 }),
-      });
-      if (!resp.ok) {
-        throw new Error(`request failed with status: ${resp.status}`);
-      }
-      const { code, message, data } = await resp.json();
-      if (code !== 0) {
-        throw new Error(message);
-      }
+  const chatMetadata =
+    initialChat.metadata && typeof initialChat.metadata === 'object'
+      ? (initialChat.metadata as Record<string, unknown>)
+      : null;
+  const latestTaskId =
+    chatMetadata && typeof chatMetadata.latestTaskId === 'string'
+      ? chatMetadata.latestTaskId
+      : '';
+  const task = latestTaskId ? await findAITaskById(latestTaskId) : null;
+  const tasks = await getAITasks({
+    userId: viewer.id,
+  });
+  const initialTask =
+    task && task.userId === viewer.id
+      ? {
+          id: task.id,
+          status: task.status,
+          provider: task.provider,
+          model: task.model,
+          scene: task.scene,
+          prompt: task.prompt,
+          options: task.options,
+          taskInfo: task.taskInfo,
+          taskResult: task.taskResult,
+          createdAt: task.createdAt,
+          creditCost: task.costCredits,
+        }
+      : null;
+  const initialTasks = tasks.map((item) => ({
+    id: item.id,
+    status: item.status,
+    provider: item.provider,
+    model: item.model,
+    scene: item.scene,
+    prompt: item.prompt,
+    options: item.options,
+    taskInfo: item.taskInfo,
+    taskResult: item.taskResult,
+    createdAt: item.createdAt,
+    creditCost: item.costCredits,
+  }));
 
-      const { list } = data;
-      setInitialMessages(
-        list.map((item: any) => ({
-          id: item.id,
-          role: item.role,
-          parts: item.parts ? JSON.parse(item.parts) : [],
-          metadata: item.metadata ? JSON.parse(item.metadata) : undefined,
-        })) as UIMessage[]
-      );
-    } catch (e: any) {
-      console.log('fetch messages failed:', e);
-    }
-  };
-
-  useEffect(() => {
-    fetchChat(params.id as string);
-  }, [params.id]);
-
-  return initialChat && initialMessages ? (
-    <ChatBox initialChat={initialChat} initialMessages={initialMessages} />
-  ) : (
-    <div className="flex h-screen items-center justify-center p-8">
-      <Loader />
-    </div>
+  return (
+    <ChatBox
+      initialChat={initialChatWithProject}
+      initialMessages={initialMessages}
+      initialTask={initialTask}
+      initialTasks={initialTasks}
+    />
   );
 }

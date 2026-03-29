@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/shared/components/ui/button';
@@ -26,9 +27,18 @@ import { SignInForm } from './sign-in-form';
 
 export function SignModal({ callbackUrl = '/' }: { callbackUrl?: string }) {
   const t = useTranslations('common.sign');
-  const { isShowSignModal, setIsShowSignModal } = useAppContext();
+  const { isShowSignModal, setIsShowSignModal, fetchConfigs } =
+    useAppContext();
 
   const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  useEffect(() => {
+    if (!isShowSignModal) {
+      return;
+    }
+
+    void fetchConfigs();
+  }, [fetchConfigs, isShowSignModal]);
 
   if (isDesktop) {
     return (

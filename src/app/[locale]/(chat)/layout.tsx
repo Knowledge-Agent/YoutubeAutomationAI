@@ -1,29 +1,28 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
 
-
+import { usePathname } from '@/core/i18n/navigation';
 import { ChatLibrary } from '@/shared/blocks/chat/library';
 import { LocaleDetector } from '@/shared/blocks/common';
-import { DashboardLayout } from '@/shared/blocks/dashboard';
+import { SignModal } from '@/shared/blocks/sign/sign-modal';
 import { ChatContextProvider } from '@/shared/contexts/chat';
-import { Sidebar as SidebarType } from '@/shared/types/blocks/dashboard';
-
 
 export default function ChatLayout({ children }: { children: ReactNode }) {
-  const t = useTranslations('ai.chat');
-
-  const sidebar: SidebarType = t.raw('sidebar');
-
-  sidebar.library = <ChatLibrary />;
+  const pathname = usePathname();
+  const isChatDetailRoute =
+    pathname.startsWith('/chat/') && pathname !== '/chat/history';
 
   return (
     <ChatContextProvider>
-      <DashboardLayout sidebar={sidebar}>
+      <div className="dark flex min-h-screen bg-[#101117] text-white">
+        {!isChatDetailRoute ? <ChatLibrary /> : null}
+        <main className="min-w-0 flex-1 bg-[#15161d] [background-image:radial-gradient(circle_at_top_left,rgba(34,211,238,0.06),transparent_18%),radial-gradient(circle_at_top_right,rgba(244,63,94,0.05),transparent_18%)]">
+          {children}
+        </main>
         <LocaleDetector />
-        {children}
-      </DashboardLayout>
+        <SignModal callbackUrl={pathname || '/'} />
+      </div>
     </ChatContextProvider>
   );
 }

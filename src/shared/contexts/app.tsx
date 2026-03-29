@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 
-import { getAuthClient } from '@/core/auth/client';
+import { authClient, getAuthClient, useSession } from '@/core/auth/client';
 import { envConfigs } from '@/config';
 import { User } from '@/shared/models/user';
 
@@ -24,6 +24,16 @@ export interface ContextValue {
   setIsShowSignModal: (show: boolean) => void;
   isShowPaymentModal: boolean;
   setIsShowPaymentModal: (show: boolean) => void;
+  generationLimitModal: {
+    open: boolean;
+    title: string;
+    description: string;
+  };
+  showGenerationLimitModal: (payload: {
+    title: string;
+    description: string;
+  }) => void;
+  hideGenerationLimitModal: () => void;
   configs: Record<string, string>;
   fetchConfigs: () => Promise<void>;
   fetchUserCredits: () => Promise<void>;
@@ -34,6 +44,11 @@ export interface ContextValue {
 const AppContext = createContext({} as ContextValue);
 
 export const useAppContext = () => useContext(AppContext);
+
+function extractSessionUser(data: any): User | null {
+  const user = data?.user ?? data?.data?.user ?? null;
+  return user && typeof user === 'object' ? (user as User) : null;
+}
 
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [configs, setConfigs] = useState<Record<string, string>>({});
@@ -50,6 +65,32 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   // show payment modal
   const [isShowPaymentModal, setIsShowPaymentModal] = useState(false);
+  const [generationLimitModal, setGenerationLimitModal] = useState({
+    open: false,
+    title: '',
+    description: '',
+  });
+  const { data: session, isPending } = useSession();
+  const sessionUser = extractSessionUser(session);
+  const didFallbackSyncRef = useRef(false);
+
+  const showGenerationLimitModal = useCallback(
+    ({ title, description }: { title: string; description: string }) => {
+      setGenerationLimitModal({
+        open: true,
+        title,
+        description,
+      });
+    },
+    []
+  );
+
+  const hideGenerationLimitModal = useCallback(() => {
+    setGenerationLimitModal((current) => ({
+      ...current,
+      open: false,
+    }));
+  }, []);
 
   const fetchConfigs = useCallback(async () => {
     try {
@@ -147,6 +188,44 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     userRef.current = user;
   }, [user]);
 
+  useEffect(() => {
+    setIsCheckSign(isPending);
+  }, [isPending]);
+
+  useEffect(() => {
+    const currentUserId = user?.id;
+    const sessionUserId = (sessionUser as any)?.id;
+
+    if (sessionUser && sessionUserId !== currentUserId) {
+      setUser(sessionUser);
+      void fetchUserInfo();
+    } else if (!sessionUser && currentUserId) {
+      setUser(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionUser?.id, (sessionUser as any)?.email, user?.id]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (didFallbackSyncRef.current) return;
+    if (isPending) return;
+    if (sessionUser || user) return;
+
+    didFallbackSyncRef.current = true;
+    void (async () => {
+      try {
+        const res: any = await authClient.getSession();
+        const fresh = extractSessionUser(res?.data ?? res);
+        if (fresh?.id) {
+          setUser(fresh);
+          await fetchUserInfo();
+        }
+      } catch {
+        // ignore
+      }
+    })();
+  }, [fetchUserInfo, isPending, sessionUser, user]);
+
   const value = useMemo(
     () => ({
       user,
@@ -157,6 +236,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       setIsShowSignModal,
       isShowPaymentModal,
       setIsShowPaymentModal,
+      generationLimitModal,
+      showGenerationLimitModal,
+      hideGenerationLimitModal,
       configs,
       fetchConfigs,
       fetchUserCredits,
@@ -168,6 +250,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       isCheckSign,
       isShowSignModal,
       isShowPaymentModal,
+      generationLimitModal,
+      showGenerationLimitModal,
+      hideGenerationLimitModal,
       configs,
       fetchConfigs,
       fetchUserCredits,

@@ -137,7 +137,7 @@ export async function getAITasks({
   mediaType,
   provider,
   page = 1,
-  limit = 30,
+  limit,
   getUser = false,
 }: {
   userId?: string;
@@ -148,7 +148,7 @@ export async function getAITasks({
   limit?: number;
   getUser?: boolean;
 }): Promise<AITask[]> {
-  const result = await db()
+  let query = db()
     .select()
     .from(aiTask)
     .where(
@@ -159,9 +159,13 @@ export async function getAITasks({
         status ? eq(aiTask.status, status) : undefined
       )
     )
-    .orderBy(desc(aiTask.createdAt))
-    .limit(limit)
-    .offset((page - 1) * limit);
+    .orderBy(desc(aiTask.createdAt));
+
+  if (typeof limit === 'number') {
+    query = query.limit(limit).offset((page - 1) * limit);
+  }
+
+  const result = await query;
 
   if (getUser) {
     return appendUserToResult(result);
