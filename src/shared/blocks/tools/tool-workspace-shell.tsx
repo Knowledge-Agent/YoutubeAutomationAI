@@ -8,6 +8,7 @@ import {
   ChevronDown,
   Clapperboard,
   Coins,
+  Film,
   FolderOpen,
   ImageIcon,
   LoaderCircle,
@@ -59,6 +60,13 @@ const topTabs = [
     icon: ImageIcon,
     accent: 'from-[#233836] via-[#1a6f63] to-[var(--image-accent)]',
   },
+  {
+    key: 'video-remaker',
+    title: 'VideoRemaker',
+    href: '/video-remaker',
+    icon: Film,
+    accent: 'from-[#2a1f3d] via-[#6b3fa0] to-[#9b59b6]',
+  },
 ] as const;
 
 const topTabStyles = {
@@ -78,6 +86,14 @@ const topTabStyles = {
     panelGlow:
       'radial-gradient(circle_at_12%_0%,rgba(255,122,26,0.08),transparent_22%),radial-gradient(circle_at_30%_12%,rgba(30,184,166,0.12),transparent_24%)',
   },
+  'video-remaker': {
+    surface:
+      'from-[rgba(42,31,61,0.98)] via-[rgba(107,63,160,0.94)] to-[rgba(155,89,182,0.92)]',
+    edge: 'from-purple-200/80 via-purple-100/70 to-violet-200/60',
+    glow: 'shadow-[0_22px_48px_rgba(107,63,160,0.2)]',
+    panelGlow:
+      'radial-gradient(circle_at_12%_0%,rgba(107,63,160,0.14),transparent_26%),radial-gradient(circle_at_30%_12%,rgba(155,89,182,0.09),transparent_24%)',
+  },
 } as const;
 
 const workspaceDefaultHref = topTabs[0].href;
@@ -94,6 +110,12 @@ const workspaceNavItems = [
     title: 'AI Image',
     href: '/ai-image-generator',
     icon: ImageIcon,
+  },
+  {
+    key: 'video-remaker',
+    title: 'VideoRemaker',
+    href: '/video-remaker',
+    icon: Film,
   },
 ] as const;
 
@@ -199,8 +221,8 @@ export function ToolWorkspaceShell({
   showIntroCard = true,
   chromeStyle = 'default',
 }: {
-  activeKey: 'ai-video' | 'ai-image';
-  activeTab: 'ai-video' | 'ai-image';
+  activeKey: 'ai-video' | 'ai-image' | 'video-remaker';
+  activeTab: 'ai-video' | 'ai-image' | 'video-remaker';
   workspaceMode?: 'hub' | 'detail';
   eyebrow?: string;
   title: string;
