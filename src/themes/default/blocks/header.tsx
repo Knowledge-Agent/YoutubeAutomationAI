@@ -151,17 +151,18 @@ export function Header({ header }: { header: HeaderType }) {
             </nav>
 
             {buttons.map((button, idx) => {
-              const isPrimary = idx === buttons.length - 1;
+              const variant =
+                button.variant || (idx === buttons.length - 1 ? 'default' : 'outline');
               return (
                 <Link
                   key={`${button.title}-${idx}`}
                   href={button.url || ''}
                   target={button.target || '_self'}
                   className={cn(
-                    'inline-flex h-9.5 items-center justify-center rounded-md px-3.5 text-sm font-medium tracking-tight transition',
-                    isPrimary
-                      ? 'bg-[var(--brand-signal)] text-white shadow-[0_12px_24px_rgba(229,106,17,0.22)] hover:bg-[var(--brand-signal-strong)]'
-                      : 'text-[var(--landing-muted)] hover:text-[var(--landing-ink)]'
+                    'inline-flex h-12 items-center justify-center text-base font-medium tracking-tight transition',
+                    variant === 'default'
+                      ? 'rounded-full bg-white px-8 text-[#111114] shadow-[0_12px_28px_rgba(0,0,0,0.14)] hover:bg-[#f3f1ee]'
+                      : 'rounded-full px-5 text-white/88 hover:text-white'
                   )}
                 >
                   {button.title}
@@ -236,7 +237,8 @@ export function Header({ header }: { header: HeaderType }) {
               {buttons.length > 0 && (
                 <div className="flex flex-col gap-2 pt-3">
                   {buttons.map((button, idx) => {
-                    const isPrimary = idx === buttons.length - 1;
+                    const variant =
+                      button.variant || (idx === buttons.length - 1 ? 'default' : 'outline');
                     return (
                       <Link
                         key={`${button.title}-${idx}`}
@@ -244,10 +246,10 @@ export function Header({ header }: { header: HeaderType }) {
                         target={button.target || '_self'}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={cn(
-                          'inline-flex h-10 items-center justify-center rounded-md px-3.5 text-sm font-medium tracking-tight transition',
-                          isPrimary
-                            ? 'bg-[var(--brand-signal)] text-white hover:bg-[var(--brand-signal-strong)]'
-                            : 'border border-[color:var(--landing-line)] bg-[var(--landing-surface)] text-[var(--landing-muted)] hover:bg-[var(--landing-hover)] hover:text-[var(--landing-ink)]'
+                          'inline-flex h-11 items-center justify-center text-sm font-medium tracking-tight transition',
+                          variant === 'default'
+                            ? 'rounded-full bg-white px-5 text-[#111114] hover:bg-[#f3f1ee]'
+                            : 'rounded-full border border-white/10 bg-transparent px-5 text-[var(--landing-muted)] hover:bg-[var(--landing-hover)] hover:text-[var(--landing-ink)]'
                         )}
                       >
                         {button.title}

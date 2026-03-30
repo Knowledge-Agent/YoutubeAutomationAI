@@ -590,7 +590,18 @@ export function ToolWorkspaceShell({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : null}
+            ) : (
+              <button
+                type="button"
+                className={cn(
+                  headerControlClass,
+                  'px-4 text-sm font-semibold text-white'
+                )}
+                onClick={() => setIsShowSignModal(true)}
+              >
+                Login
+              </button>
+            )}
           </div>
         </div>
       </header>

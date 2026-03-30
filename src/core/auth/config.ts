@@ -74,6 +74,7 @@ const authOptions = {
 export async function getAuthOptions(configs: Record<string, string>) {
   const emailVerificationEnabled =
     configs.email_verification_enabled === 'true' && !!configs.resend_api_key;
+  const isGoogleAuthEnabled = configs.google_auth_enabled === 'true';
 
   return {
     ...authOptions,
@@ -202,7 +203,9 @@ export async function getAuthOptions(configs: Record<string, string>) {
       : {}),
     socialProviders: await getSocialProviders(configs),
     plugins:
-      configs.google_client_id && configs.google_one_tap_enabled === 'true'
+      isGoogleAuthEnabled &&
+      configs.google_client_id &&
+      configs.google_one_tap_enabled === 'true'
         ? [oneTap()]
         : [],
   };
@@ -211,17 +214,28 @@ export async function getAuthOptions(configs: Record<string, string>) {
 // get social providers with configs
 export async function getSocialProviders(configs: Record<string, string>) {
   const providers: any = {};
+  const isGoogleAuthEnabled = configs.google_auth_enabled === 'true';
+  const isGithubAuthEnabled = configs.github_auth_enabled === 'true';
 
   // google auth
-  if (configs.google_client_id && configs.google_client_secret) {
+  if (
+    isGoogleAuthEnabled &&
+    configs.google_client_id &&
+    configs.google_client_secret
+  ) {
     providers.google = {
       clientId: configs.google_client_id,
       clientSecret: configs.google_client_secret,
+      prompt: 'select_account',
     };
   }
 
   // github auth
-  if (configs.github_client_id && configs.github_client_secret) {
+  if (
+    isGithubAuthEnabled &&
+    configs.github_client_id &&
+    configs.github_client_secret
+  ) {
     providers.github = {
       clientId: configs.github_client_id,
       clientSecret: configs.github_client_secret,

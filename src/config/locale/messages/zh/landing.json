@@ -27,9 +27,15 @@
     },
     "buttons": [
       {
-        "title": "加入 Waitlist",
-        "url": "/#hero",
-        "icon": "Mail",
+        "title": "登录",
+        "url": "/sign-in",
+        "target": "_self",
+        "variant": "outline"
+      },
+      {
+        "title": "免费开始",
+        "url": "/sign-up",
+        "target": "_self",
         "variant": "default"
       }
     ],
