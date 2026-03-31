@@ -11,9 +11,28 @@ import { GenerationQuotaExceededError } from '@/shared/services/generation-quota
 import { validateToolTaskInput } from '@/shared/services/tool-tasks';
 
 export async function POST(req: Request) {
+  const startedAt = Date.now();
+  let lastMark = startedAt;
+  const mark = (label: string) => {
+    const now = Date.now();
+    console.log(
+      `[tool-session] ${label}: +${now - lastMark}ms (total ${now - startedAt}ms)`
+    );
+    lastMark = now;
+  };
+
   try {
-    const { chatId, prompt, surface, mode, model, toolModel, toolOptions } =
-      await req.json();
+    const {
+      chatId,
+      prompt,
+      surface,
+      mode,
+      model,
+      toolModel,
+      toolOptions,
+      appendPrompt,
+    } = await req.json();
+    mark('parsed request');
 
     if (!surface || !isToolChatSurface(surface)) {
       throw new Error('invalid tool surface');
@@ -36,6 +55,7 @@ export async function POST(req: Request) {
     }
 
     const user = await getUserInfo();
+    mark('resolved user');
     if (!user) {
       throw new Error('no auth, please sign in');
     }
@@ -55,6 +75,7 @@ export async function POST(req: Request) {
       model: toolModel,
       options: toolOptions || {},
     });
+    mark('validated input');
 
     const result = await startToolChatSession({
       chatId,
@@ -65,8 +86,11 @@ export async function POST(req: Request) {
       model,
       toolModel,
       toolOptions,
+      appendPrompt: appendPrompt !== false,
     });
+    mark('startToolChatSession');
 
+    mark('ready response');
     return respData({
       id: result.chat.id,
       path: `/chat/${result.chat.id}`,
@@ -78,6 +102,9 @@ export async function POST(req: Request) {
     });
   } catch (e: any) {
     if (e instanceof GenerationQuotaExceededError) {
+      console.log(
+        `[tool-session] quota exceeded after ${Date.now() - startedAt}ms`
+      );
       return respJson(-2, 'daily_generation_limit_reached', {
         mediaType: e.mediaType,
         limit: e.limit,
@@ -85,7 +112,10 @@ export async function POST(req: Request) {
       });
     }
 
-    console.log('create tool session failed:', e);
+    console.log(
+      `[tool-session] failed after ${Date.now() - startedAt}ms:`,
+      e
+    );
     return respErr(`create tool session failed: ${e.message}`);
   }
 }

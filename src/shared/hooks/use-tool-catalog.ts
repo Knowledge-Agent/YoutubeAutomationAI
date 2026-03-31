@@ -8,22 +8,74 @@ import type {
   ToolSurface,
 } from '@/shared/types/ai-tools';
 
+const catalogCache = new Map<ToolSurface, ToolCatalogResponse>();
+const catalogInflight = new Map<ToolSurface, Promise<ToolCatalogResponse>>();
+
+async function fetchToolCatalog(surface: ToolSurface) {
+  const cached = catalogCache.get(surface);
+  if (cached) {
+    return cached;
+  }
+
+  const inflight = catalogInflight.get(surface);
+  if (inflight) {
+    return inflight;
+  }
+
+  const request = (async () => {
+    const resp = await fetch(`/api/tools/models?surface=${surface}`);
+    if (!resp.ok) {
+      throw new Error(`request failed with status: ${resp.status}`);
+    }
+
+    const json = (await resp.json()) as {
+      code: number;
+      message?: string;
+      data?: ToolCatalogResponse;
+    };
+
+    if (json.code !== 0 || !json.data) {
+      throw new Error(json.message || 'failed to load catalog');
+    }
+
+    catalogCache.set(surface, json.data);
+    return json.data;
+  })();
+
+  catalogInflight.set(surface, request);
+
+  try {
+    return await request;
+  } finally {
+    catalogInflight.delete(surface);
+  }
+}
+
 export function useToolCatalog(
   surface: ToolSurface,
   initialCatalog?: ToolCatalogResponse | null
 ) {
+  const cachedCatalog =
+    catalogCache.get(surface) ??
+    (initialCatalog?.surface === surface ? initialCatalog : null);
   const [catalog, setCatalog] = useState<ToolCatalogResponse | null>(
-    initialCatalog ?? null
+    cachedCatalog
   );
-  const [loading, setLoading] = useState(!initialCatalog);
+  const [loading, setLoading] = useState(!cachedCatalog);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (
-      initialCatalog &&
-      initialCatalog.surface === surface &&
-      initialCatalog.models.length > 0
-    ) {
+    if (initialCatalog?.surface === surface && initialCatalog.models.length > 0) {
+      catalogCache.set(surface, initialCatalog);
+      setCatalog(initialCatalog);
+      setLoading(false);
+      return;
+    }
+
+    const cached = catalogCache.get(surface);
+    if (cached) {
+      setCatalog(cached);
+      setLoading(false);
       return;
     }
 
@@ -33,24 +85,10 @@ export function useToolCatalog(
       try {
         setLoading(true);
         setError(null);
-
-        const resp = await fetch(`/api/tools/models?surface=${surface}`);
-        if (!resp.ok) {
-          throw new Error(`request failed with status: ${resp.status}`);
-        }
-
-        const json = (await resp.json()) as {
-          code: number;
-          message?: string;
-          data?: ToolCatalogResponse;
-        };
-
-        if (json.code !== 0 || !json.data) {
-          throw new Error(json.message || 'failed to load catalog');
-        }
+        const nextCatalog = await fetchToolCatalog(surface);
 
         if (!cancelled) {
-          setCatalog(json.data);
+          setCatalog(nextCatalog);
         }
       } catch (e: any) {
         if (!cancelled) {

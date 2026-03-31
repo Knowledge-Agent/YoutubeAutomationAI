@@ -60,12 +60,17 @@ export function AiImageHubUi() {
     modelId: '',
     options: {},
   });
-  const startToolChat = useStartToolChat('image');
+  const { isStarting, startToolChat } = useStartToolChat('image');
 
   const startGeneration = () => {
+    if (isStarting) {
+      return;
+    }
+
     const normalizedPrompt = prompt.trim();
     if (!normalizedPrompt) return;
-    startToolChat({
+
+    void startToolChat({
       prompt: normalizedPrompt,
       mode: controls.mode as 'text-to-image' | 'image-to-image',
       toolModel: controls.modelId,
@@ -82,6 +87,7 @@ export function AiImageHubUi() {
         controls={controls}
         onControlsChange={setControls}
         onSubmit={startGeneration}
+        submitting={isStarting}
         allowedModes={['text-to-image', 'image-to-image']}
       />
 

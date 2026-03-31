@@ -7,6 +7,16 @@ import {
 } from '@/shared/services/chat-tool-link';
 
 export async function POST(req: Request) {
+  const startedAt = Date.now();
+  let lastMark = startedAt;
+  const mark = (label: string) => {
+    const now = Date.now();
+    console.log(
+      `[from-tool] ${label}: +${now - lastMark}ms (total ${now - startedAt}ms)`
+    );
+    lastMark = now;
+  };
+
   try {
     const {
       chatId,
@@ -18,6 +28,7 @@ export async function POST(req: Request) {
       toolOptions,
       appendPrompt,
     } = await req.json();
+    mark('parsed request');
 
     if (!surface || !isToolChatSurface(surface)) {
       throw new Error('invalid tool surface');
@@ -32,6 +43,7 @@ export async function POST(req: Request) {
     }
 
     const user = await getUserInfo();
+    mark('resolved user');
     if (!user) {
       throw new Error('no auth, please sign in');
     }
@@ -47,7 +59,9 @@ export async function POST(req: Request) {
       toolOptions,
       appendPrompt: appendPrompt !== false,
     });
+    mark('createOrResumeToolChat');
 
+    mark('ready response');
     return respData({
       id: result.chat.id,
       title: result.chat.title,
@@ -57,7 +71,10 @@ export async function POST(req: Request) {
       metadata: result.chat.metadata ? JSON.parse(result.chat.metadata) : null,
     });
   } catch (e: any) {
-    console.log('create tool chat failed:', e);
+    console.log(
+      `[from-tool] failed after ${Date.now() - startedAt}ms:`,
+      e
+    );
     return respErr(`create tool chat failed: ${e.message}`);
   }
 }

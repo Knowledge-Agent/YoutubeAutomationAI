@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Loader2, Mail, SendHorizonal } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,8 +18,13 @@ export function Subscribe({
 }) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const submitLockRef = useRef(false);
 
   const handleSubscribe = async () => {
+    if (submitLockRef.current) {
+      return;
+    }
+
     if (!email) {
       return;
     }
@@ -29,6 +34,7 @@ export function Subscribe({
     }
 
     try {
+      submitLockRef.current = true;
       setLoading(true);
       const resp = await fetch(section.submit.action, {
         method: 'POST',
@@ -44,14 +50,14 @@ export function Subscribe({
         throw new Error(message);
       }
 
-      setLoading(false);
-
       if (message) {
         toast.success(message);
       }
     } catch (e: any) {
-      setLoading(false);
       toast.error(e.message || 'subscribe failed');
+    } finally {
+      submitLockRef.current = false;
+      setLoading(false);
     }
   };
 

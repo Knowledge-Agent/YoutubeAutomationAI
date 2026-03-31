@@ -50,7 +50,7 @@ const featuredRows = [
   {
     title: 'High-Energy Food Reveal Sequences',
     accent: 'FOOD MOTION',
-    subtitle: 'Sora 2',
+    subtitle: 'VEO3.1 Fast',
     poster: '/demos/video-hub/food-motion.jpg',
     video: '/demos/video-hub/food-motion.mp4',
   },
@@ -235,13 +235,17 @@ export function AiVideoHubUi() {
   });
   const featuredRailRef = useRef<HTMLDivElement | null>(null);
   const [hasFeaturedOverflow, setHasFeaturedOverflow] = useState(false);
-  const startToolChat = useStartToolChat('video');
+  const { isStarting, startToolChat } = useStartToolChat('video');
 
   const startGeneration = () => {
+    if (isStarting) {
+      return;
+    }
+
     const normalizedPrompt = prompt.trim();
     if (!normalizedPrompt) return;
 
-    startToolChat({
+    void startToolChat({
       prompt: normalizedPrompt,
       mode: controls.mode as 'text-to-video' | 'image-to-video',
       toolModel: controls.modelId,
@@ -291,6 +295,7 @@ export function AiVideoHubUi() {
         controls={controls}
         onControlsChange={setControls}
         onSubmit={startGeneration}
+        submitting={isStarting}
         allowedModes={['text-to-video', 'image-to-video']}
       />
 

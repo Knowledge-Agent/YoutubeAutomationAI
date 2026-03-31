@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { UIMessage, UseChatHelpers } from '@ai-sdk/react';
 import { useTranslations } from 'next-intl';
 
@@ -40,10 +40,14 @@ export function ChatInput({
   const { models, loading } = useToolCatalog('chat');
   const [model, setModel] = useState<string>('');
   const [input, setInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitLockRef = useRef(false);
   const selectedModelLabel =
     models.find((item) => item.id === model)?.label ??
     models[0]?.label ??
     'Select model';
+  const isSubmitPending =
+    isSubmitting || status === 'submitted' || status === 'streaming';
 
   useEffect(() => {
     if (!model && models[0]?.id) {
@@ -61,11 +65,20 @@ export function ChatInput({
     <div className="w-full">
       <PromptInput
         onSubmit={async (message) => {
+          if (submitLockRef.current) {
+            return;
+          }
+
           try {
-            handleSubmit(message, { model });
+            submitLockRef.current = true;
+            setIsSubmitting(true);
+            await handleSubmit(message, { model });
             setInput('');
           } catch (err) {
             // Allow parent to control error display/state. Do not clear input.
+          } finally {
+            submitLockRef.current = false;
+            setIsSubmitting(false);
           }
         }}
         className="mt-4"
@@ -107,8 +120,8 @@ export function ChatInput({
             </PromptInputSelect>
           </PromptInputTools>
           <PromptInputSubmit
-            disabled={!input || status === 'submitted' || !model}
-            status={status}
+            disabled={!input || isSubmitPending || !model}
+            status={isSubmitPending ? 'submitted' : status}
           />
         </PromptInputFooter>
       </PromptInput>

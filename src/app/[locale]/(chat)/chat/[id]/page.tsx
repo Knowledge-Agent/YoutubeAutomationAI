@@ -85,6 +85,8 @@ export default async function ChatDetailPage({
   const task = latestTaskId ? await findAITaskById(latestTaskId) : null;
   const tasks = await getAITasks({
     userId: viewer.id,
+    chatId: id,
+    limit: 50,
   });
   const initialTask =
     task && task.userId === viewer.id

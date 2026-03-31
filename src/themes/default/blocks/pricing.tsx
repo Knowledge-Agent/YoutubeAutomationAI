@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Check, Loader2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -115,6 +115,7 @@ export function Pricing({
 
   const [isLoading, setIsLoading] = useState(false);
   const [productId, setProductId] = useState<string | null>(null);
+  const checkoutLockRef = useRef(false);
 
   // Currency state management for each item
   // Store selected currency and displayed item for each product_id
@@ -203,6 +204,10 @@ export function Pricing({
   };
 
   const handlePayment = async (item: PricingItem) => {
+    if (checkoutLockRef.current) {
+      return;
+    }
+
     if (!user) {
       setIsShowSignModal(true);
       return;
@@ -255,6 +260,12 @@ export function Pricing({
     item: PricingItem,
     paymentProvider?: string
   ) => {
+    if (checkoutLockRef.current) {
+      return;
+    }
+
+    let redirecting = false;
+
     try {
       if (!user) {
         setIsShowSignModal(true);
@@ -273,6 +284,7 @@ export function Pricing({
         metadata: affiliateMetadata,
       };
 
+      checkoutLockRef.current = true;
       setIsLoading(true);
       setProductId(item.product_id);
 
@@ -306,13 +318,17 @@ export function Pricing({
         throw new Error('checkout url not found');
       }
 
+      redirecting = true;
       window.location.href = checkoutUrl;
     } catch (e: any) {
       console.log('checkout failed: ', e);
       toast.error('checkout failed: ' + e.message);
-
-      setIsLoading(false);
-      setProductId(null);
+    } finally {
+      if (!redirecting) {
+        checkoutLockRef.current = false;
+        setIsLoading(false);
+        setProductId(null);
+      }
     }
   };
 

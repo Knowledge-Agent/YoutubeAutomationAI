@@ -1,31 +1,25 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useRouter } from '@/core/i18n/navigation';
 import { useAppContext } from '@/shared/contexts/app';
 import { useToolCatalog } from '@/shared/hooks/use-tool-catalog';
-import { getGenerationLimitCopy } from '@/shared/lib/generation-limit';
+import { setPendingToolChatAutostart } from '@/shared/lib/tool-chat-autostart';
 import type { ToolMode, ToolSurface } from '@/shared/types/ai-tools';
 
 type SupportedToolSurface = Exclude<ToolSurface, 'chat'>;
 
-function showGenerationQuotaModal(
-  showModal: (payload: { title: string; description: string }) => void,
-  mediaType: 'image' | 'video'
-) {
-  showModal(getGenerationLimitCopy(mediaType));
-}
-
 export function useStartToolChat(surface: SupportedToolSurface) {
   const router = useRouter();
-  const { user, setIsShowSignModal, showGenerationLimitModal } =
-    useAppContext();
+  const { user, setIsShowSignModal, setUser } = useAppContext();
   const { models: chatModels, loading: chatLoading } = useToolCatalog('chat');
   const { models: toolModels, loading: toolLoading } = useToolCatalog(surface);
+  const startLockRef = useRef(false);
+  const [isStarting, setIsStarting] = useState(false);
 
-  return useCallback(
+  const startToolChat = useCallback(
     async ({
       prompt,
       mode,
@@ -40,6 +34,10 @@ export function useStartToolChat(surface: SupportedToolSurface) {
       toolModel?: string;
       toolOptions?: Record<string, unknown>;
     }) => {
+      if (startLockRef.current) {
+        return;
+      }
+
       const trimmedPrompt = prompt.trim();
       if (!trimmedPrompt) {
         return;
@@ -69,50 +67,85 @@ export function useStartToolChat(surface: SupportedToolSurface) {
         return;
       }
 
+      let redirecting = false;
+
       try {
-        const resp = await fetch('/api/chat/tool-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            prompt: trimmedPrompt,
-            surface,
-            mode,
-            model: chatModel,
-            toolModel: selectedToolModel.id,
-            toolOptions: toolOptions ?? selectedToolModel.defaultOptions ?? {},
-            appendPrompt: true,
-          }),
-        });
+        startLockRef.current = true;
+        setIsStarting(true);
 
-        if (!resp.ok) {
-          throw new Error(`request failed with status: ${resp.status}`);
-        }
+        const resolvedToolOptions =
+          toolOptions ?? selectedToolModel.defaultOptions ?? {};
+        const existingChatId = user.toolChatIds?.[surface];
+        let ensuredChatId = existingChatId;
+        let targetPath = existingChatId ? `/chat/${existingChatId}` : '';
 
-        const json = (await resp.json()) as {
-          code: number;
-          message?: string;
-          data?: {
-            path: string;
+        if (!ensuredChatId) {
+          const resp = await fetch('/api/chat/ensure-tool-chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              surface,
+              mode,
+              model: chatModel,
+              toolModel: selectedToolModel.id,
+              toolOptions: resolvedToolOptions,
+            }),
+          });
+
+          if (!resp.ok) {
+            throw new Error(`request failed with status: ${resp.status}`);
+          }
+
+          const json = (await resp.json()) as {
+            code: number;
+            message?: string;
+            data?: {
+              id: string;
+              path: string;
+            };
           };
-        };
 
-        if (
-          json.code === -2 ||
-          json.message === 'daily_generation_limit_reached'
-        ) {
-          showGenerationQuotaModal(showGenerationLimitModal, surface);
-          return;
+          if (json.code !== 0 || !json.data?.path || !json.data?.id) {
+            throw new Error(json.message || 'failed to ensure tool chat');
+          }
+
+          ensuredChatId = json.data.id;
+          targetPath = json.data.path;
         }
 
-        if (json.code !== 0 || !json.data?.path) {
-          throw new Error(json.message || 'failed to start tool session');
+        if (!ensuredChatId) {
+          throw new Error('failed to resolve tool chat');
         }
 
-        router.push(json.data.path);
+        setPendingToolChatAutostart(ensuredChatId, {
+          prompt: trimmedPrompt,
+          mode,
+          toolModel: selectedToolModel.id,
+          toolOptions: resolvedToolOptions,
+        });
+        setUser(
+          user.toolChatIds?.[surface] === ensuredChatId
+            ? user
+            : {
+                ...user,
+                toolChatIds: {
+                  ...user.toolChatIds,
+                  [surface]: ensuredChatId,
+                },
+              }
+        );
+
+        redirecting = true;
+        router.push(`${targetPath}?autostart=1`);
       } catch (error: any) {
         toast.error(error.message || 'failed to start tool session');
+      } finally {
+        if (!redirecting) {
+          startLockRef.current = false;
+          setIsStarting(false);
+        }
       }
     },
     [
@@ -120,11 +153,16 @@ export function useStartToolChat(surface: SupportedToolSurface) {
       chatModels,
       router,
       setIsShowSignModal,
-      showGenerationLimitModal,
+      setUser,
       surface,
       toolLoading,
       toolModels,
       user,
     ]
   );
+
+  return {
+    isStarting,
+    startToolChat,
+  };
 }

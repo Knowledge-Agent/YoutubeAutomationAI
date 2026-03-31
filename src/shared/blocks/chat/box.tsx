@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { UIMessage } from '@ai-sdk/react';
 import { ThreadPrimitive } from '@assistant-ui/react';
 import { DefaultChatTransport } from 'ai';
@@ -26,6 +26,7 @@ import { useChatContext } from '@/shared/contexts/chat';
 import { useToolCatalog } from '@/shared/hooks/use-tool-catalog';
 import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
 import { getGenerationLimitCopy } from '@/shared/lib/generation-limit';
+import { takePendingToolChatAutostart } from '@/shared/lib/tool-chat-autostart';
 import { cn } from '@/shared/lib/utils';
 import type { ToolMode } from '@/shared/types/ai-tools';
 import { Chat } from '@/shared/types/chat';
@@ -194,7 +195,15 @@ function parseJson(value: string | null | undefined) {
   }
 }
 
-function normalizeTaskErrorMessage(errorMessage: unknown) {
+function normalizeTaskErrorMessage({
+  errorMessage,
+  prompt,
+  scene,
+}: {
+  errorMessage: unknown;
+  prompt?: string | null;
+  scene?: string | null;
+}) {
   if (typeof errorMessage !== 'string') {
     return undefined;
   }
@@ -217,6 +226,41 @@ function normalizeTaskErrorMessage(errorMessage: unknown) {
 
   if (shouldSuggestSwitchModel) {
     return '当前模型暂不可用，请切换模型重试';
+  }
+
+  const promptText = String(prompt || '').trim().toLowerCase();
+  const isImageWorkflow = Boolean(scene?.includes('image'));
+  const isVideoWorkflow = Boolean(scene?.includes('video'));
+  const asksForVideo =
+    promptText.includes('视频') ||
+    promptText.includes('video') ||
+    promptText.includes('动画') ||
+    promptText.includes('motion');
+  const asksForImage =
+    promptText.includes('图片') ||
+    promptText.includes('海报') ||
+    promptText.includes('照片') ||
+    promptText.includes('image') ||
+    promptText.includes('poster') ||
+    promptText.includes('photo');
+
+  if (
+    lower.includes('returned text instead of generating an image') ||
+    lower.includes('failed to extract urls')
+  ) {
+    if (isImageWorkflow && asksForVideo) {
+      return '你当前使用的是图片生成模型，但提示词更像是在请求视频。请切换到 AI Video，或把提示词改成静态画面描述后重试。';
+    }
+
+    return '图片模型没有成功返回图片结果。请把提示词改成更明确的静态画面描述，或切换到更稳定的图片模型重试。';
+  }
+
+  if (lower.includes('returned text instead of generating a video')) {
+    if (isVideoWorkflow && asksForImage) {
+      return '你当前使用的是视频生成模型，但提示词更像是在请求单张图片。请切换到 AI Image，或把提示词改成镜头/动作描述后重试。';
+    }
+
+    return '视频模型没有成功返回视频结果。请把提示词改成更明确的镜头、动作和时长描述后重试。';
   }
 
   return normalized;
@@ -278,7 +322,11 @@ function buildTaskCard(task: ChatToolTaskRecord): AssistantTaskCardData {
           minute: '2-digit',
         }).format(new Date(task.createdAt))
       : undefined,
-    errorMessage: normalizeTaskErrorMessage(taskInfo?.errorMessage),
+    errorMessage: normalizeTaskErrorMessage({
+      errorMessage: taskInfo?.errorMessage,
+      prompt: task.prompt,
+      scene: task.scene,
+    }),
     assets: [...imageAssets, ...videoAssets],
     progress:
       typeof taskInfo?.progress === 'number'
@@ -322,7 +370,9 @@ export function ChatBox({
   initialTask?: ChatToolTaskRecord | null;
   initialTasks?: ChatToolTaskRecord[];
 }) {
+  const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setChat } = useChatContext();
   const { showGenerationLimitModal } = useAppContext();
   const { models } = useToolCatalog('chat');
@@ -364,6 +414,7 @@ export function ChatBox({
   const [toolModelId, setToolModelId] = useState(toolModelFromMetadata);
   const [isGeneratingTask, setIsGeneratingTask] = useState(false);
   const toolGenerationLockRef = useRef(false);
+  const autoStartConsumedRef = useRef(false);
   const [draftSourceTaskId, setDraftSourceTaskId] = useState<string>(
     seededTasks[0]?.id ?? ''
   );
@@ -434,11 +485,13 @@ export function ChatBox({
       mode,
       taskModelId,
       options,
+      appendPrompt = true,
     }: {
       prompt: string;
       mode: string;
       taskModelId: string;
       options: Record<string, unknown>;
+      appendPrompt?: boolean;
     }) => {
       if (toolGenerationLockRef.current) {
         return;
@@ -514,6 +567,7 @@ export function ChatBox({
             model: chatModel,
             toolModel: taskModelId,
             toolOptions: options,
+            appendPrompt,
           }),
         });
 
@@ -568,8 +622,6 @@ export function ChatBox({
             metadata: json.data.metadata,
           });
         }
-
-        router.refresh();
       } catch (error: any) {
         setTasks((current) =>
           current.filter((task) => !task.id.startsWith('local-pending-'))
@@ -757,6 +809,43 @@ export function ChatBox({
       applyDraftFromTask(null);
     }
   }, [applyDraftFromTask, isToolChat, selectedTaskId]);
+
+  useEffect(() => {
+    if (!isToolChat || !chatState?.id) {
+      return;
+    }
+
+    if (searchParams.get('autostart') !== '1') {
+      return;
+    }
+
+    if (autoStartConsumedRef.current) {
+      return;
+    }
+
+    const pendingAutostart = takePendingToolChatAutostart(chatState.id);
+    autoStartConsumedRef.current = true;
+    router.replace(pathname);
+
+    if (!pendingAutostart) {
+      return;
+    }
+
+    void createTaskFromPayload({
+      prompt: pendingAutostart.prompt,
+      mode: pendingAutostart.mode,
+      taskModelId: pendingAutostart.toolModel,
+      options: pendingAutostart.toolOptions ?? {},
+      appendPrompt: false,
+    });
+  }, [
+    chatState?.id,
+    createTaskFromPayload,
+    isToolChat,
+    pathname,
+    router,
+    searchParams,
+  ]);
 
   useEffect(() => {
     if (!isToolChat) {

@@ -10,6 +10,10 @@ export type Chat = typeof chat.$inferSelect & {
 };
 export type NewChat = typeof chat.$inferInsert;
 export type UpdateChat = Partial<Omit<NewChat, 'id' | 'createdAt'>>;
+export type ToolChatIds = {
+  image?: string;
+  video?: string;
+};
 
 export enum ChatStatus {
   PENDING = 'pending',
@@ -118,4 +122,52 @@ export async function updateChat(
     .returning();
 
   return result;
+}
+
+function safeParseMetadata(value: string | null | undefined) {
+  if (!value) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === 'object'
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
+export async function getToolChatIdsByUserId(
+  userId: string
+): Promise<ToolChatIds> {
+  const chats = await getChats({
+    userId,
+    status: ChatStatus.CREATED,
+    limit: 100,
+  });
+
+  const toolChatIds: ToolChatIds = {};
+
+  for (const item of chats) {
+    const metadata = safeParseMetadata(item.metadata);
+    if (metadata.source !== 'tool') {
+      continue;
+    }
+
+    if (metadata.toolSurface === 'image' && !toolChatIds.image) {
+      toolChatIds.image = item.id;
+    }
+
+    if (metadata.toolSurface === 'video' && !toolChatIds.video) {
+      toolChatIds.video = item.id;
+    }
+
+    if (toolChatIds.image && toolChatIds.video) {
+      break;
+    }
+  }
+
+  return toolChatIds;
 }
