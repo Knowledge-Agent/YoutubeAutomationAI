@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 
 import { Link } from '@/core/i18n/navigation';
@@ -15,8 +16,6 @@ import { NavItem } from '@/shared/types/blocks/common';
 
 export function Dropdown({
   value,
-  placeholder,
-  metadata,
   className,
 }: {
   value: NavItem[];
@@ -24,8 +23,27 @@ export function Dropdown({
   metadata: Record<string, any>;
   className?: string;
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (!value || value.length === 0) {
     return null;
+  }
+
+  if (!mounted) {
+    return (
+      <Button
+        variant="ghost"
+        type="button"
+        className={`data-[state=open]:bg-muted flex h-8 w-8 p-0 ${className || ''}`}
+      >
+        <MoreHorizontal />
+        <span className="sr-only">Open menu</span>
+      </Button>
+    );
   }
 
   return (
@@ -33,7 +51,8 @@ export function Dropdown({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="data-[state=open]:bg-muted flex h-8 w-8 p-0"
+          type="button"
+          className={`data-[state=open]:bg-muted flex h-8 w-8 p-0 ${className || ''}`}
         >
           <MoreHorizontal />
           <span className="sr-only">Open menu</span>
