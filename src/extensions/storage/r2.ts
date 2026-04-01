@@ -1,4 +1,5 @@
 import type {
+  StorageAccessUrlOptions,
   StorageConfigs,
   StorageDownloadUploadOptions,
   StorageProvider,
@@ -59,6 +60,10 @@ export class R2Provider implements StorageProvider {
       ? `${this.configs.publicDomain}/${uploadPath}/${options.key}`
       : url;
   };
+
+  async getAccessUrl(options: StorageAccessUrlOptions): Promise<string> {
+    return this.getPublicUrl(options);
+  }
 
   exists = async (options: { key: string; bucket?: string }) => {
     try {

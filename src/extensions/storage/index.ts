@@ -36,6 +36,12 @@ export interface StorageUploadResult {
   provider: string;
 }
 
+export interface StorageAccessUrlOptions {
+  key: string;
+  bucket?: string;
+  expiresIn?: number;
+}
+
 /**
  * Storage configs interface
  */
@@ -58,6 +64,11 @@ export interface StorageProvider {
 
   // get public url for key (optional)
   getPublicUrl?: (options: { key: string; bucket?: string }) => string;
+
+  // get temporary access url for key (optional)
+  getAccessUrl?: (
+    options: StorageAccessUrlOptions
+  ) => Promise<string> | string;
 
   // upload file
   uploadFile(options: StorageUploadOptions): Promise<StorageUploadResult>;
@@ -140,6 +151,53 @@ export class StorageManager {
     const provider = this.ensureDefaultProvider();
     if (!provider.getPublicUrl) return undefined;
     return provider.getPublicUrl(options);
+  }
+
+  async getAccessUrl(options: StorageAccessUrlOptions): Promise<string> {
+    const provider = this.ensureDefaultProvider();
+    if (provider.getAccessUrl) {
+      return provider.getAccessUrl(options);
+    }
+
+    if (provider.getPublicUrl) {
+      const url = provider.getPublicUrl(options);
+      if (url) {
+        return url;
+      }
+    }
+
+    throw new Error(
+      `Storage provider '${provider.name}' cannot generate access URL`
+    );
+  }
+
+  async getAccessUrlWithProvider(
+    options: StorageAccessUrlOptions,
+    providerName: string
+  ): Promise<string> {
+    const provider = this.getProvider(providerName);
+    if (!provider) {
+      throw new Error(`Storage provider '${providerName}' not found`);
+    }
+
+    if (provider.getAccessUrl) {
+      return provider.getAccessUrl(options);
+    }
+
+    if (provider.getPublicUrl) {
+      const url = provider.getPublicUrl(options);
+      if (url) {
+        return url;
+      }
+    }
+
+    throw new Error(
+      `Storage provider '${provider.name}' cannot generate access URL`
+    );
+  }
+
+  getDefaultProviderName(): string {
+    return this.ensureDefaultProvider().name;
   }
 
   // download and upload using specific provider

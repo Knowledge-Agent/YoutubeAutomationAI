@@ -3,12 +3,18 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { redirect } from '@/core/i18n/navigation';
 import { ChatBox } from '@/shared/blocks/chat/box';
-import { findAITaskById } from '@/shared/models/ai_task';
 import { getAITasks } from '@/shared/models/ai_task';
-import { ChatMessageStatus, getChatMessages } from '@/shared/models/chat_message';
 import { findChatById } from '@/shared/models/chat';
+import {
+  ChatMessageStatus,
+  getChatMessages,
+  getRecentChatMessages,
+} from '@/shared/models/chat_message';
 import { findProjectById } from '@/shared/models/project';
 import { getUserInfo } from '@/shared/models/user';
+
+const TOOL_CHAT_INITIAL_MESSAGE_LIMIT = 20;
+const TOOL_CHAT_INITIAL_TASK_LIMIT = 12;
 
 function safeParseJson(value: string | null | undefined) {
   if (!value) {
@@ -44,11 +50,34 @@ export default async function ChatDetailPage({
     redirect({ href: '/chat', locale });
   }
 
-  const messages = await getChatMessages({
-    chatId: id,
-    userId: viewer.id,
-    status: ChatMessageStatus.CREATED,
-  });
+  const metadata = safeParseJson(chat.metadata);
+  const isToolChat =
+    metadata &&
+    typeof metadata === 'object' &&
+    (metadata as Record<string, unknown>).source === 'tool';
+
+  const [messages, project, tasks] = await Promise.all([
+    isToolChat
+      ? getRecentChatMessages({
+          chatId: id,
+          userId: viewer.id,
+          status: ChatMessageStatus.CREATED,
+          limit: TOOL_CHAT_INITIAL_MESSAGE_LIMIT,
+        })
+      : getChatMessages({
+          chatId: id,
+          userId: viewer.id,
+          status: ChatMessageStatus.CREATED,
+        }),
+    chat.projectId ? findProjectById(chat.projectId) : Promise.resolve(undefined),
+    isToolChat
+      ? getAITasks({
+          userId: viewer.id,
+          chatId: id,
+          limit: TOOL_CHAT_INITIAL_TASK_LIMIT,
+        })
+      : Promise.resolve([]),
+  ]);
 
   const initialMessages: UIMessage[] = messages.map((message) => ({
     id: message.id,
@@ -64,11 +93,9 @@ export default async function ChatDetailPage({
     model: chat.model,
     provider: chat.provider,
     parts: safeParseJson(chat.parts),
-    metadata: safeParseJson(chat.metadata),
+    metadata,
     content: safeParseJson(chat.content),
   };
-  const project =
-    chat.projectId ? await findProjectById(chat.projectId) : undefined;
   const initialChatWithProject = {
     ...initialChat,
     projectTitle: project?.title || chat.title || 'Untitled Project',
@@ -82,14 +109,11 @@ export default async function ChatDetailPage({
     chatMetadata && typeof chatMetadata.latestTaskId === 'string'
       ? chatMetadata.latestTaskId
       : '';
-  const task = latestTaskId ? await findAITaskById(latestTaskId) : null;
-  const tasks = await getAITasks({
-    userId: viewer.id,
-    chatId: id,
-    limit: 50,
-  });
+  const task =
+    tasks.find((item) => item.id === latestTaskId) ??
+    (latestTaskId ? null : tasks[0] ?? null);
   const initialTask =
-    task && task.userId === viewer.id
+    task
       ? {
           id: task.id,
           status: task.status,

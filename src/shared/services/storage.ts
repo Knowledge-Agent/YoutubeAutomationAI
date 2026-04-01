@@ -12,6 +12,18 @@ import { Configs, getAllConfigs } from '@/shared/models/config';
 export function getStorageServiceWithConfigs(configs: Configs) {
   const storageManager = new StorageManager();
   let hasDefaultProvider = false;
+  const preferredProvider =
+    configs.default_storage_provider === 'auto'
+      ? ''
+      : configs.default_storage_provider || '';
+
+  const shouldSetAsDefault = (providerName: string) => {
+    if (preferredProvider) {
+      return preferredProvider === providerName;
+    }
+
+    return !hasDefaultProvider;
+  };
 
   // Add R2 provider if configured
   if (
@@ -34,9 +46,9 @@ export function getStorageServiceWithConfigs(configs: Configs) {
         endpoint: configs.r2_endpoint, // Optional custom endpoint
         publicDomain: configs.r2_domain,
       }),
-      true // Set R2 as default
+      shouldSetAsDefault('r2')
     );
-    hasDefaultProvider = true;
+    hasDefaultProvider = hasDefaultProvider || shouldSetAsDefault('r2');
   }
 
   if (
@@ -55,9 +67,9 @@ export function getStorageServiceWithConfigs(configs: Configs) {
         endpoint: configs.aliyun_oss_endpoint,
         publicDomain: configs.aliyun_oss_public_domain,
       }),
-      !hasDefaultProvider
+      shouldSetAsDefault('aliyun-oss')
     );
-    hasDefaultProvider = true;
+    hasDefaultProvider = hasDefaultProvider || shouldSetAsDefault('aliyun-oss');
   }
 
   // Add S3 provider if configured
@@ -65,14 +77,16 @@ export function getStorageServiceWithConfigs(configs: Configs) {
     storageManager.addProvider(
       new S3Provider({
         endpoint: configs.s3_endpoint,
-        region: configs.s3_region,
+        region: configs.s3_region || 'us-east-1',
         accessKeyId: configs.s3_access_key,
         secretAccessKey: configs.s3_secret_key,
         bucket: configs.s3_bucket,
+        uploadPath: configs.s3_upload_path,
         publicDomain: configs.s3_domain,
       }),
-      !hasDefaultProvider
+      shouldSetAsDefault('s3')
     );
+    hasDefaultProvider = hasDefaultProvider || shouldSetAsDefault('s3');
   }
 
   return storageManager;

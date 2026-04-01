@@ -54,11 +54,17 @@ async function uploadImageFile(file: File) {
   }
 
   const result = await response.json();
-  if (result.code !== 0 || !result.data?.urls?.length) {
+  const uploadResult = result.data?.results?.[0];
+  if (result.code !== 0 || !uploadResult) {
     throw new Error(result.message || 'Upload failed');
   }
 
-  return result.data.urls[0] as string;
+  return (
+    uploadResult.accessUrl ||
+    result.data?.accessUrls?.[0] ||
+    uploadResult.url ||
+    result.data?.urls?.[0]
+  ) as string;
 }
 
 function createEmptySlots(): ReferenceImageSlot[] {
