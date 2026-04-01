@@ -20,7 +20,7 @@ type ChatDrawerNavItem = {
 };
 
 const drawerPrimaryNav: ChatDrawerNavItem[] = [
-  { key: 'home', title: 'Home', href: '/tools', icon: Home },
+  { key: 'home', title: 'Home', href: '/ai-video-generator', icon: Home },
 ];
 
 const drawerCreationNav: ChatDrawerNavItem[] = [
