@@ -92,20 +92,15 @@ export function useStartToolChat(surface: SupportedToolSurface) {
         const ensuredChatId = json.data.id;
         const targetPath = json.data.path;
 
-        setUser((current) =>
-          current && current.id === user.id
-            ? {
-                ...current,
-                toolChatIds:
-                  current.toolChatIds?.[surface] === ensuredChatId
-                    ? current.toolChatIds
-                    : {
-                        ...current.toolChatIds,
-                        [surface]: ensuredChatId,
-                      },
-              }
-            : current
-        );
+        if (user.toolChatIds?.[surface] !== ensuredChatId) {
+          setUser({
+            ...user,
+            toolChatIds: {
+              ...user.toolChatIds,
+              [surface]: ensuredChatId,
+            },
+          });
+        }
 
         if (typeof (router as any).prefetch === 'function') {
           void (router as any).prefetch(targetPath);
