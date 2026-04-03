@@ -3,18 +3,21 @@
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
-import { getResult, getReview } from './api';
+import { getImageReview, getResult, getReview } from './api';
 import { ScreenAnalyzing } from './screen-analyzing';
 import { ScreenCreate } from './screen-create';
 import { ScreenGenerating } from './screen-generating';
+import { ScreenImageReview } from './screen-image-review';
+import { ScreenImaging } from './screen-imaging';
 import { ScreenResult } from './screen-result';
 import { ScreenReview } from './screen-review';
-import type { ResultData, ReviewData, Screen } from './types';
+import type { ImageReviewData, ResultData, ReviewData, Screen } from './types';
 
 export function VideoRemakerUi() {
   const [screen, setScreen] = useState<Screen>('create');
   const [taskId, setTaskId] = useState<string>('');
   const [reviewData, setReviewData] = useState<ReviewData | null>(null);
+  const [imageReviewData, setImageReviewData] = useState<ImageReviewData | null>(null);
   const [resultData, setResultData] = useState<ResultData | null>(null);
 
   function handleTaskCreated(id: string) {
@@ -32,7 +35,21 @@ export function VideoRemakerUi() {
     }
   }, [taskId]);
 
-  function handleGenerating() {
+  function handleImagingStarted() {
+    setScreen('imaging');
+  }
+
+  const handleImageReviewReady = useCallback(async () => {
+    try {
+      const data = await getImageReview(taskId);
+      setImageReviewData(data);
+      setScreen('image-review');
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : '获取参考图审核数据失败');
+    }
+  }, [taskId]);
+
+  function handleFilmingStarted() {
     setScreen('generating');
   }
 
@@ -49,12 +66,17 @@ export function VideoRemakerUi() {
   function handleNewTask() {
     setTaskId('');
     setReviewData(null);
+    setImageReviewData(null);
     setResultData(null);
     setScreen('create');
   }
 
   function handleRegenerated() {
     setScreen('generating');
+  }
+
+  function handleReimaging() {
+    setScreen('imaging');
   }
 
   return (
@@ -70,7 +92,24 @@ export function VideoRemakerUi() {
       )}
 
       {screen === 'review' && reviewData && (
-        <ScreenReview taskId={taskId} onGenerating={handleGenerating} />
+        <ScreenReview taskId={taskId} onImagingStarted={handleImagingStarted} />
+      )}
+
+      {screen === 'imaging' && reviewData && (
+        <ScreenImaging
+          taskId={taskId}
+          shots={reviewData.shots.map((s) => ({ shot_id: s.shot_id }))}
+          onImageReviewReady={handleImageReviewReady}
+          onCancel={handleNewTask}
+        />
+      )}
+
+      {screen === 'image-review' && imageReviewData && (
+        <ScreenImageReview
+          taskId={taskId}
+          data={imageReviewData}
+          onFilmingStarted={handleFilmingStarted}
+        />
       )}
 
       {screen === 'generating' && reviewData && (
@@ -87,6 +126,7 @@ export function VideoRemakerUi() {
           result={resultData}
           onNewTask={handleNewTask}
           onRegenerated={handleRegenerated}
+          onReimaging={handleReimaging}
         />
       )}
     </div>

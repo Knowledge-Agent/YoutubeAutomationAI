@@ -8,15 +8,15 @@ import { toast } from 'sonner';
 import { Button } from '@/shared/components/ui/button';
 import { Textarea } from '@/shared/components/ui/textarea';
 
-import { getReview, patchShot, triggerSynthesize } from './api';
+import { getReview, patchShot, triggerImaging } from './api';
 import type { IdentityAnchor, ReviewData, ReviewShot } from './types';
 
 interface ScreenReviewProps {
   taskId: string;
-  onGenerating: () => void;
+  onImagingStarted: () => void;
 }
 
-export function ScreenReview({ taskId, onGenerating }: ScreenReviewProps) {
+export function ScreenReview({ taskId, onImagingStarted }: ScreenReviewProps) {
   const [data, setData] = useState<ReviewData | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [editingImage, setEditingImage] = useState(false);
@@ -82,10 +82,10 @@ export function ScreenReview({ taskId, onGenerating }: ScreenReviewProps) {
   async function handleConfirm() {
     setConfirming(true);
     try {
-      await triggerSynthesize(taskId);
-      onGenerating();
+      await triggerImaging(taskId);
+      onImagingStarted();
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : '触发生成失败');
+      toast.error(e instanceof Error ? e.message : '触发文生图失败');
       setConfirming(false);
     }
   }
@@ -111,7 +111,7 @@ export function ScreenReview({ taskId, onGenerating }: ScreenReviewProps) {
             disabled={confirming}
             className="bg-[var(--brand-signal)] text-white hover:bg-[var(--brand-signal-strong)]"
           >
-            {confirming ? '处理中...' : '确认，开始生成'}
+            {confirming ? '处理中...' : '确认，生成参考图'}
           </Button>
         </div>
       </div>

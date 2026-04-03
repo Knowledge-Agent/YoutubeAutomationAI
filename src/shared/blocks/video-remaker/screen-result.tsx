@@ -2,24 +2,24 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Download, PenLine, Plus, RefreshCw, Save, X } from 'lucide-react';
+import { Download, PenLine, Plus, RefreshCw, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/shared/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';
 
-import { frameUrl, patchShot, refUrl, triggerSynthesize, videoUrl } from './api';
+import { frameUrl, patchShot, refilming, reimaging, videoUrl } from './api';
 import type { ResultData, ResultShot } from './types';
 
 interface PromptEditDrawerProps {
   taskId: string;
   shot: ResultShot;
   onClose: () => void;
-  onRegenerated: () => void;
+  onReimaging: () => void;
 }
 
-function PromptEditDrawer({ taskId, shot, onClose, onRegenerated }: PromptEditDrawerProps) {
+function PromptEditDrawer({ taskId, shot, onClose, onReimaging }: PromptEditDrawerProps) {
   const [draftImage, setDraftImage] = useState(shot.image_prompt);
   const [draftVideo, setDraftVideo] = useState(shot.video_prompt);
   const [saving, setSaving] = useState(false);
@@ -31,9 +31,9 @@ function PromptEditDrawer({ taskId, shot, onClose, onRegenerated }: PromptEditDr
         image_prompt: draftImage,
         video_prompt: draftVideo,
       });
-      await triggerSynthesize(taskId);
-      toast.success('已提交重新生成');
-      onRegenerated();
+      await reimaging(taskId, shot.shot_id);
+      toast.success('已提交重新生成参考图');
+      onReimaging();
       onClose();
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : '提交失败');
@@ -81,7 +81,7 @@ function PromptEditDrawer({ taskId, shot, onClose, onRegenerated }: PromptEditDr
             />
           </div>
           <div className="rounded-md bg-[var(--studio-panel-strong)] p-3 text-xs text-[var(--studio-muted)]">
-            ⚠ 修改提示词后，该分镜原有复刻结果将被覆盖
+            ⚠ 修改提示词后，将重新生成该分镜的参考图，完成后需重新确认并生成视频
           </div>
         </div>
 
@@ -98,7 +98,7 @@ function PromptEditDrawer({ taskId, shot, onClose, onRegenerated }: PromptEditDr
             disabled={saving}
             onClick={handleConfirm}
           >
-            {saving ? '提交中...' : '确认，重新生成'}
+            {saving ? '提交中...' : '确认，重新生成参考图'}
           </Button>
         </div>
       </div>
@@ -113,17 +113,18 @@ interface ScreenResultProps {
   result: ResultData;
   onNewTask: () => void;
   onRegenerated: () => void;
+  onReimaging: () => void;
 }
 
-export function ScreenResult({ taskId, result, onNewTask, onRegenerated }: ScreenResultProps) {
+export function ScreenResult({ taskId, result, onNewTask, onRegenerated, onReimaging }: ScreenResultProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('compare');
   const [editingShot, setEditingShot] = useState<ResultShot | null>(null);
   const shots = result.shots;
 
   async function handleRegenerate(shot: ResultShot) {
     try {
-      await triggerSynthesize(taskId);
-      toast.success(`分镜 ${shot.shot_id} 已提交重新生成`);
+      await refilming(taskId, shot.shot_id);
+      toast.success(`分镜 ${shot.shot_id} 已提交重新生成视频`);
       onRegenerated();
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : '重新生成失败');
@@ -268,7 +269,7 @@ export function ScreenResult({ taskId, result, onNewTask, onRegenerated }: Scree
           taskId={taskId}
           shot={editingShot}
           onClose={() => setEditingShot(null)}
-          onRegenerated={onRegenerated}
+          onReimaging={onReimaging}
         />
       )}
     </div>

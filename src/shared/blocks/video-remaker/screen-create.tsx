@@ -14,15 +14,28 @@ interface ScreenCreateProps {
 }
 
 export function ScreenCreate({ onTaskCreated }: ScreenCreateProps) {
-  const [videoPath, setVideoPath] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
   const [loading, setLoading] = useState(false);
 
+  function isYoutubeUrl(value: string): boolean {
+    try {
+      const url = new URL(value);
+      return ['www.youtube.com', 'youtube.com', 'youtu.be'].includes(url.hostname);
+    } catch {
+      return false;
+    }
+  }
+
   async function handleSubmit() {
-    const path = videoPath.trim();
-    if (!path) return;
+    const url = youtubeUrl.trim();
+    if (!url) return;
+    if (!isYoutubeUrl(url)) {
+      toast.error('请输入有效的 YouTube 链接');
+      return;
+    }
     setLoading(true);
     try {
-      const { task_id } = await createTask(path);
+      const { task_id } = await createTask(url);
       onTaskCreated(task_id);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : '创建任务失败');
@@ -42,18 +55,19 @@ export function ScreenCreate({ onTaskCreated }: ScreenCreateProps) {
       </div>
 
       <div className="w-full max-w-xl">
-        <label className="mb-2 block text-sm text-[var(--studio-muted)]">本地视频路径</label>
+        <label className="mb-2 block text-sm text-[var(--studio-muted)]">YouTube 视频链接</label>
         <div className="flex gap-3">
           <Input
-            value={videoPath}
-            onChange={(e) => setVideoPath(e.target.value)}
-            placeholder="/data/input/my_video.mp4"
-            className="flex-1 border-[var(--studio-line)] bg-[var(--studio-panel)] text-[var(--studio-ink)] placeholder:text-[var(--studio-muted)] focus-visible:ring-[var(--brand-signal)]"
+            value={youtubeUrl}
+            onChange={(e) => setYoutubeUrl(e.target.value)}
+            placeholder="https://www.youtube.com/shorts/Ylkxe9MYRto"
+            className="flex-1 border-[var(--studio-line)] placeholder:text-[var(--studio-muted)] focus-visible:ring-[var(--brand-signal)]"
+            style={{ color: 'var(--studio-ink)', backgroundColor: 'var(--studio-panel)' }}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
           />
           <Button
             onClick={handleSubmit}
-            disabled={!videoPath.trim() || loading}
+            disabled={!youtubeUrl.trim() || loading}
             className="bg-[var(--brand-signal)] text-white hover:bg-[var(--brand-signal-strong)]"
           >
             {loading ? (
@@ -64,7 +78,7 @@ export function ScreenCreate({ onTaskCreated }: ScreenCreateProps) {
           </Button>
         </div>
         <p className="mt-2 text-xs text-[var(--studio-muted)]">
-          支持 MP4、MOV 等格式，处理约需 2-3 分钟
+          当前仅支持公开可访问的 YouTube 视频或 Shorts 链接
         </p>
       </div>
     </div>

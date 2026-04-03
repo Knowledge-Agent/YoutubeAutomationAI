@@ -12,6 +12,7 @@ import { frameUrl, getTaskStatus } from './api';
 import type { TaskStatusData } from './types';
 
 const STAGE_LABELS: Record<string, string> = {
+  downloading: '正在下载 YouTube 视频...',
   splitter: '正在拆解分镜...',
   modeler: '正在识别角色特征...',
   architect: '正在生成提示词...',

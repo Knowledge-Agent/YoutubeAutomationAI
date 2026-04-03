@@ -1,21 +1,26 @@
 // VideoRemaker API 调用封装
-// 所有请求均指向后端 NEXT_PUBLIC_VIDEOAGENT_API_URL（默认 http://localhost:8000）
+// 开发环境（NODE_ENV=development）请求 Next.js Route Handler（/api/videoagent）
+// 生产环境请求 NEXT_PUBLIC_VIDEOAGENT_API_URL（默认 http://localhost:8000）
 
 import type {
+  ImageReviewData,
   ResultData,
   ReviewData,
   TaskStatusData,
 } from './types';
 
 function baseUrl(): string {
+  if (process.env.NODE_ENV === 'development') {
+    return '/api/videoagent';
+  }
   return process.env.NEXT_PUBLIC_VIDEOAGENT_API_URL ?? 'http://localhost:8000';
 }
 
-export async function createTask(videoPath: string): Promise<{ task_id: string; status: string }> {
+export async function createTask(youtubeUrl: string): Promise<{ task_id: string; status: string }> {
   const res = await fetch(`${baseUrl()}/tasks`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ video_path: videoPath }),
+    body: JSON.stringify({ youtube_url: youtubeUrl }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
@@ -50,11 +55,41 @@ export async function patchShot(
   return res.json();
 }
 
-export async function triggerSynthesize(taskId: string): Promise<{ task_id: string; status: string }> {
-  const res = await fetch(`${baseUrl()}/tasks/${taskId}/synthesize`, {
+export async function triggerImaging(taskId: string): Promise<{ task_id: string; status: string }> {
+  const res = await fetch(`${baseUrl()}/tasks/${taskId}/imaging`, {
     method: 'POST',
   });
-  if (!res.ok) throw new Error(`触发生成失败 (${res.status})`);
+  if (!res.ok) throw new Error(`触发文生图失败 (${res.status})`);
+  return res.json();
+}
+
+export async function getImageReview(taskId: string): Promise<ImageReviewData> {
+  const res = await fetch(`${baseUrl()}/tasks/${taskId}/image-review`);
+  if (!res.ok) throw new Error(`获取参考图审核数据失败 (${res.status})`);
+  return res.json();
+}
+
+export async function reimaging(taskId: string, shotId: string): Promise<{ shot_id: string; status: string }> {
+  const res = await fetch(`${baseUrl()}/tasks/${taskId}/shots/${shotId}/reimaging`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error(`重新生成参考图失败 (${res.status})`);
+  return res.json();
+}
+
+export async function triggerFilming(taskId: string): Promise<{ task_id: string; status: string }> {
+  const res = await fetch(`${baseUrl()}/tasks/${taskId}/filming`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error(`触发图生视频失败 (${res.status})`);
+  return res.json();
+}
+
+export async function refilming(taskId: string, shotId: string): Promise<{ shot_id: string; status: string }> {
+  const res = await fetch(`${baseUrl()}/tasks/${taskId}/shots/${shotId}/refilming`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error(`重新生成视频失败 (${res.status})`);
   return res.json();
 }
 

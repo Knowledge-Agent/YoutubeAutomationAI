@@ -4,13 +4,15 @@
 export type TaskStatus =
   | 'running'
   | 'review_ready'
-  | 'synthesizing'
+  | 'imaging'
+  | 'image_review_ready'
+  | 'filming'
   | 'completed'
   | 'failed';
 
-export type TaskStage = 'splitter' | 'modeler' | 'architect' | 'synthesis';
+export type TaskStage = 'downloading' | 'splitter' | 'modeler' | 'architect' | 'imaging' | 'filming';
 
-export type Screen = 'create' | 'analyzing' | 'review' | 'generating' | 'result';
+export type Screen = 'create' | 'analyzing' | 'review' | 'imaging' | 'image-review' | 'generating' | 'result';
 
 export interface TaskStatusData {
   task_id: string;
@@ -40,6 +42,20 @@ export interface ReviewData {
   task_id: string;
   identity_anchors: IdentityAnchor[];
   shots: ReviewShot[];
+}
+
+export interface ImageReviewShot {
+  shot_id: string;
+  start_sec: number;
+  end_sec: number;
+  frame_url: string;
+  ref_image_url: string;
+  image_prompt: string;
+}
+
+export interface ImageReviewData {
+  task_id: string;
+  shots: ImageReviewShot[];
 }
 
 export interface ResultShot {
