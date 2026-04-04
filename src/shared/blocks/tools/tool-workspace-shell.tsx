@@ -9,6 +9,7 @@ import {
   ImageIcon,
   LogOut,
   Menu,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -29,6 +30,13 @@ import { signOut } from '@/core/auth/client';
 
 const topTabs = [
   {
+    key: 'tools',
+    title: 'Tools',
+    href: '/tools',
+    icon: Sparkles,
+    accent: 'from-[#7057ff] via-[#8d7bff] to-[#ff8b4d]',
+  },
+  {
     key: 'ai-video',
     title: 'AI Video',
     href: '/ai-video-generator',
@@ -45,6 +53,14 @@ const topTabs = [
 ] as const;
 
 const topTabStyles = {
+  tools: {
+    surface:
+      'from-[rgba(112,87,255,0.98)] via-[rgba(141,123,255,0.94)] to-[rgba(255,139,77,0.92)]',
+    edge: 'from-violet-200/85 via-indigo-100/80 to-orange-200/70',
+    glow: 'shadow-[0_22px_48px_rgba(112,87,255,0.18)]',
+    panelGlow:
+      'radial-gradient(circle_at_12%_0%,rgba(112,87,255,0.16),transparent_26%),radial-gradient(circle_at_30%_12%,rgba(255,139,77,0.08),transparent_24%)',
+  },
   'ai-video': {
     surface:
       'from-[rgba(255,122,26,0.98)] via-[rgba(255,139,77,0.94)] to-[rgba(255,94,122,0.92)]',
@@ -66,6 +82,12 @@ const topTabStyles = {
 const workspaceDefaultHref = topTabs[0].href;
 
 const workspaceNavItems = [
+  {
+    key: 'tools',
+    title: 'Tools',
+    href: '/tools',
+    icon: Sparkles,
+  },
   {
     key: 'ai-video',
     title: 'AI Video',
@@ -177,8 +199,8 @@ export function ToolWorkspaceShell({
   showIntroCard = true,
   chromeStyle = 'default',
 }: {
-  activeKey: 'ai-video' | 'ai-image';
-  activeTab: 'ai-video' | 'ai-image';
+  activeKey: 'tools' | 'ai-video' | 'ai-image';
+  activeTab: 'tools' | 'ai-video' | 'ai-image';
   workspaceMode?: 'hub' | 'detail';
   eyebrow?: string;
   title: string;
