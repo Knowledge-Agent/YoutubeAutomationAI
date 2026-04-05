@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
   Coins,
@@ -54,6 +54,9 @@ const drawerCreationNav: ChatDrawerNavItem[] = [
   },
 ];
 
+const WORKSPACE_DRAWER_ID = 'workspace-navigation';
+const WORKSPACE_DRAWER_TITLE_ID = 'workspace-navigation-title';
+
 function safeParseHeaderMetadata(value: unknown) {
   if (!value) {
     return {};
@@ -92,6 +95,18 @@ function getToolDrawerActiveKey(
   }
 
   return 'home';
+}
+
+function getWorkspaceBrandHref(activeSection: WorkspaceSection) {
+  if (activeSection === 'tools') {
+    return '/tools';
+  }
+
+  if (activeSection === 'ai-image') {
+    return '/ai-image-generator';
+  }
+
+  return '/ai-video-generator';
 }
 
 function DrawerNavItem({
@@ -146,6 +161,28 @@ export function ChatHeader({
   const activeDrawerKey =
     activeSection ?? getToolDrawerActiveKey(headerMetadata);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  const wasDrawerOpen = useRef(false);
+
+  useEffect(() => {
+    if (drawerOpen) {
+      const frame = window.requestAnimationFrame(() => {
+        drawerRef.current?.focus();
+      });
+
+      wasDrawerOpen.current = true;
+
+      return () => {
+        window.cancelAnimationFrame(frame);
+      };
+    }
+
+    if (wasDrawerOpen.current) {
+      triggerRef.current?.focus();
+      wasDrawerOpen.current = false;
+    }
+  }, [drawerOpen]);
 
   useEffect(() => {
     if (!drawerOpen) {
@@ -165,17 +202,64 @@ export function ChatHeader({
     };
   }, [drawerOpen]);
 
+  const handleDrawerKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key !== 'Tab') {
+      return;
+    }
+
+    const focusableElements = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      event.currentTarget.focus();
+      return;
+    }
+
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement;
+
+    if (activeElement === event.currentTarget) {
+      event.preventDefault();
+      if (event.shiftKey) {
+        lastFocusable.focus();
+      } else {
+        firstFocusable.focus();
+      }
+      return;
+    }
+
+    if (event.shiftKey && activeElement === firstFocusable) {
+      event.preventDefault();
+      lastFocusable.focus();
+      return;
+    }
+
+    if (!event.shiftKey && activeElement === lastFocusable) {
+      event.preventDefault();
+      firstFocusable.focus();
+    }
+  };
+
   return (
     <>
       <header className="sticky top-0 z-20 h-[68px] border-b border-[color:var(--studio-line)] bg-[rgb(18_19_26_/_0.96)] px-4 backdrop-blur-xl md:px-5">
         <div className="flex h-full items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button
+              ref={triggerRef}
               type="button"
               onClick={() => setDrawerOpen((current) => !current)}
               aria-label={
                 drawerOpen ? 'Close workspace menu' : 'Open workspace menu'
               }
+              aria-controls={WORKSPACE_DRAWER_ID}
+              aria-expanded={drawerOpen}
+              aria-haspopup="dialog"
               className="inline-flex h-10 w-10 items-center justify-center rounded-[14px] border border-[color:var(--studio-line)] bg-[var(--studio-panel)] text-[var(--studio-ink)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:border-white/14 hover:bg-[var(--studio-hover)]"
             >
               {drawerOpen ? (
@@ -185,7 +269,7 @@ export function ChatHeader({
               )}
             </button>
             <Link
-              href="/ai-video-generator"
+              href={getWorkspaceBrandHref(activeDrawerKey)}
               className="flex items-center gap-3"
             >
               <Image
@@ -219,8 +303,20 @@ export function ChatHeader({
             className="fixed inset-x-0 top-[68px] bottom-0 z-30 bg-black/46"
             onClick={() => setDrawerOpen(false)}
           />
-          <aside className="fixed top-[68px] bottom-0 left-0 z-40 w-[286px] border-r border-[color:var(--studio-line)] bg-[rgb(15_16_22_/_0.98)] px-4 py-5 shadow-[0_24px_70px_rgba(0,0,0,0.42)] backdrop-blur-xl">
+          <aside
+            id={WORKSPACE_DRAWER_ID}
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={WORKSPACE_DRAWER_TITLE_ID}
+            tabIndex={-1}
+            onKeyDown={handleDrawerKeyDown}
+            className="fixed top-[68px] bottom-0 left-0 z-40 w-[286px] border-r border-[color:var(--studio-line)] bg-[rgb(15_16_22_/_0.98)] px-4 py-5 shadow-[0_24px_70px_rgba(0,0,0,0.42)] backdrop-blur-xl"
+          >
             <div className="flex h-full flex-col">
+              <h2 id={WORKSPACE_DRAWER_TITLE_ID} className="sr-only">
+                Workspace Navigation
+              </h2>
               <div className="space-y-2">
                 {drawerPrimaryNav.map((item) => (
                   <DrawerNavItem
