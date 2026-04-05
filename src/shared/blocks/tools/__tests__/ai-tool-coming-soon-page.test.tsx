@@ -13,7 +13,7 @@ vi.mock('@/core/i18n/navigation', () => ({
 }));
 
 describe('AiToolComingSoonPage', () => {
-  it('renders tool detail content without the old tools-only sidebar frame', () => {
+  it('renders an operational detail layout with an output preview for coming-soon tools', () => {
     const tool = getAiToolBySlug('shorts-reframer');
 
     if (!tool) {
@@ -30,5 +30,11 @@ describe('AiToolComingSoonPage', () => {
       screen.getAllByRole('link', { name: /niche discovery sprint/i })
     ).toHaveLength(2);
     expect(screen.queryByText(/^AI Tools$/)).not.toBeInTheDocument();
+    expect(screen.getByText(/what you'll input/i)).toBeInTheDocument();
+    expect(screen.getByText(tool.whatYouInput)).toBeInTheDocument();
+    expect(screen.getByText(/what you'll get/i)).toBeInTheDocument();
+    expect(screen.getByText(/hook-first short concepts/i)).toBeInTheDocument();
+    expect(screen.getByText(/clip boundaries/i)).toBeInTheDocument();
+    expect(screen.getByText(/editing notes/i)).toBeInTheDocument();
   });
 });
