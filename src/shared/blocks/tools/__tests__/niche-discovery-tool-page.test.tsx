@@ -38,7 +38,16 @@ describe('NicheDiscoveryToolPage', () => {
     expect(
       screen.getByRole('link', { name: /script rewrite studio/i })
     ).toHaveAttribute('href', '/tools/script-rewrite-studio');
+    expect(screen.getByText(/format/i)).toBeInTheDocument();
+    expect(screen.getByText(/visual source/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /generate niche pack/i })
+    ).toBeInTheDocument();
     expect(screen.getByText(/run the sprint to see/i)).toBeInTheDocument();
+    expect(screen.getByText(/what you'll get/i)).toBeInTheDocument();
+    expect(screen.getByText(/recommended niche path/i)).toBeInTheDocument();
+    expect(screen.getByText(/topic ladder/i)).toBeInTheDocument();
+    expect(screen.getByText(/hook options/i)).toBeInTheDocument();
     expect(
       screen.queryByRole('heading', { name: /recommended niche/i })
     ).not.toBeInTheDocument();
@@ -61,6 +70,15 @@ describe('NicheDiscoveryToolPage', () => {
 
     expect(
       await screen.findByRole('heading', { name: /recommended niche/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /topic ladder/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /hook options/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /script pack/i })
     ).toBeInTheDocument();
     expect(screen.getByText(/voiceover draft/i)).toBeInTheDocument();
   });

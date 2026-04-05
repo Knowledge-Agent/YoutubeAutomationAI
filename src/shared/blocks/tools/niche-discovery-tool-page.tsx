@@ -213,7 +213,7 @@ export function NicheDiscoveryToolPage({
   };
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
       <div className="space-y-4">
         <ToolSwitcherCard activeSlug={tool.slug} />
         <NicheDiscoveryToolForm
@@ -228,27 +228,29 @@ export function NicheDiscoveryToolPage({
         />
       </div>
 
-      <NicheDiscoveryToolResults
-        selectedNiche={selectedNiche}
-        selectedTopic={selectedTopic}
-        selectedHook={selectedHook}
-        onSelectTopic={(topic) => {
-          const nextHook = topic.hooks[0];
+      <div className="min-w-0">
+        <NicheDiscoveryToolResults
+          selectedNiche={selectedNiche}
+          selectedTopic={selectedTopic}
+          selectedHook={selectedHook}
+          onSelectTopic={(topic) => {
+            const nextHook = topic.hooks[0];
 
-          updateSelections({
-            nicheSlug: selectedNiche?.slug ?? '',
-            topicSlug: topic.slug,
-            hookSlug: nextHook?.slug ?? '',
-          });
-        }}
-        onSelectHook={(hook) =>
-          updateSelections({
-            nicheSlug: selectedNiche?.slug ?? '',
-            topicSlug: selectedTopic?.slug ?? '',
-            hookSlug: hook.slug,
-          })
-        }
-      />
+            updateSelections({
+              nicheSlug: selectedNiche?.slug ?? '',
+              topicSlug: topic.slug,
+              hookSlug: nextHook?.slug ?? '',
+            });
+          }}
+          onSelectHook={(hook) =>
+            updateSelections({
+              nicheSlug: selectedNiche?.slug ?? '',
+              topicSlug: selectedTopic?.slug ?? '',
+              hookSlug: hook.slug,
+            })
+          }
+        />
+      </div>
     </div>
   );
 }
