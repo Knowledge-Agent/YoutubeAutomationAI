@@ -144,17 +144,49 @@ export function NicheDiscoveryToolPage({
     router.replace(query ? `${pathname}?${query}` : pathname);
   };
 
+  const buildSearchState = ({
+    nextSeed = runSeed,
+    nextFormat = format,
+    nextAssetType = assetType,
+    nextSelections = resolvedSelections,
+  }: {
+    nextSeed?: string;
+    nextFormat?: SprintFormat;
+    nextAssetType?: string;
+    nextSelections?: SprintSelections | null;
+  } = {}): NicheDiscoveryToolSearchState => ({
+    seed: nextSeed,
+    format: nextFormat,
+    assetType: nextAssetType,
+    audience,
+    nicheSlug: nextSelections?.nicheSlug,
+    topicSlug: nextSelections?.topicSlug,
+    hookSlug: nextSelections?.hookSlug,
+  });
+
   const updateSelections = (nextSelections: SprintSelections) => {
     setSelections(nextSelections);
-    syncState({
-      seed: runSeed,
-      format,
-      assetType,
-      audience,
-      nicheSlug: nextSelections.nicheSlug,
-      topicSlug: nextSelections.topicSlug,
-      hookSlug: nextSelections.hookSlug,
-    });
+    syncState(buildSearchState({ nextSelections }));
+  };
+
+  const updateFormat = (nextFormat: SprintFormat) => {
+    setFormat(nextFormat);
+
+    if (!runSeed.trim()) {
+      return;
+    }
+
+    syncState(buildSearchState({ nextFormat }));
+  };
+
+  const updateAssetType = (nextAssetType: string) => {
+    setAssetType(nextAssetType);
+
+    if (!runSeed.trim()) {
+      return;
+    }
+
+    syncState(buildSearchState({ nextAssetType }));
   };
 
   const runSprint = () => {
@@ -172,15 +204,12 @@ export function NicheDiscoveryToolPage({
 
     setRunSeed(seed.trim());
     setSelections(nextSelections);
-    syncState({
-      seed: seed.trim(),
-      format,
-      assetType,
-      audience,
-      nicheSlug: nextSelections.nicheSlug,
-      topicSlug: nextSelections.topicSlug,
-      hookSlug: nextSelections.hookSlug,
-    });
+    syncState(
+      buildSearchState({
+        nextSeed: seed.trim(),
+        nextSelections,
+      })
+    );
   };
 
   return (
@@ -193,8 +222,8 @@ export function NicheDiscoveryToolPage({
           format={format}
           assetType={assetType}
           onSeedChange={setSeed}
-          onFormatChange={setFormat}
-          onAssetTypeChange={setAssetType}
+          onFormatChange={updateFormat}
+          onAssetTypeChange={updateAssetType}
           onRunSprint={runSprint}
         />
       </div>

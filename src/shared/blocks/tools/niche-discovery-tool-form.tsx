@@ -45,12 +45,12 @@ export function NicheDiscoveryToolForm({
             aria-label="Seed topic"
             value={seed}
             onChange={(event) => onSeedChange(event.target.value)}
-            className="w-full rounded-2xl border border-[color:var(--studio-line)] bg-[#0f1118] px-4 py-3 text-white outline-none"
+            className="w-full rounded-2xl border border-[color:var(--studio-line)] bg-[#0f1118] px-4 py-3 text-white outline-none focus-visible:border-[var(--brand-signal)] focus-visible:ring-2 focus-visible:ring-[rgba(229,106,17,0.35)]"
             placeholder="AI tools"
           />
         </label>
 
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-4">
           <button
             type="button"
             aria-pressed={format === 'story'}
@@ -76,6 +76,19 @@ export function NicheDiscoveryToolForm({
             )}
           >
             Shorts
+          </button>
+          <button
+            type="button"
+            aria-pressed={assetType === 'stock footage'}
+            onClick={() => onAssetTypeChange('stock footage')}
+            className={cn(
+              'rounded-2xl border px-4 py-3 text-left text-white transition',
+              assetType === 'stock footage'
+                ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
+                : 'border-[color:var(--studio-line)]'
+            )}
+          >
+            Stock Footage
           </button>
           <button
             type="button"
