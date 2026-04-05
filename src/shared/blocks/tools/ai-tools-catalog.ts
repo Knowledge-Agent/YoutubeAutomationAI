@@ -18,6 +18,7 @@ export interface AiToolDefinition {
   whenToUse: string;
   whatYouInput: string;
   whatYouGet: string;
+  outputModules: string[];
 }
 
 export const aiToolCategories = [
@@ -39,6 +40,11 @@ export const aiTools = [
     whenToUse: 'Use this when one long-form video needs multiple vertical cuts.',
     whatYouInput: 'One source video, desired cut style, and publishing goal.',
     whatYouGet: 'Hook-first short concepts, clip boundaries, and editing notes.',
+    outputModules: [
+      'Hook-first short concepts',
+      'Clip boundaries',
+      'Editing notes',
+    ],
   },
   {
     slug: 'thumbnail-brief-builder',
@@ -52,6 +58,11 @@ export const aiTools = [
     whenToUse: 'Use this when the packaging angle is still weaker than the topic.',
     whatYouInput: 'Topic angle, audience promise, and thumbnail direction.',
     whatYouGet: 'Thumbnail concepts, title angles, and visual composition notes.',
+    outputModules: [
+      'Thumbnail concepts',
+      'Title angles',
+      'Visual composition notes',
+    ],
   },
   {
     slug: 'niche-discovery-sprint',
@@ -67,6 +78,12 @@ export const aiTools = [
     whatYouInput:
       'One seed topic, content format, and optional audience constraints.',
     whatYouGet: 'A niche path, topic ladder, hook options, and a script-ready pack.',
+    outputModules: [
+      'Niche path',
+      'Topic ladder',
+      'Hook options',
+      'Script-ready pack',
+    ],
   },
   {
     slug: 'script-rewrite-studio',
@@ -81,6 +98,11 @@ export const aiTools = [
       'Use this when a rough draft already exists but the retention flow is weak.',
     whatYouInput: 'A draft script, tone direction, and desired pacing.',
     whatYouGet: 'A cleaner narrative structure, tighter hook, and sharper beats.',
+    outputModules: [
+      'Cleaner narrative structure',
+      'Tighter hook',
+      'Sharper beats',
+    ],
   },
 ] satisfies AiToolDefinition[];
 

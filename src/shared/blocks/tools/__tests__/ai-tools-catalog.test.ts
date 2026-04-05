@@ -22,6 +22,12 @@ describe('ai-tools-catalog', () => {
         category: 'script-tools',
         status: 'ready',
         href: '/tools/niche-discovery-sprint',
+        outputModules: [
+          'Niche path',
+          'Topic ladder',
+          'Hook options',
+          'Script-ready pack',
+        ],
       })
     );
   });
@@ -45,5 +51,27 @@ describe('ai-tools-catalog', () => {
     expect(videoTools).toContain('shorts-reframer');
     expect(videoTools).not.toContain('script-rewrite-studio');
     expect(scriptTools).toContain('script-rewrite-studio');
+  });
+
+  it('stores output modules as structured catalog data for every tool', () => {
+    expect(getAiToolBySlug('shorts-reframer')).toEqual(
+      expect.objectContaining({
+        outputModules: [
+          'Hook-first short concepts',
+          'Clip boundaries',
+          'Editing notes',
+        ],
+      })
+    );
+
+    expect(getAiToolBySlug('thumbnail-brief-builder')).toEqual(
+      expect.objectContaining({
+        outputModules: [
+          'Thumbnail concepts',
+          'Title angles',
+          'Visual composition notes',
+        ],
+      })
+    );
   });
 });

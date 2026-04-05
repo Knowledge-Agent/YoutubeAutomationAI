@@ -5,11 +5,6 @@ import { ToolSwitcherCard } from './tool-switcher-card';
 
 export function AiToolComingSoonPage({ tool }: { tool: AiToolDefinition }) {
   const availableNowTool = aiTools.find((entry) => entry.status === 'ready');
-  const outputModules = tool.whatYouGet
-    .replace(/\.$/, '')
-    .split(/,\s+and\s+|,\s+|\s+and\s+/)
-    .map((module) => module.trim())
-    .filter(Boolean);
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
@@ -83,14 +78,12 @@ export function AiToolComingSoonPage({ tool }: { tool: AiToolDefinition }) {
               Preview the deliverable before this workflow goes live
             </h2>
             <p className="mt-3 max-w-[52ch] text-sm leading-6 text-white/68">
-              Review the output modules this tool will return so the right-side
-              workspace already reads like a structured handoff instead of a
-              placeholder state.
+              {tool.whatYouGet}
             </p>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            {outputModules.map((module) => (
+            {tool.outputModules.map((module) => (
               <div
                 key={module}
                 className="rounded-[22px] border border-[color:var(--studio-line)] bg-[rgba(255,255,255,0.03)] p-4"
