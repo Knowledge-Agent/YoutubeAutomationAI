@@ -34,14 +34,6 @@ type ToolWorkspaceShellProps = {
   title: string;
   description: string;
   children: ReactNode;
-  activeTab?: ToolWorkspaceKey;
-  workspaceMode?: 'hub' | 'detail';
-  eyebrow?: string;
-  chips?: string[];
-  actions?: string[];
-  contentCard?: boolean;
-  showIntroCard?: boolean;
-  chromeStyle?: 'default' | 'studio';
 };
 
 const workspaceHomeHref = '/tools';

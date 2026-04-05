@@ -10,7 +10,6 @@ import {
   readNicheDiscoveryToolSearchState,
   type NicheDiscoveryToolSearchState,
 } from '@/shared/blocks/tools/niche-discovery-tool-query';
-import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
 
 export const revalidate = 3600;
 
@@ -65,7 +64,7 @@ export default async function ToolDetailPage({
   const getSearchValue = (key: string) => {
     const value = resolvedSearchParams[key];
 
-    return Array.isArray(value) ? value[0] : value ?? null;
+    return Array.isArray(value) ? value[0] : (value ?? null);
   };
 
   const initialState: NicheDiscoveryToolSearchState | undefined =
@@ -73,21 +72,9 @@ export default async function ToolDetailPage({
       ? readNicheDiscoveryToolSearchState({ get: getSearchValue })
       : undefined;
 
-  return (
-    <ToolWorkspaceShell
-      activeKey="tools"
-      activeTab="tools"
-      workspaceMode="detail"
-      title={tool.pageTitle}
-      description={tool.whenToUse}
-      contentCard={false}
-      showIntroCard={false}
-    >
-      {tool.slug === 'niche-discovery-sprint' ? (
-        <NicheDiscoveryToolPage tool={tool} initialState={initialState} />
-      ) : (
-        <AiToolComingSoonPage tool={tool} />
-      )}
-    </ToolWorkspaceShell>
-  );
+  if (tool.slug === 'niche-discovery-sprint') {
+    return <NicheDiscoveryToolPage tool={tool} initialState={initialState} />;
+  }
+
+  return <AiToolComingSoonPage tool={tool} />;
 }
