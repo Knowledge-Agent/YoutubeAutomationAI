@@ -8,6 +8,7 @@ import { DefaultChatTransport } from 'ai';
 import { ArrowUp, FolderOpen, LoaderCircle, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { WorkspaceDetailShell } from '@/shared/blocks/common';
 import {
   ToolControlBar,
   type ToolControlValue,
@@ -35,7 +36,6 @@ import { cn } from '@/shared/lib/utils';
 import type { ToolMode } from '@/shared/types/ai-tools';
 import { Chat } from '@/shared/types/chat';
 
-import { ChatHeader } from './header';
 import { ChatReferenceImageSlots } from './reference-image-slots';
 
 function safeParseMetadata(value: unknown) {
@@ -247,7 +247,9 @@ function normalizeTaskErrorMessage({
     return '当前模型暂不可用，请切换模型重试';
   }
 
-  const promptText = String(prompt || '').trim().toLowerCase();
+  const promptText = String(prompt || '')
+    .trim()
+    .toLowerCase();
   const isImageWorkflow = Boolean(scene?.includes('image'));
   const isVideoWorkflow = Boolean(scene?.includes('video'));
   const asksForVideo =
@@ -413,9 +415,8 @@ export function ChatBox({
         })
       : null
   );
-  const [serverTasks, setServerTasks] = useState<ChatToolTaskRecord[]>(
-    seededTasks
-  );
+  const [serverTasks, setServerTasks] =
+    useState<ChatToolTaskRecord[]>(seededTasks);
   const [optimisticTask, setOptimisticTask] =
     useState<ChatToolTaskRecord | null>(initialOptimisticTaskRef.current);
   const [launchState, setLaunchState] = useState<ToolLaunchState>(
@@ -653,9 +654,7 @@ export function ChatBox({
           json.message === 'daily_generation_limit_reached'
         ) {
           showGenerationLimitModal(
-            getGenerationLimitCopy(
-              toolSurface === 'image' ? 'image' : 'video'
-            )
+            getGenerationLimitCopy(toolSurface === 'image' ? 'image' : 'video')
           );
           setOptimisticTask(null);
           setLaunchState(serverTasks.length > 0 ? 'active' : 'idle');
@@ -668,10 +667,7 @@ export function ChatBox({
 
         setServerTasks((current) => [
           json.data!.task!,
-          ...current.filter(
-            (task) =>
-              task.id !== json.data!.task!.id
-          ),
+          ...current.filter((task) => task.id !== json.data!.task!.id),
         ]);
         setOptimisticTask(null);
         setLaunchState('active');
@@ -1196,155 +1192,156 @@ export function ChatBox({
     };
   }, [chatState?.projectId]);
 
-  return (
-    <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[#111217]">
-      <ChatHeader />
-      <div className="min-h-0 flex-1 overflow-hidden px-3 py-2 lg:px-5 lg:py-3">
-        <div className="mx-auto flex h-full min-h-0 max-w-[1180px] flex-col gap-2 lg:gap-3">
-          <AssistantWorkspaceThread
-            runtime={runtime}
-            composerActionSlot={
-              isToolChat ? (
-                <>
-                  <ThreadPrimitive.If running={false}>
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        if (toolInputIntent === 'generate') {
-                          void handleGenerateToolTask();
-                          return;
-                        }
+  const activeSection =
+    toolSurface === 'image'
+      ? 'ai-image'
+      : toolSurface === 'video'
+        ? 'ai-video'
+        : 'home';
 
-                        const form = event.currentTarget.closest('form');
-                        form?.requestSubmit();
-                      }}
-                      className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-zinc-950 shadow-lg shadow-black/20 transition hover:bg-zinc-100 disabled:bg-white/6 disabled:text-zinc-500"
-                      disabled={
-                        toolInputIntent === 'generate'
-                          ? !canGenerateToolTask
-                          : isGeneratingTask
-                      }
-                    >
-                      {isGeneratingTask ? (
-                        <LoaderCircle className="size-4.5 animate-spin" />
-                      ) : (
-                        <ArrowUp className="size-4.5" />
-                      )}
-                    </button>
-                  </ThreadPrimitive.If>
-                  <ThreadPrimitive.If running>
-                    <button
-                      type="button"
-                      className="flex h-12 w-12 items-center justify-center rounded-full bg-white/8 text-zinc-400 shadow-lg shadow-black/20"
-                      disabled
-                    >
-                      <LoaderCircle className="size-4.5 animate-spin" />
-                    </button>
-                  </ThreadPrimitive.If>
-                </>
-              ) : undefined
-            }
-            composerFooter={
-              isToolChat && AI_CREDITS_ENABLED ? (
-                <span className="pr-2 text-[15px] text-zinc-500">
-                  {selectedToolModel?.creditCostByMode?.[
-                    toolModeState as ToolMode
-                  ] ?? 0}{' '}
-                  Credits
-                </span>
-              ) : undefined
-            }
-            composerPlaceholder={
-              isToolChat
-                ? 'Enter your idea to generate'
-                : 'Ask about scripts, workflows, prompts, or growth ideas'
-            }
-            composerShowAttachmentButton
-            composerSubmitDisabled={isGeneratingTask}
-            composerSubmitIntent={
-              isToolChat ? handleToolInputSubmitIntent : undefined
-            }
-            composerLeading={
-              isToolChat && imageReferenceRequired ? (
-                <ChatReferenceImageSlots
-                  value={imageUrls}
-                  onChange={(nextUrls) => {
-                    setToolOptions((current) => ({
-                      ...current,
-                      image_urls: nextUrls,
-                    }));
-                    setIsDraftDirty(true);
+  return (
+    <WorkspaceDetailShell activeSection={activeSection}>
+      <AssistantWorkspaceThread
+        runtime={runtime}
+        composerActionSlot={
+          isToolChat ? (
+            <>
+              <ThreadPrimitive.If running={false}>
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    if (toolInputIntent === 'generate') {
+                      void handleGenerateToolTask();
+                      return;
+                    }
+
+                    const form = event.currentTarget.closest('form');
+                    form?.requestSubmit();
                   }}
-                />
-              ) : undefined
-            }
-            composerToolbar={
-              isToolChat &&
-              (toolSurface === 'image' || toolSurface === 'video') ? (
-                <ToolControlBar
-                  className="w-full"
-                  surface={toolCatalogSurface}
-                  value={{
-                    mode: toolModeState,
-                    modelId: toolModelId,
-                    options: toolOptions,
-                  }}
-                  onChange={(nextValue: ToolControlValue) => {
-                    setToolModeState(nextValue.mode);
-                    setToolModelId(nextValue.modelId);
-                    setToolOptions(nextValue.options);
-                    setIsDraftDirty(true);
-                  }}
-                  allowedModes={
-                    toolSurface === 'image'
-                      ? ['text-to-image', 'image-to-image']
-                      : ['text-to-video', 'image-to-video']
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-zinc-950 shadow-lg shadow-black/20 transition hover:bg-zinc-100 disabled:bg-white/6 disabled:text-zinc-500"
+                  disabled={
+                    toolInputIntent === 'generate'
+                      ? !canGenerateToolTask
+                      : isGeneratingTask
                   }
-                />
-              ) : undefined
-            }
-            initialComposerValue={isToolChat ? toolPrompt : initialPrompt}
-            onComposerValueChange={
-              isToolChat
-                ? (value) => {
-                    setToolPrompt(value);
-                    setIsDraftDirty(true);
-                  }
-                : undefined
-            }
-            toolUIs={[imageTaskToolUI, videoTaskToolUI]}
-            hideUserMessages={isToolChat}
-            contentSlot={toolChatContent ?? undefined}
-            headerSlot={toolChatHeader ?? undefined}
-            autoScrollKey={taskCards[0]?.task.id ?? taskCards.length}
-            emptyDescription="Your latest generation and assistant replies will appear here."
-            emptyTitle={chatState?.title || 'Start the conversation'}
-            suggestions={
-              isToolChat
-                ? undefined
-                : [
-                    {
-                      label: 'Rewrite my thumbnail prompt',
-                      prompt:
-                        'Rewrite my thumbnail prompt to improve click-through rate.',
-                    },
-                    {
-                      label: 'Plan a faceless channel',
-                      prompt:
-                        'Plan a faceless YouTube channel workflow using image and video generation.',
-                    },
-                    {
-                      label: 'Generate better hooks',
-                      prompt:
-                        'Give me 10 stronger hooks for a YouTube automation video.',
-                    },
-                  ]
-            }
-            viewportClassName="bg-transparent"
-            className="rounded-none border-none bg-transparent shadow-none"
-          />
-        </div>
-      </div>
-    </div>
+                >
+                  {isGeneratingTask ? (
+                    <LoaderCircle className="size-4.5 animate-spin" />
+                  ) : (
+                    <ArrowUp className="size-4.5" />
+                  )}
+                </button>
+              </ThreadPrimitive.If>
+              <ThreadPrimitive.If running>
+                <button
+                  type="button"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-white/8 text-zinc-400 shadow-lg shadow-black/20"
+                  disabled
+                >
+                  <LoaderCircle className="size-4.5 animate-spin" />
+                </button>
+              </ThreadPrimitive.If>
+            </>
+          ) : undefined
+        }
+        composerFooter={
+          isToolChat && AI_CREDITS_ENABLED ? (
+            <span className="pr-2 text-[15px] text-zinc-500">
+              {selectedToolModel?.creditCostByMode?.[
+                toolModeState as ToolMode
+              ] ?? 0}{' '}
+              Credits
+            </span>
+          ) : undefined
+        }
+        composerPlaceholder={
+          isToolChat
+            ? 'Enter your idea to generate'
+            : 'Ask about scripts, workflows, prompts, or growth ideas'
+        }
+        composerShowAttachmentButton
+        composerSubmitDisabled={isGeneratingTask}
+        composerSubmitIntent={
+          isToolChat ? handleToolInputSubmitIntent : undefined
+        }
+        composerLeading={
+          isToolChat && imageReferenceRequired ? (
+            <ChatReferenceImageSlots
+              value={imageUrls}
+              onChange={(nextUrls) => {
+                setToolOptions((current) => ({
+                  ...current,
+                  image_urls: nextUrls,
+                }));
+                setIsDraftDirty(true);
+              }}
+            />
+          ) : undefined
+        }
+        composerToolbar={
+          isToolChat && (toolSurface === 'image' || toolSurface === 'video') ? (
+            <ToolControlBar
+              className="w-full"
+              surface={toolCatalogSurface}
+              value={{
+                mode: toolModeState,
+                modelId: toolModelId,
+                options: toolOptions,
+              }}
+              onChange={(nextValue: ToolControlValue) => {
+                setToolModeState(nextValue.mode);
+                setToolModelId(nextValue.modelId);
+                setToolOptions(nextValue.options);
+                setIsDraftDirty(true);
+              }}
+              allowedModes={
+                toolSurface === 'image'
+                  ? ['text-to-image', 'image-to-image']
+                  : ['text-to-video', 'image-to-video']
+              }
+            />
+          ) : undefined
+        }
+        initialComposerValue={isToolChat ? toolPrompt : initialPrompt}
+        onComposerValueChange={
+          isToolChat
+            ? (value) => {
+                setToolPrompt(value);
+                setIsDraftDirty(true);
+              }
+            : undefined
+        }
+        toolUIs={[imageTaskToolUI, videoTaskToolUI]}
+        hideUserMessages={isToolChat}
+        contentSlot={toolChatContent ?? undefined}
+        headerSlot={toolChatHeader ?? undefined}
+        autoScrollKey={taskCards[0]?.task.id ?? taskCards.length}
+        emptyDescription="Your latest generation and assistant replies will appear here."
+        emptyTitle={chatState?.title || 'Start the conversation'}
+        suggestions={
+          isToolChat
+            ? undefined
+            : [
+                {
+                  label: 'Rewrite my thumbnail prompt',
+                  prompt:
+                    'Rewrite my thumbnail prompt to improve click-through rate.',
+                },
+                {
+                  label: 'Plan a faceless channel',
+                  prompt:
+                    'Plan a faceless YouTube channel workflow using image and video generation.',
+                },
+                {
+                  label: 'Generate better hooks',
+                  prompt:
+                    'Give me 10 stronger hooks for a YouTube automation video.',
+                },
+              ]
+        }
+        viewportClassName="bg-transparent"
+        className="rounded-none border-none bg-transparent shadow-none"
+      />
+    </WorkspaceDetailShell>
   );
 }

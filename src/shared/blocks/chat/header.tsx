@@ -2,16 +2,26 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Coins, Home, ImageIcon, Menu, WandSparkles, X } from 'lucide-react';
+import {
+  Coins,
+  Home,
+  ImageIcon,
+  Menu,
+  Sparkles,
+  WandSparkles,
+  X,
+} from 'lucide-react';
 
 import { Link } from '@/core/i18n/navigation';
-import { LocaleSelector } from '@/shared/blocks/common';
+import { LocaleSelector } from '@/shared/blocks/common/locale-selector';
 import { useChatContext } from '@/shared/contexts/chat';
 import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
 import { cn } from '@/shared/lib/utils';
 
+export type WorkspaceSection = 'home' | 'ai-video' | 'ai-image' | 'tools';
+
 type ChatDrawerNavItem = {
-  key: string;
+  key: WorkspaceSection;
   title: string;
   href: string;
   icon: typeof Home;
@@ -35,6 +45,12 @@ const drawerCreationNav: ChatDrawerNavItem[] = [
     title: 'AI Image',
     href: '/ai-image-generator',
     icon: ImageIcon,
+  },
+  {
+    key: 'tools',
+    title: 'Tools',
+    href: '/tools',
+    icon: Sparkles,
   },
 ];
 
@@ -61,7 +77,9 @@ function safeParseHeaderMetadata(value: unknown) {
   }
 }
 
-function getToolDrawerActiveKey(metadata: Record<string, unknown>) {
+function getToolDrawerActiveKey(
+  metadata: Record<string, unknown>
+): WorkspaceSection {
   const toolSurface =
     typeof metadata.toolSurface === 'string' ? metadata.toolSurface : '';
 
@@ -118,10 +136,15 @@ function DrawerNavItem({
   );
 }
 
-export function ChatHeader() {
+export function ChatHeader({
+  activeSection,
+}: {
+  activeSection?: WorkspaceSection;
+}) {
   const { chat } = useChatContext();
   const headerMetadata = safeParseHeaderMetadata(chat?.metadata);
-  const activeDrawerKey = getToolDrawerActiveKey(headerMetadata);
+  const activeDrawerKey =
+    activeSection ?? getToolDrawerActiveKey(headerMetadata);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -203,7 +226,7 @@ export function ChatHeader() {
                   <DrawerNavItem
                     key={item.key}
                     item={item}
-                    active={item.key === 'home'}
+                    active={item.key === activeDrawerKey}
                     onNavigate={() => setDrawerOpen(false)}
                   />
                 ))}

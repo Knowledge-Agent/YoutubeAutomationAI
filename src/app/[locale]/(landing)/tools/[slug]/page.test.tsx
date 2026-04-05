@@ -30,6 +30,23 @@ vi.mock('@/shared/blocks/sign/sign-modal', () => ({
   SignModal: () => null,
 }));
 
+vi.mock('@/shared/blocks/common', () => ({
+  WorkspaceDetailShell: ({
+    activeSection,
+    children,
+  }: {
+    activeSection: string;
+    children: any;
+  }) => (
+    <section
+      data-testid="workspace-detail-shell"
+      data-active-section={activeSection}
+    >
+      {children}
+    </section>
+  ),
+}));
+
 vi.mock('@/shared/contexts/app', () => ({
   useAppContext: () => ({
     user: null,
@@ -56,7 +73,7 @@ vi.mock('@/shared/blocks/tools/ai-tool-coming-soon-page', () => ({
 }));
 
 describe('ToolDetailPage', () => {
-  it('keeps shared workspace chrome without forcing the hub sidebar and intro shell', async () => {
+  it('reuses the shared detail shell without forcing the hub sidebar and intro shell', async () => {
     const page = await ToolDetailPage({
       params: Promise.resolve({ locale: 'en', slug: 'niche-discovery-sprint' }),
       searchParams: Promise.resolve({}),
@@ -65,10 +82,10 @@ describe('ToolDetailPage', () => {
     render(page);
 
     expect(screen.getByText('detail tool body')).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: /youtube automation ai/i })
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+    expect(screen.getByTestId('workspace-detail-shell')).toHaveAttribute(
+      'data-active-section',
+      'tools'
+    );
     expect(
       screen.queryByRole('heading', { name: 'Base Capabilities' })
     ).not.toBeInTheDocument();

@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
+import { WorkspaceDetailShell } from '@/shared/blocks/common';
 import { AiToolComingSoonPage } from '@/shared/blocks/tools/ai-tool-coming-soon-page';
 import { getAiToolBySlug } from '@/shared/blocks/tools/ai-tools-catalog';
 import { NicheDiscoveryToolPage } from '@/shared/blocks/tools/niche-discovery-tool-page';
@@ -10,7 +11,6 @@ import {
   readNicheDiscoveryToolSearchState,
   type NicheDiscoveryToolSearchState,
 } from '@/shared/blocks/tools/niche-discovery-tool-query';
-import { ToolWorkspaceChrome } from '@/shared/blocks/tools/tool-workspace-chrome';
 
 export const revalidate = 3600;
 
@@ -74,18 +74,14 @@ export default async function ToolDetailPage({
       : undefined;
 
   return (
-    <ToolWorkspaceChrome>
-      <div className="min-h-screen pt-[62px]">
-        <main className="min-w-0 bg-[#15161d] [background-image:radial-gradient(circle_at_top_left,rgba(255,122,26,0.08),transparent_20%),radial-gradient(circle_at_top_right,rgba(30,184,166,0.05),transparent_16%)] p-4 lg:p-6">
-          <div className="mx-auto max-w-[1680px]">
-            {tool.slug === 'niche-discovery-sprint' ? (
-              <NicheDiscoveryToolPage tool={tool} initialState={initialState} />
-            ) : (
-              <AiToolComingSoonPage tool={tool} />
-            )}
-          </div>
-        </main>
+    <WorkspaceDetailShell activeSection="tools">
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        {tool.slug === 'niche-discovery-sprint' ? (
+          <NicheDiscoveryToolPage tool={tool} initialState={initialState} />
+        ) : (
+          <AiToolComingSoonPage tool={tool} />
+        )}
       </div>
-    </ToolWorkspaceChrome>
+    </WorkspaceDetailShell>
   );
 }

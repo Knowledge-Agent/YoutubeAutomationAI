@@ -14,6 +14,7 @@ export * from './copyright';
 
 export * from './page-header';
 export * from './section-header';
+export * from './workspace-detail-shell';
 
 export * from './empty';
 export * from './lazy-image';
