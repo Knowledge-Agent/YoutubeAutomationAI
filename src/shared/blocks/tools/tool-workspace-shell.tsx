@@ -148,7 +148,7 @@ export function ToolWorkspaceShell({
       }
     >
       {isMobileNavOpen ? (
-        <div className="fixed inset-0 z-30 bg-black/60 lg:hidden">
+        <div className="fixed inset-0 z-50 bg-black/60 lg:hidden">
           <div
             id="workspace-mobile-navigation"
             role="dialog"

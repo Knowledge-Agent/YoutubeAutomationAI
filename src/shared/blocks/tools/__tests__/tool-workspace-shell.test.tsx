@@ -71,6 +71,7 @@ describe('ToolWorkspaceShell', () => {
     const mobileNav = screen.getByRole('dialog', {
       name: /workspace navigation/i,
     });
+    const overlay = mobileNav.parentElement;
 
     expect(
       within(mobileNav).getByRole('heading', { name: 'Base Capabilities' })
@@ -81,6 +82,15 @@ describe('ToolWorkspaceShell', () => {
     expect(
       within(mobileNav).getAllByRole('link', { name: 'Tools' })
     ).toHaveLength(1);
+    expect(overlay).toHaveClass('z-50');
+
+    await user.click(
+      within(mobileNav).getByRole('button', { name: /close navigation/i })
+    );
+
+    expect(
+      screen.queryByRole('dialog', { name: /workspace navigation/i })
+    ).not.toBeInTheDocument();
   });
 
   it('stays hub-only even when the pathname points at a tool detail route', () => {
