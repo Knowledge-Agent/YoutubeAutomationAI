@@ -8,15 +8,36 @@ export interface NicheDiscoveryToolSearchState {
   hookSlug?: string;
 }
 
+const DEFAULT_FORMAT: NicheDiscoveryToolSearchState['format'] = 'story';
+const DEFAULT_ASSET_TYPE = 'stock footage';
+
+function normalizeFormat(
+  value: string | null
+): NicheDiscoveryToolSearchState['format'] | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  return value === 'shorts' || value === 'story' ? value : DEFAULT_FORMAT;
+}
+
+function normalizeAssetType(value: string | null) {
+  if (!value) {
+    return undefined;
+  }
+
+  return value === 'screenshots' || value === 'stock footage'
+    ? value
+    : DEFAULT_ASSET_TYPE;
+}
+
 export function readNicheDiscoveryToolSearchState(searchParams: {
   get: (key: string) => string | null;
 }): NicheDiscoveryToolSearchState {
   return {
     seed: searchParams.get('seed') || undefined,
-    format:
-      (searchParams.get('format') as NicheDiscoveryToolSearchState['format']) ||
-      undefined,
-    assetType: searchParams.get('asset') || undefined,
+    format: normalizeFormat(searchParams.get('format')),
+    assetType: normalizeAssetType(searchParams.get('asset')),
     audience: searchParams.get('audience') || undefined,
     nicheSlug: searchParams.get('niche') || undefined,
     topicSlug: searchParams.get('topic') || undefined,

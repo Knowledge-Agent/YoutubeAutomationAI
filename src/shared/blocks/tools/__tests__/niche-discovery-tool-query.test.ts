@@ -27,4 +27,26 @@ describe('niche-discovery-tool-query', () => {
       hookSlug: 'ai-tools-breakdowns-high-curiosity-authority-hook',
     });
   });
+
+  it('normalizes malformed format and asset values to supported defaults', () => {
+    const params = new URLSearchParams({
+      seed: 'AI tools',
+      format: 'unsupported',
+      asset: 'b-roll',
+      audience: 'curious beginners',
+      niche: 'ai-tools-breakdowns',
+      topic: 'ai-tools-breakdowns-high-curiosity',
+      hook: 'ai-tools-breakdowns-high-curiosity-authority-hook',
+    });
+
+    expect(readNicheDiscoveryToolSearchState(params)).toEqual({
+      seed: 'AI tools',
+      format: 'story',
+      assetType: 'stock footage',
+      audience: 'curious beginners',
+      nicheSlug: 'ai-tools-breakdowns',
+      topicSlug: 'ai-tools-breakdowns-high-curiosity',
+      hookSlug: 'ai-tools-breakdowns-high-curiosity-authority-hook',
+    });
+  });
 });
