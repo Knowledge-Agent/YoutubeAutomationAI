@@ -28,9 +28,11 @@ Each business tool SHALL own its own detail route under `/tools/[slug]`.
 
 - **WHEN** a user selects a tool card
 - **THEN** the product opens a dedicated tool page
-- **AND** the page shows a left / center / right workspace layout
-- **AND** the tool owns the center-column input and right-column result
-  experience
+- **AND** the page reuses the shared detail shell header and drawer
+- **AND** tool switching appears as an in-content module instead of a
+  second sidebar
+- **AND** the tool owns its input and result experience inside that
+  shell
 
 ### Requirement: Niche Discovery Sprint Workspace
 
@@ -43,6 +45,7 @@ faceless creators.
 - **THEN** the workspace returns a recommended niche path
 - **AND** the result includes topic and hook options plus a script-ready
   pack
+- **AND** the page keeps one primary run CTA for generating the sprint
 - **AND** alternate hooks or topics can be refined locally without
   rerunning the full flow
 
