@@ -21,6 +21,10 @@ export function NicheDiscoveryToolResults({
   onSelectTopic: (topic: SprintTopic) => void;
   onSelectHook: (hook: SprintHook) => void;
 }) {
+  const radioInputClassName = 'peer sr-only';
+  const radioCardClassName =
+    'block w-full rounded-2xl border px-4 py-3 text-left text-white transition peer-focus-visible:border-[var(--brand-signal)] peer-focus-visible:ring-2 peer-focus-visible:ring-[rgba(229,106,17,0.35)] peer-checked:border-[var(--brand-signal)] peer-checked:bg-[rgba(229,106,17,0.12)]';
+
   if (!selectedNiche || !selectedTopic || !selectedHook) {
     return (
       <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[#11131a] p-6">
@@ -106,57 +110,83 @@ export function NicheDiscoveryToolResults({
 
         <div className="grid gap-4 xl:grid-cols-2">
           <section className="rounded-[24px] border border-[color:var(--studio-line)] bg-[rgba(255,255,255,0.03)] p-5">
-            <h3 className="text-base font-semibold text-white">
+            <h3
+              id="niche-topic-ladder-label"
+              className="text-base font-semibold text-white"
+            >
               Topic Ladder
             </h3>
             <p className="mt-2 text-sm leading-6 text-white/68">
               Pick the episode direction you want to refine inside this
               niche path.
             </p>
-            <div className="mt-4 space-y-2">
+            <div
+              role="radiogroup"
+              aria-labelledby="niche-topic-ladder-label"
+              className="mt-4 space-y-2"
+            >
               {selectedNiche.topics.map((topic) => (
-                <button
-                  key={topic.slug}
-                  type="button"
-                  aria-pressed={topic.slug === selectedTopic.slug}
-                  onClick={() => onSelectTopic(topic)}
-                  className={cn(
-                    'block w-full rounded-2xl border px-4 py-3 text-left text-white transition',
-                    topic.slug === selectedTopic.slug
-                      ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
-                      : 'border-[color:var(--studio-line)]'
-                  )}
-                >
-                  {topic.title}
-                </button>
+                <label key={topic.slug} className="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="niche-discovery-topic"
+                    value={topic.slug}
+                    checked={topic.slug === selectedTopic.slug}
+                    onChange={() => onSelectTopic(topic)}
+                    className={radioInputClassName}
+                  />
+                  <span
+                    className={cn(
+                      radioCardClassName,
+                      topic.slug === selectedTopic.slug
+                        ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
+                        : 'border-[color:var(--studio-line)]'
+                    )}
+                  >
+                    {topic.title}
+                  </span>
+                </label>
               ))}
             </div>
           </section>
 
           <section className="rounded-[24px] border border-[color:var(--studio-line)] bg-[rgba(255,255,255,0.03)] p-5">
-            <h3 className="text-base font-semibold text-white">
+            <h3
+              id="niche-hook-options-label"
+              className="text-base font-semibold text-white"
+            >
               Hook Options
             </h3>
             <p className="mt-2 text-sm leading-6 text-white/68">
               Choose the opening angle that best frames the selected
               topic.
             </p>
-            <div className="mt-4 space-y-2">
+            <div
+              role="radiogroup"
+              aria-labelledby="niche-hook-options-label"
+              className="mt-4 space-y-2"
+            >
               {selectedTopic.hooks.map((hook) => (
-                <button
-                  key={hook.slug}
-                  type="button"
-                  aria-pressed={hook.slug === selectedHook.slug}
-                  onClick={() => onSelectHook(hook)}
-                  className={cn(
-                    'block w-full rounded-2xl border px-4 py-3 text-left text-white transition',
-                    hook.slug === selectedHook.slug
-                      ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
-                      : 'border-[color:var(--studio-line)]'
-                  )}
-                >
-                  {hook.title}
-                </button>
+                <label key={hook.slug} className="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="niche-discovery-hook"
+                    value={hook.slug}
+                    checked={hook.slug === selectedHook.slug}
+                    onChange={() => onSelectHook(hook)}
+                    className={radioInputClassName}
+                  />
+                  <span
+                    className={cn(
+                      radioCardClassName,
+                      hook.slug === selectedHook.slug
+                        ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
+                        : 'border-[color:var(--studio-line)]'
+                    )}
+                  >
+                    {hook.title}
+                  </span>
+                </label>
               ))}
             </div>
           </section>

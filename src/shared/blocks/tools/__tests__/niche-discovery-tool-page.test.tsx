@@ -38,8 +38,14 @@ describe('NicheDiscoveryToolPage', () => {
     expect(
       screen.getByRole('link', { name: /script rewrite studio/i })
     ).toHaveAttribute('href', '/tools/script-rewrite-studio');
-    expect(screen.getByText(/format/i)).toBeInTheDocument();
-    expect(screen.getByText(/visual source/i)).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: /format/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('radiogroup', { name: /visual source/i })
+    ).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: /story/i })).toBeChecked();
+    expect(
+      screen.getByRole('radio', { name: /stock footage/i })
+    ).toBeChecked();
     expect(
       screen.getByRole('button', { name: /generate niche pack/i })
     ).toBeInTheDocument();
@@ -72,6 +78,12 @@ describe('NicheDiscoveryToolPage', () => {
       await screen.findByRole('heading', { name: /recommended niche/i })
     ).toBeInTheDocument();
     expect(
+      screen.getByRole('radiogroup', { name: /topic ladder/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('radiogroup', { name: /hook options/i })
+    ).toBeInTheDocument();
+    expect(
       screen.getByRole('heading', { name: /topic ladder/i })
     ).toBeInTheDocument();
     expect(
@@ -80,6 +92,12 @@ describe('NicheDiscoveryToolPage', () => {
     expect(
       screen.getByRole('heading', { name: /script pack/i })
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('radio', { name: /easy-entry ai tools/i })
+    ).toBeChecked();
+    expect(
+      screen.getByRole('radio', { name: /curiosity hook/i })
+    ).toBeChecked();
     expect(screen.getByText(/voiceover draft/i)).toBeInTheDocument();
   });
 
@@ -108,7 +126,7 @@ describe('NicheDiscoveryToolPage', () => {
       screen.getByRole('button', { name: /generate niche pack/i })
     );
 
-    await user.click(screen.getByRole('button', { name: /shorts/i }));
+    await user.click(screen.getByRole('radio', { name: /shorts/i }));
 
     expect(persistState).toHaveBeenLastCalledWith({
       seed: 'AI tools',
@@ -120,7 +138,7 @@ describe('NicheDiscoveryToolPage', () => {
       hookSlug: defaultSelections.hookSlug,
     });
 
-    await user.click(screen.getByRole('button', { name: /screenshots/i }));
+    await user.click(screen.getByRole('radio', { name: /screenshots/i }));
 
     expect(persistState).toHaveBeenLastCalledWith({
       seed: 'AI tools',
@@ -146,23 +164,23 @@ describe('NicheDiscoveryToolPage', () => {
 
     render(<NicheDiscoveryToolPage tool={tool} persistState={vi.fn()} />);
 
-    const stockFootageButton = screen.getByRole('button', {
+    const stockFootageRadio = screen.getByRole('radio', {
       name: /stock footage/i,
     });
-    const screenshotsButton = screen.getByRole('button', {
+    const screenshotsRadio = screen.getByRole('radio', {
       name: /screenshots/i,
     });
 
-    expect(stockFootageButton).toHaveAttribute('aria-pressed', 'true');
-    expect(screenshotsButton).toHaveAttribute('aria-pressed', 'false');
+    expect(stockFootageRadio).toBeChecked();
+    expect(screenshotsRadio).not.toBeChecked();
 
-    await user.click(screenshotsButton);
-    expect(stockFootageButton).toHaveAttribute('aria-pressed', 'false');
-    expect(screenshotsButton).toHaveAttribute('aria-pressed', 'true');
+    await user.click(screenshotsRadio);
+    expect(stockFootageRadio).not.toBeChecked();
+    expect(screenshotsRadio).toBeChecked();
 
-    await user.click(stockFootageButton);
-    expect(stockFootageButton).toHaveAttribute('aria-pressed', 'true');
-    expect(screenshotsButton).toHaveAttribute('aria-pressed', 'false');
+    await user.click(stockFootageRadio);
+    expect(stockFootageRadio).toBeChecked();
+    expect(screenshotsRadio).not.toBeChecked();
   });
 
   it('renders a visible focus indicator for the seed input', () => {
@@ -203,9 +221,9 @@ describe('NicheDiscoveryToolPage', () => {
     ).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole('button', { name: /high-curiosity ai tools/i })
+      screen.getByRole('radio', { name: /high-curiosity ai tools/i })
     );
-    await user.click(screen.getByRole('button', { name: /authority hook/i }));
+    await user.click(screen.getByRole('radio', { name: /authority hook/i }));
 
     expect(persistState).toHaveBeenLastCalledWith({
       seed: 'AI tools',

@@ -24,8 +24,9 @@ export function NicheDiscoveryToolForm({
   onAssetTypeChange: (value: string) => void;
   onRunSprint: () => void;
 }) {
-  const controlClassName =
-    'rounded-2xl border px-4 py-3 text-left text-white transition';
+  const radioInputClassName = 'peer sr-only';
+  const radioCardClassName =
+    'block rounded-2xl border px-4 py-3 text-left text-white transition peer-focus-visible:border-[var(--brand-signal)] peer-focus-visible:ring-2 peer-focus-visible:ring-[rgba(229,106,17,0.35)] peer-checked:border-[var(--brand-signal)] peer-checked:bg-[rgba(229,106,17,0.12)]';
 
   return (
     <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[#171922] p-6">
@@ -53,73 +54,115 @@ export function NicheDiscoveryToolForm({
           />
         </label>
 
-        <div className="space-y-3">
-          <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
+        <fieldset
+          role="radiogroup"
+          aria-labelledby="niche-format-label"
+          className="space-y-3"
+        >
+          <legend
+            id="niche-format-label"
+            className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase"
+          >
             Format
-          </div>
+          </legend>
           <div className="grid gap-3 sm:grid-cols-2">
-            <button
-              type="button"
-              aria-pressed={format === 'story'}
-              onClick={() => onFormatChange('story')}
-              className={cn(
-                controlClassName,
-                format === 'story'
-                  ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
-                  : 'border-[color:var(--studio-line)]'
-              )}
-            >
-              Story
-            </button>
-            <button
-              type="button"
-              aria-pressed={format === 'shorts'}
-              onClick={() => onFormatChange('shorts')}
-              className={cn(
-                controlClassName,
-                format === 'shorts'
-                  ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
-                  : 'border-[color:var(--studio-line)]'
-              )}
-            >
-              Shorts
-            </button>
+            <label className="block cursor-pointer">
+              <input
+                type="radio"
+                name="niche-discovery-format"
+                value="story"
+                checked={format === 'story'}
+                onChange={() => onFormatChange('story')}
+                className={radioInputClassName}
+              />
+              <span
+                className={cn(
+                  radioCardClassName,
+                  format === 'story'
+                    ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
+                    : 'border-[color:var(--studio-line)]'
+                )}
+              >
+                Story
+              </span>
+            </label>
+            <label className="block cursor-pointer">
+              <input
+                type="radio"
+                name="niche-discovery-format"
+                value="shorts"
+                checked={format === 'shorts'}
+                onChange={() => onFormatChange('shorts')}
+                className={radioInputClassName}
+              />
+              <span
+                className={cn(
+                  radioCardClassName,
+                  format === 'shorts'
+                    ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
+                    : 'border-[color:var(--studio-line)]'
+                )}
+              >
+                Shorts
+              </span>
+            </label>
           </div>
-        </div>
+        </fieldset>
 
-        <div className="space-y-3">
-          <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
+        <fieldset
+          role="radiogroup"
+          aria-labelledby="niche-visual-source-label"
+          className="space-y-3"
+        >
+          <legend
+            id="niche-visual-source-label"
+            className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase"
+          >
             Visual Source
-          </div>
+          </legend>
           <div className="grid gap-3 sm:grid-cols-2">
-            <button
-              type="button"
-              aria-pressed={assetType === 'stock footage'}
-              onClick={() => onAssetTypeChange('stock footage')}
-              className={cn(
-                controlClassName,
-                assetType === 'stock footage'
-                  ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
-                  : 'border-[color:var(--studio-line)]'
-              )}
-            >
-              Stock Footage
-            </button>
-            <button
-              type="button"
-              aria-pressed={assetType === 'screenshots'}
-              onClick={() => onAssetTypeChange('screenshots')}
-              className={cn(
-                controlClassName,
-                assetType === 'screenshots'
-                  ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
-                  : 'border-[color:var(--studio-line)]'
-              )}
-            >
-              Screenshots
-            </button>
+            <label className="block cursor-pointer">
+              <input
+                type="radio"
+                name="niche-discovery-visual-source"
+                value="stock footage"
+                checked={assetType === 'stock footage'}
+                onChange={() => onAssetTypeChange('stock footage')}
+                className={radioInputClassName}
+              />
+              <span
+                className={cn(
+                  radioCardClassName,
+                  assetType === 'stock footage'
+                    ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
+                    : 'border-[color:var(--studio-line)]'
+                )}
+              >
+                Stock Footage
+              </span>
+            </label>
+            <label className="block cursor-pointer">
+              <input
+                type="radio"
+                name="niche-discovery-visual-source"
+                value="screenshots"
+                checked={assetType === 'screenshots'}
+                onChange={() => onAssetTypeChange('screenshots')}
+                className={radioInputClassName}
+              />
+              <span
+                className={cn(
+                  radioCardClassName,
+                  assetType === 'screenshots'
+                    ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)]'
+                    : 'border-[color:var(--studio-line)]'
+                )}
+              >
+                Screenshots
+              </span>
+            </label>
           </div>
-        </div>
+        </fieldset>
 
         <button
           type="button"
