@@ -5,11 +5,11 @@ import { aiTools } from './ai-tools-catalog';
 
 export function ToolSwitcherCard({ activeSlug }: { activeSlug: string }) {
   return (
-    <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[#14151c] p-5">
-      <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
+    <section className="rounded-[22px] border border-[color:var(--studio-line)]/80 bg-[rgba(255,255,255,0.02)] px-4 py-3">
+      <div className="text-[10px] tracking-[0.22em] text-[var(--studio-muted)] uppercase">
         Switch Tool
       </div>
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         {aiTools.map((tool) => {
           const isActive = tool.slug === activeSlug;
 
@@ -19,10 +19,10 @@ export function ToolSwitcherCard({ activeSlug }: { activeSlug: string }) {
               href={tool.href}
               aria-current={isActive ? 'page' : undefined}
               className={cn(
-                'inline-flex rounded-full border px-3 py-2 text-sm transition',
+                'inline-flex min-h-9 items-center rounded-full border px-3.5 py-2 text-sm transition',
                 isActive
                   ? 'border-[var(--brand-signal)] bg-[rgba(229,106,17,0.12)] text-white'
-                  : 'border-[color:var(--studio-line)] bg-[var(--studio-panel-strong)] text-[var(--studio-muted)] hover:border-[var(--brand-signal)] hover:text-white'
+                  : 'border-[color:var(--studio-line)] bg-[rgba(255,255,255,0.03)] text-[var(--studio-muted)] hover:border-white/14 hover:text-white'
               )}
             >
               {tool.title}
