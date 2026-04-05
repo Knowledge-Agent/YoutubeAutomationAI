@@ -15,10 +15,13 @@ import {
   type SprintSelections,
   type SprintTopic,
 } from './niche-discovery-sprint-data';
+import { NicheDiscoveryToolForm } from './niche-discovery-tool-form';
 import {
   buildNicheDiscoveryToolSearchParams,
   type NicheDiscoveryToolSearchState,
 } from './niche-discovery-tool-query';
+import { NicheDiscoveryToolResults } from './niche-discovery-tool-results';
+import { ToolSwitcherCard } from './tool-switcher-card';
 
 const DEFAULT_FORMAT: SprintFormat = 'story';
 const DEFAULT_ASSET_TYPE = 'stock footage';
@@ -182,152 +185,41 @@ export function NicheDiscoveryToolPage({
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
-      <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[#171922] p-5">
-        <div className="space-y-5">
-          <div>
-            <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
-              Current Tool
-            </div>
-            <h1 className="studio-title mt-2 text-3xl font-semibold tracking-tight text-white">
-              {tool.pageTitle}
-            </h1>
-            <p className="mt-2 text-sm leading-6 text-white/72">
-              {tool.whenToUse}
-            </p>
-          </div>
+      <div className="space-y-4">
+        <ToolSwitcherCard activeSlug={tool.slug} />
+        <NicheDiscoveryToolForm
+          tool={tool}
+          seed={seed}
+          format={format}
+          assetType={assetType}
+          onSeedChange={setSeed}
+          onFormatChange={setFormat}
+          onAssetTypeChange={setAssetType}
+          onRunSprint={runSprint}
+        />
+      </div>
 
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-white">Seed topic</span>
-            <input
-              aria-label="Seed topic"
-              value={seed}
-              onChange={(event) => setSeed(event.target.value)}
-              className="w-full rounded-2xl border border-[color:var(--studio-line)] bg-[#0f1118] px-4 py-3 text-white outline-none"
-              placeholder="AI tools"
-            />
-          </label>
+      <NicheDiscoveryToolResults
+        selectedNiche={selectedNiche}
+        selectedTopic={selectedTopic}
+        selectedHook={selectedHook}
+        onSelectTopic={(topic) => {
+          const nextHook = topic.hooks[0];
 
-          <div className="grid gap-3 md:grid-cols-3">
-            <button
-              type="button"
-              onClick={() => setFormat('story')}
-              className="rounded-2xl border border-[color:var(--studio-line)] px-4 py-3 text-left text-white"
-            >
-              Story
-            </button>
-            <button
-              type="button"
-              onClick={() => setFormat('shorts')}
-              className="rounded-2xl border border-[color:var(--studio-line)] px-4 py-3 text-left text-white"
-            >
-              Shorts
-            </button>
-            <button
-              type="button"
-              onClick={() => setAssetType('screenshots')}
-              className="rounded-2xl border border-[color:var(--studio-line)] px-4 py-3 text-left text-white"
-            >
-              Screenshots
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={runSprint}
-            className="rounded-full bg-[var(--brand-signal)] px-5 py-3 text-sm font-semibold text-white"
-          >
-            Generate Niche Pack
-          </button>
-        </div>
-      </section>
-
-      <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[#11131a] p-5">
-        {!sprint || !selectedNiche || !selectedTopic || !selectedHook ? (
-          <div className="space-y-3">
-            <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
-              Results
-            </div>
-            <h2 className="studio-title text-2xl font-semibold tracking-tight text-white">
-              Run the sprint to see your recommended path
-            </h2>
-          </div>
-        ) : (
-          <div className="space-y-5">
-            <div>
-              <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
-                Recommended Niche
-              </div>
-              <h2 className="studio-title mt-2 text-3xl font-semibold tracking-tight text-white">
-                <span className="sr-only">Recommended Niche: </span>
-                {selectedNiche.title}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-white/72">
-                {selectedNiche.summary}
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              {selectedNiche.topics.map((topic) => (
-                <button
-                  key={topic.slug}
-                  type="button"
-                  onClick={() => {
-                    const nextHook = topic.hooks[0];
-
-                    updateSelections({
-                      nicheSlug: selectedNiche.slug,
-                      topicSlug: topic.slug,
-                      hookSlug: nextHook?.slug ?? '',
-                    });
-                  }}
-                  className="block w-full rounded-2xl border border-[color:var(--studio-line)] px-4 py-3 text-left text-white"
-                >
-                  {topic.title}
-                </button>
-              ))}
-            </div>
-
-            <div className="space-y-2">
-              {selectedTopic.hooks.map((hook) => (
-                <button
-                  key={hook.slug}
-                  type="button"
-                  onClick={() =>
-                    updateSelections({
-                      nicheSlug: selectedNiche.slug,
-                      topicSlug: selectedTopic.slug,
-                      hookSlug: hook.slug,
-                    })
-                  }
-                  className="block w-full rounded-2xl border border-[color:var(--studio-line)] px-4 py-3 text-left text-white"
-                >
-                  {hook.title}
-                </button>
-              ))}
-            </div>
-
-            <div className="space-y-3 rounded-[24px] border border-[color:var(--studio-line)] bg-[rgba(255,255,255,0.04)] p-4">
-              <div className="text-sm font-semibold text-white">
-                Voiceover Draft
-              </div>
-              {selectedHook.scriptPack.voiceoverDraft.map((line) => (
-                <p key={line} className="text-sm leading-6 text-white/72">
-                  {line}
-                </p>
-              ))}
-
-              <div className="text-sm font-semibold text-white">
-                Visual Cues
-              </div>
-              {selectedHook.scriptPack.visuals.map((line) => (
-                <p key={line} className="text-sm leading-6 text-white/72">
-                  {line}
-                </p>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
+          updateSelections({
+            nicheSlug: selectedNiche?.slug ?? '',
+            topicSlug: topic.slug,
+            hookSlug: nextHook?.slug ?? '',
+          });
+        }}
+        onSelectHook={(hook) =>
+          updateSelections({
+            nicheSlug: selectedNiche?.slug ?? '',
+            topicSlug: selectedTopic?.slug ?? '',
+            hookSlug: hook.slug,
+          })
+        }
+      />
     </div>
   );
 }
