@@ -1,6 +1,7 @@
 import { Link } from '@/core/i18n/navigation';
 
 import { aiTools, type AiToolDefinition } from './ai-tools-catalog';
+import { ToolSwitcherCard } from './tool-switcher-card';
 
 export function AiToolComingSoonPage({ tool }: { tool: AiToolDefinition }) {
   const availableNowTool = aiTools.find((entry) => entry.status === 'ready');
@@ -8,6 +9,8 @@ export function AiToolComingSoonPage({ tool }: { tool: AiToolDefinition }) {
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
       <div className="space-y-4">
+        <ToolSwitcherCard activeSlug={tool.slug} />
+
         <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[#171922] p-5">
           <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
             Current Tool

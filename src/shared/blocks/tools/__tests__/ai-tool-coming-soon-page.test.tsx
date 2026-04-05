@@ -24,8 +24,11 @@ describe('AiToolComingSoonPage', () => {
 
     expect(screen.getByText('Coming Soon')).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: /niche discovery sprint/i })
-    ).toBeInTheDocument();
+      screen.getByRole('link', { name: /shorts reframer/i })
+    ).toHaveAttribute('aria-current', 'page');
+    expect(
+      screen.getAllByRole('link', { name: /niche discovery sprint/i })
+    ).toHaveLength(2);
     expect(screen.queryByText(/^AI Tools$/)).not.toBeInTheDocument();
   });
 });
