@@ -17,9 +17,12 @@ describe('AiToolsDirectory', () => {
       <AiToolsDirectory activeCategory="script-tools" />
     );
 
-    expect(
-      screen.getByRole('link', { name: /video tools/i })
-    ).toHaveAttribute('href', '/tools?tab=video-tools');
+    const videoToolsLink = screen.getByRole('link', { name: /video tools/i });
+    const scriptToolsLink = screen.getByRole('link', { name: /script tools/i });
+
+    expect(videoToolsLink).toHaveAttribute('href', '/tools?tab=video-tools');
+    expect(scriptToolsLink).toHaveAttribute('aria-current', 'page');
+    expect(videoToolsLink).not.toHaveAttribute('aria-current');
     expect(
       screen.getByRole('link', { name: /niche discovery sprint/i })
     ).toHaveAttribute('href', '/tools/niche-discovery-sprint');
@@ -33,7 +36,10 @@ describe('AiToolsDirectory', () => {
     const nav = container.querySelector('nav');
     const navClasses = nav?.className.split(/\s+/) ?? [];
 
+    expect(navClasses).toContain('flex-nowrap');
     expect(navClasses).toContain('gap-2');
+    expect(navClasses).toContain('overflow-x-auto');
+    expect(navClasses).not.toContain('flex-wrap');
     expect(navClasses).not.toContain('p-2');
   });
 

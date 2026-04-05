@@ -18,7 +18,7 @@ export function AiToolsDirectory({
     <div className="space-y-4">
       <nav
         aria-label="AI tools categories"
-        className="flex flex-wrap items-center gap-2"
+        className="flex flex-nowrap items-center gap-2 overflow-x-auto"
       >
         {aiToolCategories.map((category) => {
           const active = category.slug === activeCategory;
@@ -27,8 +27,9 @@ export function AiToolsDirectory({
             <Link
               key={category.slug}
               href={`/tools?tab=${category.slug}`}
+              aria-current={active ? 'page' : undefined}
               className={cn(
-                'rounded-full border border-[color:var(--studio-line)] px-3 py-1.5 text-sm font-medium transition',
+                'shrink-0 rounded-full border border-[color:var(--studio-line)] px-3 py-1.5 text-sm font-medium transition',
                 active
                   ? 'border-white bg-white text-[#13141b]'
                   : 'bg-[var(--studio-panel)] text-[var(--studio-muted)] hover:border-white/20 hover:text-white'
