@@ -1,32 +1,17 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
-import Image from 'next/image';
 import {
-  ChevronDown,
   Clapperboard,
-  Coins,
   ImageIcon,
-  LogOut,
   Menu,
   Sparkles,
   X,
   type LucideIcon,
 } from 'lucide-react';
 
-import { signOut } from '@/core/auth/client';
-import { Link, usePathname, useRouter } from '@/core/i18n/navigation';
-import { SignModal } from '@/shared/blocks/sign/sign-modal';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/shared/components/ui/dropdown-menu';
-import { useAppContext } from '@/shared/contexts/app';
-import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
+import { Link } from '@/core/i18n/navigation';
+import { ToolWorkspaceChrome } from '@/shared/blocks/tools/tool-workspace-chrome';
 import { cn } from '@/shared/lib/utils';
 
 type ToolWorkspaceKey = 'tools' | 'ai-video' | 'ai-image';
@@ -37,8 +22,6 @@ type ToolWorkspaceShellProps = {
   description: string;
   children: ReactNode;
 };
-
-const workspaceHomeHref = '/tools';
 
 const navigationSections = [
   {
@@ -141,144 +124,30 @@ function NavigationSectionList({
   );
 }
 
-function isToolDetailPath(pathname?: string | null) {
-  if (!pathname) {
-    return false;
-  }
-
-  const pathSegments = pathname.split('?')[0].split('/').filter(Boolean);
-  const toolsIndex = pathSegments.indexOf('tools');
-
-  return toolsIndex !== -1 && toolsIndex < pathSegments.length - 1;
-}
-
 export function ToolWorkspaceShell({
   activeKey,
   title,
   description,
   children,
 }: ToolWorkspaceShellProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { user, setIsShowSignModal } = useAppContext();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const isDetailRoute = isToolDetailPath(pathname);
-  const headerControlClass =
-    'flex h-9 items-center gap-2 rounded-2xl border border-[color:var(--studio-line)] bg-[var(--studio-panel)] px-3.5 text-[13px] font-medium text-[var(--studio-ink)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:border-white/14 hover:bg-[var(--studio-hover)]';
 
   return (
-    <div
-      className="dark min-h-screen bg-[var(--studio-bg)] text-white"
-      style={{
-        fontFamily:
-          'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
-      }}
+    <ToolWorkspaceChrome
+      headerLeading={
+        <button
+          type="button"
+          aria-label="Open navigation"
+          aria-expanded={isMobileNavOpen}
+          aria-controls="workspace-mobile-navigation"
+          className="flex h-9 w-9 items-center justify-center rounded-2xl border border-[color:var(--studio-line)] bg-[var(--studio-panel)] text-[var(--studio-ink)] transition hover:border-white/14 hover:bg-[var(--studio-hover)] lg:hidden"
+          onClick={() => setIsMobileNavOpen(true)}
+        >
+          <Menu className="size-4" />
+        </button>
+      }
     >
-      <SignModal callbackUrl={pathname || '/'} />
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-[color:var(--studio-line)] bg-[rgb(18_19_26_/_0.96)] backdrop-blur-xl">
-        <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-[var(--brand-signal)] via-[#ff8b4d] to-[var(--image-accent)] opacity-80" />
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-white/0 via-white/8 to-white/0" />
-        <div className="flex h-[62px] items-center justify-between px-4 lg:px-5">
-          <div className="flex items-center gap-3">
-            {!isDetailRoute ? (
-              <button
-                type="button"
-                aria-label="Open navigation"
-                aria-expanded={isMobileNavOpen}
-                aria-controls="workspace-mobile-navigation"
-                className="flex h-9 w-9 items-center justify-center rounded-2xl border border-[color:var(--studio-line)] bg-[var(--studio-panel)] text-[var(--studio-ink)] transition hover:border-white/14 hover:bg-[var(--studio-hover)] lg:hidden"
-                onClick={() => setIsMobileNavOpen(true)}
-              >
-                <Menu className="size-4" />
-              </button>
-            ) : null}
-            <Link href={workspaceHomeHref} className="flex items-center gap-3">
-              <Image
-                src="/logo-mark.svg"
-                alt="YouTube Automation AI"
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain"
-              />
-              <span className="text-[1.15rem] font-semibold tracking-[-0.04em] text-[var(--studio-ink)] lg:text-[1.3rem]">
-                YouTube Automation AI
-              </span>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    className={cn(
-                      headerControlClass,
-                      'hidden max-w-[240px] px-4 md:inline-flex'
-                    )}
-                  >
-                    <span className="truncate">{user.name || user.email}</span>
-                    <ChevronDown className="size-4 text-[var(--studio-muted)]" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-60 border-[color:var(--studio-line)] bg-[rgb(23_25_32_/_0.98)] text-[var(--studio-ink)] shadow-[0_24px_60px_rgba(0,0,0,0.38)] backdrop-blur-xl"
-                >
-                  <DropdownMenuLabel className="px-3 py-2">
-                    <div className="truncate text-sm font-semibold text-[var(--studio-ink)]">
-                      {user.name || 'User'}
-                    </div>
-                    <div className="truncate text-xs font-normal text-[var(--studio-muted)]">
-                      {user.email}
-                    </div>
-                  </DropdownMenuLabel>
-                  {AI_CREDITS_ENABLED ? (
-                    <>
-                      <DropdownMenuSeparator className="bg-[color:var(--studio-line)]" />
-                      <DropdownMenuItem className="px-3 py-2 text-[var(--studio-ink)] focus:bg-[var(--studio-hover)] focus:text-[var(--studio-ink)]">
-                        <Coins className="size-4 text-[var(--brand-signal)]" />
-                        <span>
-                          Credits: {user.credits?.remainingCredits ?? 0}
-                        </span>
-                      </DropdownMenuItem>
-                    </>
-                  ) : null}
-                  <DropdownMenuSeparator className="bg-[color:var(--studio-line)]" />
-                  <DropdownMenuItem
-                    className="px-3 py-2 text-[var(--studio-ink)] focus:bg-[var(--studio-hover)] focus:text-[var(--studio-ink)]"
-                    onClick={() =>
-                      signOut({
-                        fetchOptions: {
-                          onSuccess: () => {
-                            router.refresh();
-                          },
-                        },
-                      })
-                    }
-                  >
-                    <LogOut className="size-4" />
-                    <span>Sign Out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <button
-                type="button"
-                className={cn(
-                  headerControlClass,
-                  'px-4 text-sm font-semibold text-white'
-                )}
-                onClick={() => setIsShowSignModal(true)}
-              >
-                Login
-              </button>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {!isDetailRoute && isMobileNavOpen ? (
+      {isMobileNavOpen ? (
         <div className="fixed inset-0 z-30 bg-black/60 lg:hidden">
           <div
             id="workspace-mobile-navigation"
@@ -309,38 +178,29 @@ export function ToolWorkspaceShell({
       ) : null}
 
       <div className="flex min-h-screen pt-[62px]">
-        {!isDetailRoute ? (
-          <aside className="hidden w-[244px] shrink-0 border-r border-white/6 bg-[#0d0e14] lg:block">
-            <div className="flex h-full flex-col px-4 py-6">
-              <NavigationSectionList activeKey={activeKey} />
-            </div>
-          </aside>
-        ) : null}
+        <aside className="hidden w-[244px] shrink-0 border-r border-white/6 bg-[#0d0e14] lg:block">
+          <div className="flex h-full flex-col px-4 py-6">
+            <NavigationSectionList activeKey={activeKey} />
+          </div>
+        </aside>
 
         <main className="min-w-0 flex-1 bg-[#15161d] [background-image:radial-gradient(circle_at_top_left,rgba(255,122,26,0.08),transparent_20%),radial-gradient(circle_at_top_right,rgba(30,184,166,0.05),transparent_16%)] p-4 lg:p-6">
-          <div
-            className={cn(
-              'mx-auto',
-              isDetailRoute ? 'max-w-[1680px]' : 'max-w-[1680px] space-y-6'
-            )}
-          >
-            {!isDetailRoute ? (
-              <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[rgb(27_28_37_/_0.96)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] md:p-6">
-                <div className="max-w-4xl">
-                  <h1 className="text-3xl font-semibold tracking-tight text-[var(--studio-ink)] md:text-4xl">
-                    {title}
-                  </h1>
-                  <p className="mt-3 text-base leading-7 text-[var(--studio-muted)] md:text-lg">
-                    {description}
-                  </p>
-                </div>
-              </section>
-            ) : null}
+          <div className="mx-auto max-w-[1680px] space-y-6">
+            <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[rgb(27_28_37_/_0.96)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.22)] md:p-6">
+              <div className="max-w-4xl">
+                <h1 className="text-3xl font-semibold tracking-tight text-[var(--studio-ink)] md:text-4xl">
+                  {title}
+                </h1>
+                <p className="mt-3 text-base leading-7 text-[var(--studio-muted)] md:text-lg">
+                  {description}
+                </p>
+              </div>
+            </section>
 
             <div>{children}</div>
           </div>
         </main>
       </div>
-    </div>
+    </ToolWorkspaceChrome>
   );
 }

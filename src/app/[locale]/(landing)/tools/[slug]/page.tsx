@@ -10,7 +10,7 @@ import {
   readNicheDiscoveryToolSearchState,
   type NicheDiscoveryToolSearchState,
 } from '@/shared/blocks/tools/niche-discovery-tool-query';
-import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
+import { ToolWorkspaceChrome } from '@/shared/blocks/tools/tool-workspace-chrome';
 
 export const revalidate = 3600;
 
@@ -74,16 +74,18 @@ export default async function ToolDetailPage({
       : undefined;
 
   return (
-    <ToolWorkspaceShell
-      activeKey="tools"
-      title={tool.pageTitle}
-      description={tool.whenToUse}
-    >
-      {tool.slug === 'niche-discovery-sprint' ? (
-        <NicheDiscoveryToolPage tool={tool} initialState={initialState} />
-      ) : (
-        <AiToolComingSoonPage tool={tool} />
-      )}
-    </ToolWorkspaceShell>
+    <ToolWorkspaceChrome>
+      <div className="min-h-screen pt-[62px]">
+        <main className="min-w-0 bg-[#15161d] [background-image:radial-gradient(circle_at_top_left,rgba(255,122,26,0.08),transparent_20%),radial-gradient(circle_at_top_right,rgba(30,184,166,0.05),transparent_16%)] p-4 lg:p-6">
+          <div className="mx-auto max-w-[1680px]">
+            {tool.slug === 'niche-discovery-sprint' ? (
+              <NicheDiscoveryToolPage tool={tool} initialState={initialState} />
+            ) : (
+              <AiToolComingSoonPage tool={tool} />
+            )}
+          </div>
+        </main>
+      </div>
+    </ToolWorkspaceChrome>
   );
 }

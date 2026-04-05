@@ -1,8 +1,10 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
+
+let mockPathname = '/tools';
 
 vi.mock('@/core/i18n/navigation', () => ({
   Link: ({ href, children, ...props }: any) => (
@@ -10,7 +12,7 @@ vi.mock('@/core/i18n/navigation', () => ({
       {children}
     </a>
   ),
-  usePathname: () => '/tools',
+  usePathname: () => mockPathname,
   useRouter: () => ({
     refresh: vi.fn(),
   }),
@@ -28,6 +30,10 @@ vi.mock('@/shared/contexts/app', () => ({
 }));
 
 describe('ToolWorkspaceShell', () => {
+  beforeEach(() => {
+    mockPathname = '/tools';
+  });
+
   it('renders a single primary navigation hierarchy for tools', () => {
     render(
       <ToolWorkspaceShell
@@ -75,5 +81,29 @@ describe('ToolWorkspaceShell', () => {
     expect(
       within(mobileNav).getAllByRole('link', { name: 'Tools' })
     ).toHaveLength(1);
+  });
+
+  it('stays hub-only even when the pathname points at a tool detail route', () => {
+    mockPathname = '/tools/niche-discovery-sprint';
+
+    render(
+      <ToolWorkspaceShell
+        activeKey="tools"
+        title="Workspace Overview"
+        description="Workspace description"
+      >
+        <div>shell content</div>
+      </ToolWorkspaceShell>
+    );
+
+    expect(
+      screen.getByRole('button', { name: /open navigation/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Base Capabilities' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Workspace Overview' })
+    ).toBeInTheDocument();
   });
 });
