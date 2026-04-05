@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { usePathname, useRouter } from '@/core/i18n/navigation';
 
+import { type AiToolDefinition } from './ai-tools-catalog';
 import {
   buildNicheDiscoverySprint,
   getDefaultSprintSelections,
@@ -14,8 +15,6 @@ import {
   type SprintSelections,
   type SprintTopic,
 } from './niche-discovery-sprint-data';
-import { type AiToolDefinition } from './ai-tools-catalog';
-import { AiToolPageFrame } from './ai-tool-page-frame';
 import {
   buildNicheDiscoveryToolSearchParams,
   type NicheDiscoveryToolSearchState,
@@ -26,7 +25,9 @@ const DEFAULT_ASSET_TYPE = 'stock footage';
 const DEFAULT_AUDIENCE = 'curious general viewers';
 
 function resolveTopic(niche: SprintNiche, topicSlug?: string): SprintTopic {
-  return niche.topics.find((topic) => topic.slug === topicSlug) ?? niche.topics[0];
+  return (
+    niche.topics.find((topic) => topic.slug === topicSlug) ?? niche.topics[0]
+  );
 }
 
 function resolveHook(topic: SprintTopic, hookSlug?: string): SprintHook {
@@ -103,8 +104,9 @@ export function NicheDiscoveryToolPage({
     }
 
     return (
-      sprint.niches.find((niche) => niche.slug === resolvedSelections.nicheSlug) ??
-      sprint.niches[0]
+      sprint.niches.find(
+        (niche) => niche.slug === resolvedSelections.nicheSlug
+      ) ?? sprint.niches[0]
     );
   }, [resolvedSelections, sprint]);
 
@@ -179,9 +181,8 @@ export function NicheDiscoveryToolPage({
   };
 
   return (
-    <AiToolPageFrame
-      tool={tool}
-      center={
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[#171922] p-5">
         <div className="space-y-5">
           <div>
             <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
@@ -238,9 +239,10 @@ export function NicheDiscoveryToolPage({
             Generate Niche Pack
           </button>
         </div>
-      }
-      right={
-        !sprint || !selectedNiche || !selectedTopic || !selectedHook ? (
+      </section>
+
+      <section className="rounded-[28px] border border-[color:var(--studio-line)] bg-[#11131a] p-5">
+        {!sprint || !selectedNiche || !selectedTopic || !selectedHook ? (
           <div className="space-y-3">
             <div className="text-[11px] tracking-[0.18em] text-[var(--studio-muted)] uppercase">
               Results
@@ -314,7 +316,9 @@ export function NicheDiscoveryToolPage({
                 </p>
               ))}
 
-              <div className="text-sm font-semibold text-white">Visual Cues</div>
+              <div className="text-sm font-semibold text-white">
+                Visual Cues
+              </div>
               {selectedHook.scriptPack.visuals.map((line) => (
                 <p key={line} className="text-sm leading-6 text-white/72">
                   {line}
@@ -322,8 +326,8 @@ export function NicheDiscoveryToolPage({
               ))}
             </div>
           </div>
-        )
-      }
-    />
+        )}
+      </section>
+    </div>
   );
 }

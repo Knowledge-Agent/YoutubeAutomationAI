@@ -32,6 +32,7 @@ describe('NicheDiscoveryToolPage', () => {
 
     render(<NicheDiscoveryToolPage tool={tool} persistState={vi.fn()} />);
 
+    expect(screen.queryByText(/^AI Tools$/)).not.toBeInTheDocument();
     expect(screen.getByText(/run the sprint to see/i)).toBeInTheDocument();
 
     await user.type(screen.getByLabelText(/seed topic/i), 'AI tools');
