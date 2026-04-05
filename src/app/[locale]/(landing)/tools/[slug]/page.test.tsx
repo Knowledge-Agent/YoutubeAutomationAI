@@ -56,7 +56,7 @@ vi.mock('@/shared/blocks/tools/ai-tool-coming-soon-page', () => ({
 }));
 
 describe('ToolDetailPage', () => {
-  it('does not force tool detail routes into the hub sidebar and intro shell', async () => {
+  it('keeps shared workspace chrome without forcing the hub sidebar and intro shell', async () => {
     const page = await ToolDetailPage({
       params: Promise.resolve({ locale: 'en', slug: 'niche-discovery-sprint' }),
       searchParams: Promise.resolve({}),
@@ -65,6 +65,10 @@ describe('ToolDetailPage', () => {
     render(page);
 
     expect(screen.getByText('detail tool body')).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /youtube automation ai/i })
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
     expect(
       screen.queryByRole('heading', { name: 'Base Capabilities' })
     ).not.toBeInTheDocument();
