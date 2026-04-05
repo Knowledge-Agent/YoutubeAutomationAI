@@ -12,9 +12,14 @@ vi.mock('@/core/i18n/navigation', () => ({
 }));
 
 describe('AiToolsDirectory', () => {
-  it('renders only the selected category and links directly to tool pages', () => {
-    render(<AiToolsDirectory activeCategory="script-tools" />);
+  it('renders compact category filters and direct card links', () => {
+    const { container } = render(
+      <AiToolsDirectory activeCategory="script-tools" />
+    );
 
+    expect(
+      screen.getByRole('link', { name: /video tools/i })
+    ).toHaveAttribute('href', '/tools?tab=video-tools');
     expect(
       screen.getByRole('link', { name: /niche discovery sprint/i })
     ).toHaveAttribute('href', '/tools/niche-discovery-sprint');
@@ -24,13 +29,29 @@ describe('AiToolsDirectory', () => {
     expect(
       screen.queryByRole('link', { name: /shorts reframer/i })
     ).not.toBeInTheDocument();
+
+    const nav = container.querySelector('nav');
+    const navClasses = nav?.className.split(/\s+/) ?? [];
+
+    expect(navClasses).toContain('gap-2');
+    expect(navClasses).not.toContain('p-2');
   });
 
-  it('keeps the cards visually minimal', () => {
-    render(<AiToolsDirectory activeCategory="video-tools" />);
+  it('keeps cards limited to the cover image and tool name', () => {
+    render(<AiToolsDirectory activeCategory="script-tools" />);
 
-    expect(screen.getByText('Shorts Reframer')).toBeInTheDocument();
+    const nicheCard = screen.getByRole('link', {
+      name: /niche discovery sprint/i,
+    });
+    const nicheImage = screen.getByRole('img', {
+      name: /niche discovery sprint/i,
+    });
+
+    expect(nicheCard).toContainElement(nicheImage);
+    expect(screen.getByText('Niche Discovery Sprint')).toBeInTheDocument();
+    expect(screen.getByText('Script Rewrite Studio')).toBeInTheDocument();
     expect(screen.queryByText(/what you input/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/coming soon/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/open tool/i)).not.toBeInTheDocument();
   });
 });

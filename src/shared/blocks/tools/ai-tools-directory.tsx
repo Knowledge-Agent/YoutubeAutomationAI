@@ -15,10 +15,10 @@ export function AiToolsDirectory({
   const tools = getAiToolsForCategory(activeCategory);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <nav
         aria-label="AI tools categories"
-        className="flex flex-wrap gap-2 rounded-[28px] border border-[color:var(--studio-line)] bg-[rgb(23_25_32_/_0.74)] p-2"
+        className="flex flex-wrap items-center gap-2"
       >
         {aiToolCategories.map((category) => {
           const active = category.slug === activeCategory;
@@ -28,10 +28,10 @@ export function AiToolsDirectory({
               key={category.slug}
               href={`/tools?tab=${category.slug}`}
               className={cn(
-                'rounded-full px-4 py-2 text-sm font-medium transition',
+                'rounded-full border border-[color:var(--studio-line)] px-3 py-1.5 text-sm font-medium transition',
                 active
-                  ? 'bg-white text-[#13141b]'
-                  : 'text-[var(--studio-muted)] hover:bg-white/[0.04] hover:text-white'
+                  ? 'border-white bg-white text-[#13141b]'
+                  : 'bg-[var(--studio-panel)] text-[var(--studio-muted)] hover:border-white/20 hover:text-white'
               )}
             >
               {category.title}
@@ -40,12 +40,12 @@ export function AiToolsDirectory({
         })}
       </nav>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {tools.map((tool) => (
           <Link
             key={tool.slug}
             href={tool.href}
-            className="group overflow-hidden rounded-[22px] border border-[color:var(--studio-line)] bg-[var(--studio-panel-strong)] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] transition hover:border-white/14"
+            className="group overflow-hidden rounded-[20px] border border-[color:var(--studio-line)] bg-[var(--studio-panel-strong)] transition hover:border-white/14"
           >
             <div className="relative aspect-[1.42/1] overflow-hidden bg-black">
               <img
@@ -54,8 +54,8 @@ export function AiToolsDirectory({
                 className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
               />
             </div>
-            <div className="border-t border-[color:var(--studio-line)] px-4 py-3">
-              <div className="studio-title text-lg font-semibold tracking-tight text-white">
+            <div className="px-4 py-3">
+              <div className="studio-title text-base font-semibold tracking-tight text-white">
                 {tool.title}
               </div>
             </div>
