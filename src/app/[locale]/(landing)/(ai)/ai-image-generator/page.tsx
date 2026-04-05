@@ -24,13 +24,8 @@ export default async function AiImageGeneratorPage({
   return (
     <ToolWorkspaceShell
       activeKey="ai-image"
-      activeTab="ai-image"
-      workspaceMode="hub"
       title={t.raw('page.title')}
       description={t.raw('page.description')}
-      actions={['Favorites', 'Assets']}
-      contentCard={false}
-      showIntroCard={false}
     >
       <AiImageHubUi />
     </ToolWorkspaceShell>

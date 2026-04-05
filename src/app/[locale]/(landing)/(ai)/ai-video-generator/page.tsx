@@ -24,13 +24,8 @@ export default async function AiVideoGeneratorPage({
   return (
     <ToolWorkspaceShell
       activeKey="ai-video"
-      activeTab="ai-video"
-      workspaceMode="hub"
       title={t.raw('page.title')}
       description={t.raw('page.description')}
-      actions={['Favorites', 'Assets']}
-      contentCard={false}
-      showIntroCard={false}
     >
       <AiVideoHubUi />
     </ToolWorkspaceShell>

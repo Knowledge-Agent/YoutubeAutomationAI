@@ -76,13 +76,8 @@ export default async function LandingPage({
 
         <ToolWorkspaceShell
           activeKey="ai-video"
-          activeTab="ai-video"
-          workspaceMode="hub"
           title={toolT.raw('page.title')}
           description={toolT.raw('page.description')}
-          actions={['Favorites', 'Assets']}
-          contentCard={false}
-          showIntroCard={false}
         >
           <AiVideoHubUi />
         </ToolWorkspaceShell>

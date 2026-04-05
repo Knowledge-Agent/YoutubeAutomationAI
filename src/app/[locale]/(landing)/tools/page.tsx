@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { AiToolsDirectory } from '@/shared/blocks/tools/ai-tools-directory';
 import { parseAiToolCategory } from '@/shared/blocks/tools/ai-tools-catalog';
+import { AiToolsDirectory } from '@/shared/blocks/tools/ai-tools-directory';
 import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
 import { getMetadata } from '@/shared/lib/seo';
 
@@ -33,13 +33,8 @@ export default async function ToolsPage({
   return (
     <ToolWorkspaceShell
       activeKey="tools"
-      activeTab="tools"
-      workspaceMode="hub"
       title={t.raw('page.title')}
       description={t.raw('page.description')}
-      actions={['Directory']}
-      contentCard={false}
-      showIntroCard={false}
     >
       <AiToolsDirectory activeCategory={activeCategory} />
     </ToolWorkspaceShell>
