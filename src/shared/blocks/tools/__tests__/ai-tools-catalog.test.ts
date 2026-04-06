@@ -14,7 +14,7 @@ describe('ai-tools-catalog', () => {
     expect(parseAiToolCategory('not-a-real-tab')).toBe('video-tools');
   });
 
-  it('returns the niche discovery tool as the ready tool route', () => {
+  it('marks both niche discovery and script rewrite as ready tools', () => {
     expect(getAiToolBySlug('niche-discovery-sprint')).toEqual(
       expect.objectContaining({
         slug: 'niche-discovery-sprint',
@@ -28,6 +28,14 @@ describe('ai-tools-catalog', () => {
           'Hook options',
           'Script-ready pack',
         ],
+      })
+    );
+
+    expect(getAiToolBySlug('script-rewrite-studio')).toEqual(
+      expect.objectContaining({
+        slug: 'script-rewrite-studio',
+        status: 'ready',
+        href: '/tools/script-rewrite-studio',
       })
     );
   });
@@ -71,6 +79,17 @@ describe('ai-tools-catalog', () => {
           'Title angles',
           'Visual composition notes',
         ],
+        status: 'planned',
+        primaryActionLabel: 'Lock The Topic First',
+        previewTitle: 'Sample Thumbnail Brief',
+      })
+    );
+
+    expect(getAiToolBySlug('shorts-reframer')).toEqual(
+      expect.objectContaining({
+        status: 'planned',
+        primaryActionLabel: 'Rewrite The Source First',
+        previewTitle: 'Sample Shorts Reframe Pack',
       })
     );
   });

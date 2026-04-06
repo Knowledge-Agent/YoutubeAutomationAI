@@ -13,42 +13,59 @@ vi.mock('@/core/i18n/navigation', () => ({
 }));
 
 describe('AiToolComingSoonPage', () => {
-  it('renders output modules from structured tool data instead of parsing summary copy', () => {
-    const baseTool = getAiToolBySlug('shorts-reframer');
+  it('renders a planned-tool page with explicit hierarchy, one clear CTA, and one strong sample deliverable', () => {
+    const tool = getAiToolBySlug('shorts-reframer');
 
-    if (!baseTool) {
+    if (!tool) {
       throw new Error('Expected tool metadata');
     }
 
-    const tool = {
-      ...baseTool,
-      whatYouGet: 'A focused production handoff for this workflow.',
-      outputModules: [
-        'Beat-by-beat short map',
-        'Retention edit cues',
-        'Publishing checklist',
-      ],
-    };
-
     render(<AiToolComingSoonPage tool={tool} />);
 
+    expect(
+      screen.getByRole('heading', { name: /shorts reframer/i, level: 1 })
+    ).toBeInTheDocument();
     expect(screen.getByText('Coming Soon')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /shorts reframer/i })
     ).toHaveAttribute('aria-current', 'page');
     expect(
-      screen.getAllByRole('link', { name: /niche discovery sprint/i })
+      screen.getAllByRole('link', { name: /script rewrite studio/i })
     ).toHaveLength(2);
-    expect(screen.queryByText(/^AI Tools$/)).not.toBeInTheDocument();
-    expect(screen.getByText(/what you'll input/i)).toBeInTheDocument();
-    expect(screen.getByText(tool.whatYouInput)).toBeInTheDocument();
-    expect(screen.getByText(/what you'll get/i)).toBeInTheDocument();
-    expect(screen.getByText(tool.whatYouGet)).toBeInTheDocument();
-    expect(screen.getByText(/beat-by-beat short map/i)).toBeInTheDocument();
-    expect(screen.getByText(/retention edit cues/i)).toBeInTheDocument();
-    expect(screen.getByText(/publishing checklist/i)).toBeInTheDocument();
     expect(
-      screen.queryByText(/hook-first short concepts/i)
+      screen.getAllByRole('link', { name: /niche discovery sprint/i })
+    ).toHaveLength(1);
+    expect(screen.queryByText(/^AI Tools$/)).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/recommended right now/i)
+    ).toBeInTheDocument();
+    expect(screen.getByText(/rewrite the source first/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /use script rewrite studio now/i })
+    ).toHaveAttribute('href', '/tools/script-rewrite-studio');
+    expect(
+      screen.getByRole('heading', { name: /sample shorts reframe pack/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /a realistic example of the short-form output this tool will generate/i
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByText(/short angles/i)).toBeInTheDocument();
+    expect(screen.getByText(/hook options/i)).toBeInTheDocument();
+    expect(screen.getByText(/edit notes/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/unexpected turning point cut/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/start at the payoff and rewind/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/trim setup to under 2 seconds/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/why this page exists/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/output module/i)
     ).not.toBeInTheDocument();
   });
 });

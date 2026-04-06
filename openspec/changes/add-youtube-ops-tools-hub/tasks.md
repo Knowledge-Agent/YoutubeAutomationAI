@@ -26,7 +26,7 @@
 - [x] 4.1 Add or refresh targeted tests for the catalog, directory,
       shared detail shell integration, tool switcher, niche discovery
       workspace, and AI video generator separation
-- [ ] 4.2 Manually review `/tools`, `/tools/niche-discovery-sprint`, and
+- [x] 4.2 Manually review `/tools`, `/tools/niche-discovery-sprint`, and
       `/ai-video-generator` at desktop and mobile breakpoints
 - [x] 4.3 Run final lint/build verification and record results
       (`pnpm lint`, `pnpm test:run`, `pnpm build` on 2026-04-05)

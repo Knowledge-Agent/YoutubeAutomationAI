@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -26,7 +26,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 describe('NicheDiscoveryToolPage', () => {
-  it('renders the switcher link and an empty results state before the sprint runs', () => {
+  it('renders one operator panel CTA and a structured result workspace before the sprint runs', () => {
     const tool = getAiToolBySlug('niche-discovery-sprint');
 
     if (!tool) {
@@ -38,6 +38,7 @@ describe('NicheDiscoveryToolPage', () => {
     expect(
       screen.getByRole('link', { name: /script rewrite studio/i })
     ).toHaveAttribute('href', '/tools/script-rewrite-studio');
+    expect(screen.getByText(/operator panel/i)).toBeInTheDocument();
     expect(screen.getByRole('radiogroup', { name: /format/i })).toBeInTheDocument();
     expect(
       screen.getByRole('radiogroup', { name: /visual source/i })
@@ -49,17 +50,30 @@ describe('NicheDiscoveryToolPage', () => {
     expect(
       screen.getByRole('button', { name: /generate niche pack/i })
     ).toBeInTheDocument();
-    expect(screen.getByText(/run the sprint to see/i)).toBeInTheDocument();
-    expect(screen.getByText(/what you'll get/i)).toBeInTheDocument();
-    expect(screen.getByText(/recommended niche path/i)).toBeInTheDocument();
-    expect(screen.getByText(/topic ladder/i)).toBeInTheDocument();
-    expect(screen.getByText(/hook options/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+    expect(screen.getByText(/result workspace/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /recommended path preview/i })
+    ).toBeInTheDocument();
+    expect(screen.getByText(/output modules/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/recommended niche/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/topic ladder/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/hook options/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/script pack/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/after this run/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/pick the strongest topic, choose a hook, then move into scripting/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/what you'll get/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/what happens after this run/i)
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('heading', { name: /recommended niche/i })
     ).not.toBeInTheDocument();
   });
 
-  it('renders the recommended niche and voiceover draft after one CTA', async () => {
+  it('renders one cohesive result workspace with a usable next step after one CTA', async () => {
     const user = userEvent.setup();
     const tool = getAiToolBySlug('niche-discovery-sprint');
 
@@ -77,6 +91,8 @@ describe('NicheDiscoveryToolPage', () => {
     expect(
       await screen.findByRole('heading', { name: /recommended niche/i })
     ).toBeInTheDocument();
+    expect(screen.getByText(/result workspace/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
     expect(
       screen.getByRole('radiogroup', { name: /topic ladder/i })
     ).toBeInTheDocument();
@@ -92,6 +108,9 @@ describe('NicheDiscoveryToolPage', () => {
     expect(
       screen.getByRole('heading', { name: /script pack/i })
     ).toBeInTheDocument();
+    expect(screen.getByText(/why it fits/i)).toBeInTheDocument();
+    expect(screen.getByText(/risk to watch/i)).toBeInTheDocument();
+    expect(screen.getByText(/refine this pack/i)).toBeInTheDocument();
     expect(
       screen.getByRole('radio', { name: /easy-entry ai tools/i })
     ).toBeChecked();
@@ -99,6 +118,21 @@ describe('NicheDiscoveryToolPage', () => {
       screen.getByRole('radio', { name: /curiosity hook/i })
     ).toBeChecked();
     expect(screen.getByText(/voiceover draft/i)).toBeInTheDocument();
+    expect(screen.getByText(/next creator step/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /continue in script rewrite studio/i })
+    ).toHaveAttribute('href', '/tools/script-rewrite-studio');
+
+    const scriptPack = screen.getByRole('heading', { name: /script pack/i })
+      .closest('section');
+
+    expect(scriptPack).not.toBeNull();
+    expect(
+      within(scriptPack as HTMLElement).getByText(/voiceover draft/i)
+    ).toBeInTheDocument();
+    expect(
+      within(scriptPack as HTMLElement).getByText(/visual cues/i)
+    ).toBeInTheDocument();
   });
 
   it('syncs persisted sprint state when format and asset type change after a run', async () => {

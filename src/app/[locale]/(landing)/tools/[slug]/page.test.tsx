@@ -63,11 +63,20 @@ vi.mock('@/shared/blocks/tools/niche-discovery-tool-page', () => ({
   ),
 }));
 
+vi.mock('@/shared/blocks/tools/script-rewrite-tool-page', () => ({
+  ScriptRewriteToolPage: ({ tool }: any) => (
+    <section>
+      <h1>{tool.pageTitle}</h1>
+      <p>script rewrite tool body</p>
+    </section>
+  ),
+}));
+
 vi.mock('@/shared/blocks/tools/ai-tool-coming-soon-page', () => ({
   AiToolComingSoonPage: ({ tool }: any) => (
     <section>
       <h1>{tool.pageTitle}</h1>
-      <p>coming soon tool body</p>
+      <p>planned tool body</p>
     </section>
   ),
 }));
@@ -90,5 +99,42 @@ describe('ToolDetailPage', () => {
       screen.queryByRole('heading', { name: 'Base Capabilities' })
     ).not.toBeInTheDocument();
     expect(screen.getAllByText('Niche Discovery Sprint')).toHaveLength(1);
+  });
+
+  it('renders script rewrite studio as a ready tool inside the shared detail shell', async () => {
+    const page = await ToolDetailPage({
+      params: Promise.resolve({ locale: 'en', slug: 'script-rewrite-studio' }),
+      searchParams: Promise.resolve({}),
+    });
+
+    render(page);
+
+    expect(screen.getByText('script rewrite tool body')).toBeInTheDocument();
+    expect(screen.queryByText('planned tool body')).not.toBeInTheDocument();
+    expect(screen.getByTestId('workspace-detail-shell')).toHaveAttribute(
+      'data-active-section',
+      'tools'
+    );
+  });
+
+  it('renders thumbnail brief builder as a planned tool page inside the shared detail shell', async () => {
+    const page = await ToolDetailPage({
+      params: Promise.resolve({
+        locale: 'en',
+        slug: 'thumbnail-brief-builder',
+      }),
+      searchParams: Promise.resolve({}),
+    });
+
+    render(page);
+
+    expect(screen.getByText('planned tool body')).toBeInTheDocument();
+    expect(
+      screen.queryByText('script rewrite tool body')
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId('workspace-detail-shell')).toHaveAttribute(
+      'data-active-section',
+      'tools'
+    );
   });
 });

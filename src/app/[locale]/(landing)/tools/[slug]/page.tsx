@@ -7,6 +7,7 @@ import { WorkspaceDetailShell } from '@/shared/blocks/common';
 import { AiToolComingSoonPage } from '@/shared/blocks/tools/ai-tool-coming-soon-page';
 import { getAiToolBySlug } from '@/shared/blocks/tools/ai-tools-catalog';
 import { NicheDiscoveryToolPage } from '@/shared/blocks/tools/niche-discovery-tool-page';
+import { ScriptRewriteToolPage } from '@/shared/blocks/tools/script-rewrite-tool-page';
 import {
   readNicheDiscoveryToolSearchState,
   type NicheDiscoveryToolSearchState,
@@ -78,6 +79,8 @@ export default async function ToolDetailPage({
       <div className="min-h-0 flex-1 overflow-y-auto">
         {tool.slug === 'niche-discovery-sprint' ? (
           <NicheDiscoveryToolPage tool={tool} initialState={initialState} />
+        ) : tool.slug === 'script-rewrite-studio' ? (
+          <ScriptRewriteToolPage tool={tool} />
         ) : (
           <AiToolComingSoonPage tool={tool} />
         )}

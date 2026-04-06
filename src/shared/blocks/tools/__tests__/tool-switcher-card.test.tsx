@@ -26,15 +26,15 @@ describe('ToolSwitcherCard', () => {
 
     expect(switcherLabel).toBeInTheDocument();
     expect(switcher).toHaveClass(
-      'rounded-[22px]',
-      'px-4',
-      'py-3',
-      'bg-[rgba(255,255,255,0.02)]'
+      'rounded-[18px]',
+      'px-3',
+      'py-2.5',
+      'bg-[rgba(255,255,255,0.015)]'
     );
     expect(
       activeLink
     ).toHaveAttribute('aria-current', 'page');
-    expect(activeLink).toHaveClass('min-h-9', 'px-3.5', 'py-2');
+    expect(activeLink).toHaveClass('min-h-8', 'px-3', 'py-1.5');
     expect(inactiveLink).toHaveAttribute('href', '/tools/script-rewrite-studio');
     expect(screen.queryByText(/^Current Tool$/)).not.toBeInTheDocument();
   });
