@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { ArrowUp, ImageIcon, ImagePlus, Video } from 'lucide-react';
+import { ArrowUp, ImageIcon, Loader2, Video } from 'lucide-react';
 
 import { ChatReferenceImageSlots } from '@/shared/blocks/chat/reference-image-slots';
 import { useToolCatalog } from '@/shared/hooks/use-tool-catalog';
@@ -208,7 +208,16 @@ export function ToolPromptCard({
               )}
               disabled={!canSubmit || submitting}
             >
-              <ArrowUp className={cn(isHero ? 'size-5' : 'size-4.5')} />
+              {submitting ? (
+                <Loader2
+                  className={cn(
+                    'animate-spin',
+                    isHero ? 'size-5' : 'size-4.5'
+                  )}
+                />
+              ) : (
+                <ArrowUp className={cn(isHero ? 'size-5' : 'size-4.5')} />
+              )}
             </button>
           </div>
         </div>

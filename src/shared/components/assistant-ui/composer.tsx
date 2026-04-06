@@ -3,7 +3,7 @@
 import {
   ComposerPrimitive,
   ThreadPrimitive,
-  useAui,
+  useAssistantApi,
 } from '@assistant-ui/react';
 import { ArrowUp, Paperclip, Square } from 'lucide-react';
 import {
@@ -50,7 +50,7 @@ export function AssistantWorkspaceComposer({
   inputTestId?: string;
   submitTestId?: string;
 }) {
-  const aui = useAui();
+  const aui = useAssistantApi();
   const lastInitializedRef = useRef<string | null>(null);
 
   useEffect(() => {

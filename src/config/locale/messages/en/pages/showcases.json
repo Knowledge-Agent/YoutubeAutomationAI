@@ -123,17 +123,6 @@
             "group": "ai-coding"
           },
           {
-            "title": "SoraFM",
-            "description": "AI Video Generator",
-            "url": "https://sorafm.trys.ai",
-            "target": "_blank",
-            "image": {
-              "src": "/imgs/cases/8.png",
-              "alt": "showcases"
-            },
-            "group": "ai-video"
-          },
-          {
             "title": "PodLM",
             "description": "AI Podcast Generator",
             "url": "https://podlm.ai",

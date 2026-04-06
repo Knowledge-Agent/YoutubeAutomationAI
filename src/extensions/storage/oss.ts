@@ -1,4 +1,5 @@
 import type {
+  StorageAccessUrlOptions,
   StorageConfigs,
   StorageDownloadUploadOptions,
   StorageProvider,
@@ -97,6 +98,10 @@ export class OSSProvider implements StorageProvider {
 
     return this.getSignedUrl(options);
   };
+
+  async getAccessUrl(options: StorageAccessUrlOptions): Promise<string> {
+    return this.getPublicUrl(options);
+  }
 
   exists = async (options: { key: string; bucket?: string }) => {
     try {

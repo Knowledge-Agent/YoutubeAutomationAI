@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import Image from 'next/image';
 import {
   ArrowRight,
@@ -29,6 +29,7 @@ export function Hero({
 }) {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const submitLockRef = useRef(false);
 
   const highlightText = section.highlight_text ?? '';
   let texts = null;
@@ -52,6 +53,10 @@ export function Hero({
   const handleWaitlistSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (submitLockRef.current) {
+      return;
+    }
+
     const trimmed = email.trim().toLowerCase();
     const action = section.submit?.action;
 
@@ -71,6 +76,7 @@ export function Hero({
     }
 
     try {
+      submitLockRef.current = true;
       setSubmitting(true);
 
       const pagePath =
@@ -106,6 +112,7 @@ export function Hero({
     } catch (error: any) {
       toast.error(error?.message || 'submit failed');
     } finally {
+      submitLockRef.current = false;
       setSubmitting(false);
     }
   };

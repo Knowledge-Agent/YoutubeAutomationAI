@@ -91,6 +91,7 @@ export function SidebarUser({ user }: { user: SidebarUserType }) {
 
     if (
       configs &&
+      configs.google_auth_enabled === 'true' &&
       configs.google_client_id &&
       configs.google_one_tap_enabled === 'true' &&
       !session &&

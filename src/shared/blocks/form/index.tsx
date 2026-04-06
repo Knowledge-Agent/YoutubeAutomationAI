@@ -1,7 +1,7 @@
 'use client';
 
 import { isArray } from 'util';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -202,6 +202,7 @@ export function Form({
   }
 
   const [loading, setLoading] = useState(false);
+  const submitLockRef = useRef(false);
 
   const router = useRouter();
   const FormSchema = generateFormSchema(fields);
@@ -259,6 +260,10 @@ export function Form({
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (submitLockRef.current) {
+      return;
+    }
+
     // console.log('=== Form Submit Start ===');
     // console.log('[Form Submit] Raw form data:', data);
 
@@ -277,6 +282,9 @@ export function Form({
     if (!submit?.handler) return;
 
     try {
+      submitLockRef.current = true;
+      setLoading(true);
+
       const formData = new FormData();
 
       Object.entries(data).forEach(([key, value]) => {
@@ -294,7 +302,6 @@ export function Form({
         }
       });
 
-      setLoading(true);
       const res = await submit.handler(formData, passby);
 
       if (!res) {
@@ -312,11 +319,11 @@ export function Form({
       if (res.redirect_url) {
         router.push(res.redirect_url as any);
       }
-
-      setLoading(false);
     } catch (err: any) {
       console.log('submit form error', err);
       toast.error(err.message || 'submit form failed');
+    } finally {
+      submitLockRef.current = false;
       setLoading(false);
     }
   }

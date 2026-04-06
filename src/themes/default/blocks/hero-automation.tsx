@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import Image from 'next/image';
 import { ArrowUp, Loader2, Mail } from 'lucide-react';
 import { toast } from 'sonner';
@@ -138,6 +138,7 @@ export function HeroAutomation({
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [placeholderText, setPlaceholderText] = useState('');
+  const submitLockRef = useRef(false);
 
   const accentText =
     typeof section.title_emphasis === 'string' ? section.title_emphasis : '';
@@ -199,6 +200,10 @@ export function HeroAutomation({
   const handleWaitlistSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (submitLockRef.current) {
+      return;
+    }
+
     const trimmed = email.trim().toLowerCase();
     const action = section.submit?.action;
 
@@ -215,6 +220,7 @@ export function HeroAutomation({
     }
 
     try {
+      submitLockRef.current = true;
       setSubmitting(true);
       const pagePath =
         typeof window !== 'undefined'
@@ -249,6 +255,7 @@ export function HeroAutomation({
     } catch (error: any) {
       toast.error(error?.message || 'submit failed');
     } finally {
+      submitLockRef.current = false;
       setSubmitting(false);
     }
   };

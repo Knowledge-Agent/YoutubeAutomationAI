@@ -50,7 +50,7 @@ const featuredRows = [
   {
     title: 'High-Energy Food Reveal Sequences',
     accent: 'FOOD MOTION',
-    subtitle: 'Sora 2',
+    subtitle: 'VEO3.1 Fast',
     poster: '/demos/video-hub/food-motion.jpg',
     video: '/demos/video-hub/food-motion.mp4',
   },
@@ -130,7 +130,6 @@ const promptIdeas = [
 function FeaturedVideoTile({ card }: { card: FeaturedDemoCard }) {
   const shouldReduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -141,12 +140,18 @@ function FeaturedVideoTile({ card }: { card: FeaturedDemoCard }) {
       return;
     }
 
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting && entry.intersectionRatio >= 0.45);
+        setIsVisible(entry.isIntersecting && entry.intersectionRatio >= 0.2);
       },
       {
-        threshold: [0.25, 0.45, 0.7],
+        threshold: [0, 0.2, 0.45],
+        rootMargin: '120px 0px',
       }
     );
 
@@ -154,30 +159,6 @@ function FeaturedVideoTile({ card }: { card: FeaturedDemoCard }) {
 
     return () => observer.disconnect();
   }, [shouldReduceMotion]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-
-    if (!video || shouldReduceMotion || hasError) {
-      return;
-    }
-
-    if (!isVisible) {
-      video.pause();
-      return;
-    }
-
-    const playPromise = video.play();
-    if (playPromise) {
-      playPromise.catch(() => {
-        setHasError(true);
-      });
-    }
-
-    return () => {
-      video.pause();
-    };
-  }, [hasError, isVisible, shouldReduceMotion]);
 
   return (
     <div ref={containerRef} className="group min-w-0 overflow-hidden">
@@ -188,22 +169,25 @@ function FeaturedVideoTile({ card }: { card: FeaturedDemoCard }) {
             alt={card.title}
             className="absolute inset-0 h-full w-full object-cover object-[center_24%] transition duration-700 group-hover:scale-[1.03]"
           />
-          {!shouldReduceMotion && !hasError ? (
+          {isVisible && !shouldReduceMotion && !hasError ? (
             <video
-              ref={videoRef}
               src={card.video}
               poster={card.poster}
+              autoPlay
               muted
               loop
               playsInline
               preload="metadata"
               className={cn(
                 'absolute inset-0 h-full w-full object-cover object-[center_24%] transition duration-500',
-                isReady ? 'opacity-100' : 'opacity-0',
-                isVisible ? 'scale-100' : 'scale-[1.02]'
+                isReady ? 'opacity-100' : 'opacity-0'
               )}
               onLoadedData={() => setIsReady(true)}
-              onError={() => setHasError(true)}
+              onCanPlay={() => setIsReady(true)}
+              onError={() => {
+                setHasError(true);
+                setIsReady(false);
+              }}
             />
           ) : null}
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0)_24%,rgba(0,0,0,0.88)_100%)]" />
@@ -235,13 +219,17 @@ export function AiVideoHubUi() {
   });
   const featuredRailRef = useRef<HTMLDivElement | null>(null);
   const [hasFeaturedOverflow, setHasFeaturedOverflow] = useState(false);
-  const startToolChat = useStartToolChat('video');
+  const { isStarting, startToolChat } = useStartToolChat('video');
 
   const startGeneration = () => {
+    if (isStarting) {
+      return;
+    }
+
     const normalizedPrompt = prompt.trim();
     if (!normalizedPrompt) return;
 
-    startToolChat({
+    void startToolChat({
       prompt: normalizedPrompt,
       mode: controls.mode as 'text-to-video' | 'image-to-video',
       toolModel: controls.modelId,
@@ -291,6 +279,7 @@ export function AiVideoHubUi() {
         controls={controls}
         onControlsChange={setControls}
         onSubmit={startGeneration}
+        submitting={isStarting}
         allowedModes={['text-to-video', 'image-to-video']}
       />
 

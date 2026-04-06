@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { UIMessage } from '@ai-sdk/react';
 import { ThreadPrimitive } from '@assistant-ui/react';
 import { DefaultChatTransport } from 'ai';
@@ -26,6 +26,11 @@ import { useChatContext } from '@/shared/contexts/chat';
 import { useToolCatalog } from '@/shared/hooks/use-tool-catalog';
 import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
 import { getGenerationLimitCopy } from '@/shared/lib/generation-limit';
+import {
+  peekPendingToolChatAutostart,
+  takePendingToolChatAutostart,
+  type PendingToolChatAutostart,
+} from '@/shared/lib/tool-chat-autostart';
 import { cn } from '@/shared/lib/utils';
 import type { ToolMode } from '@/shared/types/ai-tools';
 import { Chat } from '@/shared/types/chat';
@@ -77,6 +82,8 @@ type ChatToolTaskRecord = {
   creditCost?: number | null;
 };
 
+type ToolLaunchState = 'idle' | 'bootstrapping' | 'starting' | 'active';
+
 function createPendingTaskRecord({
   prompt,
   mode,
@@ -101,6 +108,19 @@ function createPendingTaskRecord({
     }),
     createdAt: new Date().toISOString(),
   };
+}
+
+function getInitialPendingToolChatAutostart(chatId?: string) {
+  if (typeof window === 'undefined' || !chatId) {
+    return null;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('autostart') !== '1') {
+    return null;
+  }
+
+  return peekPendingToolChatAutostart(chatId);
 }
 
 function classifyToolInputIntent(text: string): 'generate' | 'chat' {
@@ -194,7 +214,15 @@ function parseJson(value: string | null | undefined) {
   }
 }
 
-function normalizeTaskErrorMessage(errorMessage: unknown) {
+function normalizeTaskErrorMessage({
+  errorMessage,
+  prompt,
+  scene,
+}: {
+  errorMessage: unknown;
+  prompt?: string | null;
+  scene?: string | null;
+}) {
   if (typeof errorMessage !== 'string') {
     return undefined;
   }
@@ -217,6 +245,41 @@ function normalizeTaskErrorMessage(errorMessage: unknown) {
 
   if (shouldSuggestSwitchModel) {
     return '当前模型暂不可用，请切换模型重试';
+  }
+
+  const promptText = String(prompt || '').trim().toLowerCase();
+  const isImageWorkflow = Boolean(scene?.includes('image'));
+  const isVideoWorkflow = Boolean(scene?.includes('video'));
+  const asksForVideo =
+    promptText.includes('视频') ||
+    promptText.includes('video') ||
+    promptText.includes('动画') ||
+    promptText.includes('motion');
+  const asksForImage =
+    promptText.includes('图片') ||
+    promptText.includes('海报') ||
+    promptText.includes('照片') ||
+    promptText.includes('image') ||
+    promptText.includes('poster') ||
+    promptText.includes('photo');
+
+  if (
+    lower.includes('returned text instead of generating an image') ||
+    lower.includes('failed to extract urls')
+  ) {
+    if (isImageWorkflow && asksForVideo) {
+      return '你当前使用的是图片生成模型，但提示词更像是在请求视频。请切换到 AI Video，或把提示词改成静态画面描述后重试。';
+    }
+
+    return '图片模型没有成功返回图片结果。请把提示词改成更明确的静态画面描述，或切换到更稳定的图片模型重试。';
+  }
+
+  if (lower.includes('returned text instead of generating a video')) {
+    if (isVideoWorkflow && asksForImage) {
+      return '你当前使用的是视频生成模型，但提示词更像是在请求单张图片。请切换到 AI Image，或把提示词改成镜头/动作描述后重试。';
+    }
+
+    return '视频模型没有成功返回视频结果。请把提示词改成更明确的镜头、动作和时长描述后重试。';
   }
 
   return normalized;
@@ -278,7 +341,11 @@ function buildTaskCard(task: ChatToolTaskRecord): AssistantTaskCardData {
           minute: '2-digit',
         }).format(new Date(task.createdAt))
       : undefined,
-    errorMessage: normalizeTaskErrorMessage(taskInfo?.errorMessage),
+    errorMessage: normalizeTaskErrorMessage({
+      errorMessage: taskInfo?.errorMessage,
+      prompt: task.prompt,
+      scene: task.scene,
+    }),
     assets: [...imageAssets, ...videoAssets],
     progress:
       typeof taskInfo?.progress === 'number'
@@ -322,7 +389,8 @@ export function ChatBox({
   initialTask?: ChatToolTaskRecord | null;
   initialTasks?: ChatToolTaskRecord[];
 }) {
-  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { setChat } = useChatContext();
   const { showGenerationLimitModal } = useAppContext();
   const { models } = useToolCatalog('chat');
@@ -332,9 +400,33 @@ export function ChatBox({
   );
   const seededTasks =
     initialTasks.length > 0 ? initialTasks : initialTask ? [initialTask] : [];
-  const [tasks, setTasks] = useState<ChatToolTaskRecord[]>(seededTasks);
+  const initialPendingAutostartRef = useRef<PendingToolChatAutostart | null>(
+    getInitialPendingToolChatAutostart(initialChat?.id)
+  );
+  const initialOptimisticTaskRef = useRef<ChatToolTaskRecord | null>(
+    initialPendingAutostartRef.current
+      ? createPendingTaskRecord({
+          prompt: initialPendingAutostartRef.current.prompt,
+          mode: initialPendingAutostartRef.current.mode,
+          model: initialPendingAutostartRef.current.toolModel,
+          options: initialPendingAutostartRef.current.toolOptions ?? {},
+        })
+      : null
+  );
+  const [serverTasks, setServerTasks] = useState<ChatToolTaskRecord[]>(
+    seededTasks
+  );
+  const [optimisticTask, setOptimisticTask] =
+    useState<ChatToolTaskRecord | null>(initialOptimisticTaskRef.current);
+  const [launchState, setLaunchState] = useState<ToolLaunchState>(
+    seededTasks.length > 0
+      ? 'active'
+      : initialOptimisticTaskRef.current
+        ? 'bootstrapping'
+        : 'idle'
+  );
   const [selectedTaskId, setSelectedTaskId] = useState<string>(
-    seededTasks[0]?.id ?? ''
+    seededTasks[0]?.id ?? initialOptimisticTaskRef.current?.id ?? ''
   );
   const [activeToolTab, setActiveToolTab] = useState<ToolChatTab>('All');
   const [favoriteTaskIds, setFavoriteTaskIds] = useState<string[]>([]);
@@ -364,8 +456,9 @@ export function ChatBox({
   const [toolModelId, setToolModelId] = useState(toolModelFromMetadata);
   const [isGeneratingTask, setIsGeneratingTask] = useState(false);
   const toolGenerationLockRef = useRef(false);
+  const autoStartConsumedRef = useRef(false);
   const [draftSourceTaskId, setDraftSourceTaskId] = useState<string>(
-    seededTasks[0]?.id ?? ''
+    seededTasks[0]?.id ?? initialOptimisticTaskRef.current?.id ?? ''
   );
   const [isDraftDirty, setIsDraftDirty] = useState(false);
   const [toolOptions, setToolOptions] = useState<Record<string, unknown>>(
@@ -412,12 +505,22 @@ export function ChatBox({
     () => classifyToolInputIntent(toolPrompt),
     [toolPrompt]
   );
+  const displayTasks = useMemo(
+    () =>
+      optimisticTask
+        ? [
+            optimisticTask,
+            ...serverTasks.filter((task) => task.id !== optimisticTask.id),
+          ]
+        : serverTasks,
+    [optimisticTask, serverTasks]
+  );
   const visibleTasks = useMemo(
     () =>
       activeToolTab === 'All'
-        ? tasks
-        : tasks.filter((task) => getTaskTab(task) === activeToolTab),
-    [activeToolTab, tasks]
+        ? displayTasks
+        : displayTasks.filter((task) => getTaskTab(task) === activeToolTab),
+    [activeToolTab, displayTasks]
   );
   const latestTask = visibleTasks[0] ?? null;
   const selectedTask =
@@ -434,11 +537,13 @@ export function ChatBox({
       mode,
       taskModelId,
       options,
+      appendPrompt = true,
     }: {
       prompt: string;
       mode: string;
       taskModelId: string;
       options: Record<string, unknown>;
+      appendPrompt?: boolean;
     }) => {
       if (toolGenerationLockRef.current) {
         return;
@@ -484,21 +589,33 @@ export function ChatBox({
       try {
         toolGenerationLockRef.current = true;
         setIsGeneratingTask(true);
+        setLaunchState('starting');
         const shouldKeepCurrentTaskVisible = selectedTask?.status === 'success';
         const shouldAutoSelectNewTask = !shouldKeepCurrentTaskVisible;
-        const optimisticTask = createPendingTaskRecord({
-          prompt: trimmedPrompt,
-          mode,
-          model: taskModelId,
-          options,
-        });
-        setTasks((current) => [
-          optimisticTask,
-          ...current.filter((task) => task.id !== optimisticTask.id),
-        ]);
+        const nextOptimisticTask =
+          optimisticTask && optimisticTask.id.startsWith('local-pending-')
+            ? {
+                ...optimisticTask,
+                status: 'pending',
+                model: taskModelId,
+                scene: mode,
+                prompt: trimmedPrompt,
+                options: JSON.stringify(options),
+                taskInfo: JSON.stringify({
+                  progress: 12,
+                }),
+              }
+            : createPendingTaskRecord({
+                prompt: trimmedPrompt,
+                mode,
+                model: taskModelId,
+                options,
+              });
+
+        setOptimisticTask(nextOptimisticTask);
         if (shouldAutoSelectNewTask) {
-          setSelectedTaskId(optimisticTask.id);
-          setDraftSourceTaskId(optimisticTask.id);
+          setSelectedTaskId(nextOptimisticTask.id);
+          setDraftSourceTaskId(nextOptimisticTask.id);
         }
 
         const resp = await fetch('/api/chat/tool-session', {
@@ -514,6 +631,7 @@ export function ChatBox({
             model: chatModel,
             toolModel: taskModelId,
             toolOptions: options,
+            appendPrompt,
           }),
         });
 
@@ -539,9 +657,8 @@ export function ChatBox({
               toolSurface === 'image' ? 'image' : 'video'
             )
           );
-          setTasks((current) =>
-            current.filter((task) => task.id !== optimisticTask.id)
-          );
+          setOptimisticTask(null);
+          setLaunchState(serverTasks.length > 0 ? 'active' : 'idle');
           return;
         }
 
@@ -549,13 +666,15 @@ export function ChatBox({
           throw new Error(json.message || 'failed to start generation');
         }
 
-        setTasks((current) => [
+        setServerTasks((current) => [
           json.data!.task!,
           ...current.filter(
             (task) =>
-              task.id !== json.data!.task!.id && task.id !== optimisticTask.id
+              task.id !== json.data!.task!.id
           ),
         ]);
+        setOptimisticTask(null);
+        setLaunchState('active');
         if (shouldAutoSelectNewTask) {
           setSelectedTaskId(json.data.task.id);
           setDraftSourceTaskId(json.data.task.id);
@@ -568,12 +687,9 @@ export function ChatBox({
             metadata: json.data.metadata,
           });
         }
-
-        router.refresh();
       } catch (error: any) {
-        setTasks((current) =>
-          current.filter((task) => !task.id.startsWith('local-pending-'))
-        );
+        setOptimisticTask(null);
+        setLaunchState(serverTasks.length > 0 ? 'active' : 'idle');
         toast.error(error.message || 'failed to start generation');
       } finally {
         toolGenerationLockRef.current = false;
@@ -584,10 +700,10 @@ export function ChatBox({
       chatState,
       isToolChat,
       models,
-      router,
+      optimisticTask,
       selectedModelId,
       selectedTask?.status,
-      selectedTaskId,
+      serverTasks.length,
       showGenerationLimitModal,
       toolSurface,
     ]
@@ -668,6 +784,42 @@ export function ChatBox({
       })),
     [visibleTasks]
   );
+  const launchPlaceholderCard = useMemo(() => {
+    if (launchState === 'idle' || taskCards.length > 0) {
+      return null;
+    }
+
+    const placeholderTask =
+      optimisticTask ??
+      ({
+        id: 'local-launch-placeholder',
+        status: 'pending',
+        provider: 'apimart',
+        model: toolModelId || toolModelFromMetadata,
+        scene: toolModeState || toolMode || null,
+        prompt:
+          toolPrompt.trim() ||
+          toolPromptFromMetadata ||
+          'Preparing generation...',
+        options: JSON.stringify(toolOptions),
+        taskInfo: JSON.stringify({
+          progress: 12,
+        }),
+      } as ChatToolTaskRecord);
+
+    return buildTaskCard(placeholderTask);
+  }, [
+    launchState,
+    optimisticTask,
+    taskCards.length,
+    toolMode,
+    toolModeState,
+    toolModelFromMetadata,
+    toolModelId,
+    toolOptions,
+    toolPrompt,
+    toolPromptFromMetadata,
+  ]);
   const orderedTaskCards = useMemo(() => [...taskCards].reverse(), [taskCards]);
   const latestTaskCard = taskCards[0]?.card ?? null;
   const toolChatHeader = useMemo(() => {
@@ -687,6 +839,14 @@ export function ChatBox({
     }
 
     if (!taskCards.length) {
+      if (launchPlaceholderCard) {
+        return (
+          <AssistantTaskFeedItem>
+            <AssistantTaskCard task={launchPlaceholderCard} />
+          </AssistantTaskFeedItem>
+        );
+      }
+
       return (
         <AssistantTaskFeedItem>
           <div className="rounded-[22px] border border-dashed border-white/8 bg-[#181922] px-5 py-8 text-sm text-zinc-500">
@@ -709,7 +869,14 @@ export function ChatBox({
         ))}
       </>
     );
-  }, [handleRegenerateTask, handleRepromptTask, isToolChat, orderedTaskCards]);
+  }, [
+    handleRegenerateTask,
+    handleRepromptTask,
+    isToolChat,
+    launchPlaceholderCard,
+    orderedTaskCards,
+    taskCards.length,
+  ]);
 
   const runtime = useAssistantWorkspaceRuntime({
     id: chatState?.id,
@@ -759,6 +926,50 @@ export function ChatBox({
   }, [applyDraftFromTask, isToolChat, selectedTaskId]);
 
   useEffect(() => {
+    if (!isToolChat || !chatState?.id) {
+      return;
+    }
+
+    if (searchParams.get('autostart') !== '1') {
+      return;
+    }
+
+    if (autoStartConsumedRef.current) {
+      return;
+    }
+
+    const pendingAutostart =
+      takePendingToolChatAutostart(chatState.id) ??
+      initialPendingAutostartRef.current;
+    initialPendingAutostartRef.current = null;
+    autoStartConsumedRef.current = true;
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(window.history.state, '', pathname);
+    }
+
+    if (!pendingAutostart) {
+      setOptimisticTask(null);
+      setLaunchState(serverTasks.length > 0 ? 'active' : 'idle');
+      return;
+    }
+
+    void createTaskFromPayload({
+      prompt: pendingAutostart.prompt,
+      mode: pendingAutostart.mode,
+      taskModelId: pendingAutostart.toolModel,
+      options: pendingAutostart.toolOptions ?? {},
+      appendPrompt: false,
+    });
+  }, [
+    chatState?.id,
+    createTaskFromPayload,
+    isToolChat,
+    pathname,
+    searchParams,
+    serverTasks.length,
+  ]);
+
+  useEffect(() => {
     if (!isToolChat) {
       return;
     }
@@ -789,7 +1000,7 @@ export function ChatBox({
       return;
     }
 
-    const nextTask = tasks.find((task) => task.id === selectedTaskId);
+    const nextTask = displayTasks.find((task) => task.id === selectedTaskId);
     if (!nextTask) {
       return;
     }
@@ -799,7 +1010,7 @@ export function ChatBox({
     if (draftSourceTaskId !== nextTask.id) {
       applyDraftFromTask(nextTask);
     }
-  }, [applyDraftFromTask, draftSourceTaskId, selectedTaskId, tasks]);
+  }, [applyDraftFromTask, displayTasks, draftSourceTaskId, selectedTaskId]);
 
   useEffect(() => {
     if (visibleTasks.length === 0) {
@@ -818,7 +1029,7 @@ export function ChatBox({
   }, [selectedTaskId, visibleTasks]);
 
   useEffect(() => {
-    const activeTaskIds = tasks
+    const activeTaskIds = serverTasks
       .filter((task) => !isTerminalTaskStatus(task.status))
       .map((task) => task.id);
 
@@ -833,13 +1044,6 @@ export function ChatBox({
             try {
               const resp = await fetch(`/api/tools/tasks/${taskId}`);
               if (!resp.ok) {
-                if (resp.status === 404) {
-                  setTasks((current) =>
-                    current.filter((task) => task.id !== taskId)
-                  );
-                  return;
-                }
-
                 throw new Error(`request failed with status: ${resp.status}`);
               }
 
@@ -854,17 +1058,10 @@ export function ChatBox({
                 !json.data ||
                 json.message === 'task not found'
               ) {
-                if (json.message === 'task not found') {
-                  setTasks((current) =>
-                    current.filter((task) => task.id !== taskId)
-                  );
-                  return;
-                }
-
                 throw new Error(json.message || 'failed to refresh task');
               }
 
-              setTasks((current) =>
+              setServerTasks((current) =>
                 current.map((task) => (task.id === taskId ? json.data! : task))
               );
             } catch (error) {
@@ -879,7 +1076,7 @@ export function ChatBox({
     return () => {
       window.clearInterval(interval);
     };
-  }, [tasks, toolSurface]);
+  }, [serverTasks, toolSurface]);
 
   const handleGenerateToolTask = useCallback(async () => {
     await createTaskFromPayload({

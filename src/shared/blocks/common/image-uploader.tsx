@@ -57,11 +57,18 @@ const uploadImageFile = async (file: File) => {
   }
 
   const result = await response.json();
-  if (result.code !== 0 || !result.data?.urls?.length) {
+  const uploadResult = result.data?.results?.[0];
+  if (result.code !== 0 || !uploadResult) {
     throw new Error(result.message || 'Upload failed');
   }
 
-  return result.data.urls[0] as string;
+  return {
+    url: (uploadResult.url || result.data?.urls?.[0]) as string,
+    previewUrl: (uploadResult.accessUrl ||
+      result.data?.accessUrls?.[0] ||
+      uploadResult.url ||
+      result.data?.urls?.[0]) as string,
+  };
 };
 
 export function ImageUploader({
@@ -199,7 +206,7 @@ export function ImageUploader({
       );
 
       uploadImageFile(file)
-        .then((url) => {
+        .then(({ url, previewUrl }) => {
           setItems((prev) =>
             prev.map((item) => {
               if (item.id !== id) return item;
@@ -209,7 +216,7 @@ export function ImageUploader({
               }
               return {
                 ...item,
-                preview: url,
+                preview: previewUrl,
                 url,
                 status: 'uploaded' as UploadStatus,
                 file: undefined,
@@ -321,7 +328,7 @@ export function ImageUploader({
     Promise.all(
       newItems.map(async (item) => {
         try {
-          const url = await uploadImageFile(item.file as File);
+          const { url, previewUrl } = await uploadImageFile(item.file as File);
           setItems((prev) => {
             const next = prev.map((current) => {
               if (current.id === item.id) {
@@ -334,7 +341,7 @@ export function ImageUploader({
                 }
                 return {
                   ...current,
-                  preview: url, // Replace preview with uploaded URL
+                  preview: previewUrl,
                   url,
                   status: 'uploaded' as UploadStatus,
                   file: undefined,

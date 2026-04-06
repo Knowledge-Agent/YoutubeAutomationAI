@@ -41,7 +41,20 @@
         }
       ]
     },
-    "buttons": [],
+    "buttons": [
+      {
+        "title": "Login",
+        "url": "/sign-in",
+        "target": "_self",
+        "variant": "outline"
+      },
+      {
+        "title": "Start for Free",
+        "url": "/sign-up",
+        "target": "_self",
+        "variant": "default"
+      }
+    ],
     "user_nav": {
       "show_name": true,
       "show_credits": true,

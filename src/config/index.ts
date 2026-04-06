@@ -51,6 +51,7 @@ export const envConfigs: ConfigMap = {
   db_max_connections: process.env.DB_MAX_CONNECTIONS || '1',
   auth_url: process.env.AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '',
   auth_secret: process.env.AUTH_SECRET ?? '', // openssl rand -base64 32
+  default_storage_provider: process.env.DEFAULT_STORAGE_PROVIDER ?? '',
   aliyun_oss_region: process.env.ALIYUN_OSS_REGION ?? '',
   aliyun_oss_access_key_id: process.env.ALIYUN_OSS_ACCESS_KEY_ID ?? '',
   aliyun_oss_access_key_secret: process.env.ALIYUN_OSS_ACCESS_KEY_SECRET ?? '',
@@ -58,6 +59,13 @@ export const envConfigs: ConfigMap = {
   aliyun_oss_public_domain: process.env.ALIYUN_OSS_PUBLIC_DOMAIN ?? '',
   aliyun_oss_upload_path: process.env.ALIYUN_OSS_UPLOAD_PATH ?? '',
   aliyun_oss_endpoint: process.env.ALIYUN_OSS_ENDPOINT ?? '',
+  s3_region: process.env.S3_REGION ?? '',
+  s3_endpoint: process.env.S3_ENDPOINT ?? '',
+  s3_access_key: process.env.S3_ACCESS_KEY ?? '',
+  s3_secret_key: process.env.S3_SECRET_KEY ?? '',
+  s3_bucket: process.env.S3_BUCKET ?? '',
+  s3_domain: process.env.S3_DOMAIN ?? '',
+  s3_upload_path: process.env.S3_UPLOAD_PATH ?? '',
   version: packageJson.version,
   locale_detect_enabled:
     process.env.NEXT_PUBLIC_LOCALE_DETECT_ENABLED ?? 'false',

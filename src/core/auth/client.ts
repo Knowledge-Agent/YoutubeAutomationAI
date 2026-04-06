@@ -118,9 +118,14 @@ export function getAuthClient(configs: Record<string, string>) {
 // get auth plugins with configs
 function getAuthPlugins(configs: Record<string, string>) {
   const authPlugins = [];
+  const isGoogleAuthEnabled = configs.google_auth_enabled === 'true';
 
   // google one tap plugin
-  if (configs.google_client_id && configs.google_one_tap_enabled === 'true') {
+  if (
+    isGoogleAuthEnabled &&
+    configs.google_client_id &&
+    configs.google_one_tap_enabled === 'true'
+  ) {
     authPlugins.push(
       oneTapClient({
         clientId: configs.google_client_id,

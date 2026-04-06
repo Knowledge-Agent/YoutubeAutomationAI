@@ -1,29 +1,19 @@
 'use client';
 
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode } from 'react';
 import Image from 'next/image';
 import {
-  Bell,
-  Check,
   ChevronDown,
   Clapperboard,
   Coins,
   Film,
-  FolderOpen,
   ImageIcon,
-  LoaderCircle,
   LogOut,
   Menu,
-  PencilLine,
-  Plus,
-  Search,
-  Star,
-  Trash2,
-  X,
   type LucideIcon,
 } from 'lucide-react';
-import { toast } from 'sonner';
 
+import { signOut } from '@/core/auth/client';
 import { Link, usePathname, useRouter } from '@/core/i18n/navigation';
 import { SignModal } from '@/shared/blocks/sign/sign-modal';
 import {
@@ -34,16 +24,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
-import { Input } from '@/shared/components/ui/input';
 import { useAppContext } from '@/shared/contexts/app';
 import { AI_CREDITS_ENABLED } from '@/shared/lib/ai-credits';
-import {
-  clearStoredProjectSelection,
-  getStoredProjectSelection,
-  setStoredProjectSelection,
-} from '@/shared/lib/project-selection';
 import { cn } from '@/shared/lib/utils';
-import { signOut } from '@/core/auth/client';
 
 const topTabs = [
   {
@@ -118,11 +101,6 @@ const workspaceNavItems = [
     icon: Film,
   },
 ] as const;
-
-interface WorkspaceProject {
-  id: string;
-  title: string;
-}
 
 function SidebarItem({
   active,
@@ -237,17 +215,6 @@ export function ToolWorkspaceShell({
   const router = useRouter();
   const pathname = usePathname();
   const { user, setIsShowSignModal } = useAppContext();
-  const [projectOpen, setProjectOpen] = useState(false);
-  const [projects, setProjects] = useState<WorkspaceProject[]>([]);
-  const [activeProjectId, setActiveProjectId] = useState('');
-  const [activeProjectTitle, setActiveProjectTitle] = useState('Project');
-  const [renameProjectId, setRenameProjectId] = useState('');
-  const [draftTitle, setDraftTitle] = useState('');
-  const [loadingProjects, setLoadingProjects] = useState(false);
-  const [creatingProject, setCreatingProject] = useState(false);
-  const [savingProjectId, setSavingProjectId] = useState('');
-  const [deletingProjectId, setDeletingProjectId] = useState('');
-  const projectMenuRef = useRef<HTMLDivElement | null>(null);
   const isDetailMode = workspaceMode === 'detail';
   const isStudioChrome = chromeStyle === 'studio';
   const useConnectedWorkspacePanel = !showIntroCard && !contentCard;
@@ -259,258 +226,6 @@ export function ToolWorkspaceShell({
     ? 'flex h-10 w-10 items-center justify-center rounded-[18px] border border-[color:var(--studio-line)] bg-[var(--studio-panel)] text-[var(--studio-ink)] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] transition hover:border-white/14 hover:bg-[var(--studio-hover)]'
     : 'flex h-9 w-9 items-center justify-center rounded-2xl border border-[color:var(--studio-line)] bg-[var(--studio-panel)] text-[var(--studio-ink)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:border-white/14 hover:bg-[var(--studio-hover)]';
   const compactRailItems = workspaceNavItems;
-
-  const syncProjectSelection = useCallback(
-    (project: WorkspaceProject | null) => {
-      if (!project) {
-        setActiveProjectId('');
-        setActiveProjectTitle('Project');
-        clearStoredProjectSelection();
-        return;
-      }
-
-      setActiveProjectId(project.id);
-      setActiveProjectTitle(project.title);
-      setStoredProjectSelection(project);
-    },
-    []
-  );
-
-  const loadProjects = useCallback(async () => {
-    if (!user) {
-      setProjects([]);
-      syncProjectSelection(null);
-      return;
-    }
-
-    try {
-      setLoadingProjects(true);
-      const resp = await fetch('/api/project/list', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const json = await resp.json();
-
-      if (!resp.ok || json.code !== 0) {
-        throw new Error(json.message || 'failed to load projects');
-      }
-
-      const nextProjects: WorkspaceProject[] = Array.isArray(json.data)
-        ? json.data.map((item: any) => ({
-            id: item.id,
-            title: item.title || 'Untitled Project',
-          }))
-        : [];
-
-      setProjects(nextProjects);
-
-      const storedProject = getStoredProjectSelection();
-      const currentProject =
-        nextProjects.find((item) => item.id === activeProjectId) ||
-        nextProjects.find((item) => item.id === storedProject?.id) ||
-        nextProjects[0] ||
-        null;
-
-      syncProjectSelection(currentProject);
-    } catch (error: any) {
-      console.error('load workspace projects failed:', error);
-      toast.error(error.message || 'failed to load projects');
-    } finally {
-      setLoadingProjects(false);
-    }
-  }, [activeProjectId, syncProjectSelection, user]);
-
-  useEffect(() => {
-    void loadProjects();
-  }, [loadProjects]);
-
-  useEffect(() => {
-    if (!projectOpen) {
-      setRenameProjectId('');
-      return;
-    }
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!projectMenuRef.current) {
-        return;
-      }
-
-      if (projectMenuRef.current.contains(event.target as Node)) {
-        return;
-      }
-
-      setProjectOpen(false);
-      setRenameProjectId('');
-    };
-
-    document.addEventListener('mousedown', handlePointerDown);
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-    };
-  }, [projectOpen]);
-
-  const requireProjectAccess = useCallback(() => {
-    if (user) {
-      return true;
-    }
-
-    setIsShowSignModal(true);
-    return false;
-  }, [setIsShowSignModal, user]);
-
-  const handleCreateProject = async () => {
-    if (!requireProjectAccess()) {
-      return;
-    }
-
-    try {
-      setCreatingProject(true);
-      const resp = await fetch('/api/project/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: '',
-        }),
-      });
-      const json = await resp.json();
-
-      if (!resp.ok || json.code !== 0) {
-        throw new Error(json.message || 'failed to create project');
-      }
-
-      const nextProject = {
-        id: json.data.id,
-        title: json.data.title || 'Untitled Project',
-      };
-
-      setProjects((current) => [nextProject, ...current]);
-      syncProjectSelection(nextProject);
-      setProjectOpen(true);
-      setRenameProjectId('');
-    } catch (error: any) {
-      toast.error(error.message || 'failed to create project');
-    } finally {
-      setCreatingProject(false);
-    }
-  };
-
-  const handleSelectProject = (project: WorkspaceProject) => {
-    syncProjectSelection(project);
-    setRenameProjectId('');
-    setProjectOpen(false);
-  };
-
-  const handleStartRename = (project: WorkspaceProject) => {
-    setRenameProjectId(project.id);
-    setDraftTitle(project.title);
-  };
-
-  const handleRenameProject = async (projectId: string) => {
-    const nextTitle = draftTitle.trim();
-    if (!nextTitle) {
-      toast.error('Project title is required.');
-      return;
-    }
-
-    try {
-      setSavingProjectId(projectId);
-      const resp = await fetch('/api/project/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          projectId,
-          title: nextTitle,
-        }),
-      });
-      const json = await resp.json();
-
-      if (!resp.ok || json.code !== 0) {
-        throw new Error(json.message || 'failed to update project');
-      }
-
-      const nextProjects = projects.map((item) =>
-        item.id === projectId ? { ...item, title: nextTitle } : item
-      );
-      setProjects(nextProjects);
-
-      if (activeProjectId === projectId) {
-        syncProjectSelection({
-          id: projectId,
-          title: nextTitle,
-        });
-      }
-
-      setRenameProjectId('');
-    } catch (error: any) {
-      toast.error(error.message || 'failed to update project');
-    } finally {
-      setSavingProjectId('');
-    }
-  };
-
-  const handleDeleteProject = async (project: WorkspaceProject) => {
-    if (!window.confirm(`Delete "${project.title}"?`)) {
-      return;
-    }
-
-    try {
-      setDeletingProjectId(project.id);
-      const resp = await fetch('/api/project/delete', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          projectId: project.id,
-          createFallback: activeProjectId === project.id,
-        }),
-      });
-      const json = await resp.json();
-
-      if (!resp.ok || json.code !== 0) {
-        throw new Error(json.message || 'failed to delete project');
-      }
-
-      const nextProjects = projects.filter((item) => item.id !== project.id);
-      const fallbackProject = json.data?.nextProject
-        ? {
-            id: json.data.nextProject.id,
-            title: json.data.nextProject.title || 'Untitled Project',
-          }
-        : null;
-
-      const mergedProjects =
-        fallbackProject &&
-        !nextProjects.some((item) => item.id === fallbackProject.id)
-          ? [fallbackProject, ...nextProjects]
-          : nextProjects;
-
-      setProjects(mergedProjects);
-
-      if (activeProjectId === project.id) {
-        syncProjectSelection(
-          fallbackProject ||
-            mergedProjects.find((item) => item.id !== project.id) ||
-            null
-        );
-      }
-
-      if (renameProjectId === project.id) {
-        setRenameProjectId('');
-      }
-    } catch (error: any) {
-      toast.error(error.message || 'failed to delete project');
-    } finally {
-      setDeletingProjectId('');
-    }
-  };
 
   return (
     <div
@@ -612,7 +327,18 @@ export function ToolWorkspaceShell({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : null}
+            ) : (
+              <button
+                type="button"
+                className={cn(
+                  headerControlClass,
+                  'px-4 text-sm font-semibold text-white'
+                )}
+                onClick={() => setIsShowSignModal(true)}
+              >
+                Login
+              </button>
+            )}
           </div>
         </div>
       </header>

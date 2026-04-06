@@ -1,6 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { getThemePage } from '@/core/theme';
 import { AiVideoHubUi } from '@/shared/blocks/tools/ai-video-hub-ui';
 import { ToolWorkspaceShell } from '@/shared/blocks/tools/tool-workspace-shell';
 import { getMetadata } from '@/shared/lib/seo';
@@ -62,8 +61,6 @@ export default async function LandingPage({
     buildOrganizationStructuredData(),
     faqStructuredData,
   ]);
-  const Page = await getThemePage('dynamic-page');
-
   return (
     <>
       <script
@@ -72,6 +69,11 @@ export default async function LandingPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <div className="relative min-h-screen bg-[var(--studio-bg)]">
+        <section className="sr-only">
+          <h1>{heroSection?.title || toolT.raw('page.title')}</h1>
+          <p>{metadata.description || heroSection?.description}</p>
+        </section>
+
         <ToolWorkspaceShell
           activeKey="ai-video"
           activeTab="ai-video"
@@ -86,10 +88,6 @@ export default async function LandingPage({
         </ToolWorkspaceShell>
 
         <LandingBottomNav header={header} />
-
-        <div aria-hidden="true" className="seo-embed-hidden">
-          <Page locale={locale} page={page} />
-        </div>
       </div>
     </>
   );

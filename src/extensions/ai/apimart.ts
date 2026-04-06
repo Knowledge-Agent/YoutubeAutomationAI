@@ -230,7 +230,6 @@ export class ApimartProvider implements AIProvider {
     const options = params.options || {};
     const modelDefinition = getToolModelById(params.model || '');
     const isHailuo = modelDefinition?.id?.startsWith('MiniMax-Hailuo');
-    const supportsSoraStyle = modelDefinition?.id?.startsWith('sora-2');
     const usesMode =
       modelDefinition?.id === 'kling-v2-6' ||
       modelDefinition?.id === 'kling-v3' ||
@@ -300,7 +299,6 @@ export class ApimartProvider implements AIProvider {
       watermark: options.watermark,
       thumbnail: options.thumbnail,
       private: options.private,
-      style: supportsSoraStyle ? options.style : undefined,
       storyboard: options.storyboard,
       character_url: options.character_url,
       character_timestamps: options.character_timestamps,

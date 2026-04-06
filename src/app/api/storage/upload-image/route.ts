@@ -58,8 +58,15 @@ export async function POST(req: Request) {
       if (exists) {
         const publicUrl = storageService.getPublicUrl({ key });
         if (publicUrl) {
+          const provider = storageService.getDefaultProviderName();
+          const accessUrl = await storageService.getAccessUrlWithProvider(
+            { key },
+            provider
+          );
           uploadResults.push({
             url: publicUrl,
+            accessUrl,
+            provider,
             key,
             filename: file.name,
             deduped: true,
@@ -82,9 +89,15 @@ export async function POST(req: Request) {
       }
 
       console.log('[API] Upload success:', result.url);
+      const accessUrl = await storageService.getAccessUrlWithProvider(
+        { key: result.key || key },
+        result.provider
+      );
 
       uploadResults.push({
         url: result.url,
+        accessUrl,
+        provider: result.provider,
         key: result.key,
         filename: file.name,
         deduped: false,
@@ -98,6 +111,7 @@ export async function POST(req: Request) {
 
     return respData({
       urls: uploadResults.map((r) => r.url),
+      accessUrls: uploadResults.map((r) => r.accessUrl || r.url),
       results: uploadResults,
     });
   } catch (e) {

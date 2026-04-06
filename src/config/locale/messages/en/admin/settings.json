@@ -9,6 +9,7 @@
     "paypal": "Paypal",
     "resend": "Resend",
     "r2": "Cloudflare R2",
+    "storage_default": "Default Storage",
     "s3": "AWS S3",
     "openrouter": "OpenRouter",
     "replicate": "Replicate",

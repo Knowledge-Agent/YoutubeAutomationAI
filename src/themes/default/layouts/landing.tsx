@@ -21,6 +21,7 @@ export default function LandingLayout({
   const pathname = usePathname();
   const isHomeRoute = pathname === '/';
   const isWorkspaceRoute =
+    pathname.startsWith('/tools') ||
     pathname.startsWith('/ai-video-generator') ||
     pathname.startsWith('/ai-image-generator');
 

@@ -196,34 +196,17 @@ export async function createOrResumeToolChat({
     if (chat.userId !== userId) {
       throw new Error('no permission to access this chat');
     }
-
-    chat = await updateChat(chat.id, {
-      metadata: JSON.stringify(
-        mergeToolMetadata({
-          currentMetadata: chat.metadata,
-          context,
-          model,
-          prompt: trimmedPrompt || undefined,
-        })
-      ),
-      updatedAt: new Date(),
-    });
   } else {
-    const currentTime = new Date();
-    const initialParts = trimmedPrompt
-      ? buildUserMessageParts(trimmedPrompt)
-      : [];
-
     chat = await createChat({
       id: generateId().toLowerCase(),
       userId,
       status: ChatStatus.CREATED,
-      createdAt: currentTime,
-      updatedAt: currentTime,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       model,
       provider,
-      title: (trimmedPrompt || `${surface} ${mode}`).slice(0, 100),
-      parts: initialParts.length > 0 ? JSON.stringify(initialParts) : '[]',
+      title: `${surface === 'image' ? 'Image' : 'Video'} Generator`,
+      parts: '[]',
       metadata: JSON.stringify(
         mergeToolMetadata({
           currentMetadata: null,
@@ -232,11 +215,7 @@ export async function createOrResumeToolChat({
           prompt: trimmedPrompt || undefined,
         })
       ),
-      content: trimmedPrompt
-        ? JSON.stringify({
-            text: trimmedPrompt,
-          })
-        : null,
+      content: null,
     });
 
     created = true;
@@ -248,6 +227,12 @@ export async function createOrResumeToolChat({
 
   const shouldAppendPrompt =
     Boolean(trimmedPrompt) && (appendPrompt || created);
+  const nextMetadata = mergeToolMetadata({
+    currentMetadata: chat.metadata,
+    context,
+    model,
+    prompt: trimmedPrompt || undefined,
+  });
 
   if (shouldAppendPrompt) {
     await appendToolPromptMessage({
@@ -256,20 +241,21 @@ export async function createOrResumeToolChat({
       model,
       provider,
       prompt: trimmedPrompt,
-      metadata: mergeToolMetadata({
-        currentMetadata: chat.metadata,
-        context,
-        model,
-        prompt: trimmedPrompt || undefined,
-      }),
+      metadata: nextMetadata,
     });
 
     chat = await updateChat(chat.id, {
       updatedAt: new Date(),
+      metadata: JSON.stringify(nextMetadata),
       parts: JSON.stringify(buildUserMessageParts(trimmedPrompt)),
       content: JSON.stringify({
         text: trimmedPrompt,
       }),
+    });
+  } else if (!created) {
+    chat = await updateChat(chat.id, {
+      metadata: JSON.stringify(nextMetadata),
+      updatedAt: new Date(),
     });
   }
 
@@ -278,6 +264,75 @@ export async function createOrResumeToolChat({
     created,
     appendedPrompt: shouldAppendPrompt,
   };
+}
+
+export async function ensureToolChat({
+  chatId,
+  userId,
+  surface,
+  mode,
+  model,
+  toolModel,
+  toolOptions,
+}: {
+  chatId?: string;
+  userId: string;
+  surface: ToolChatSurface;
+  mode: ToolChatMode;
+  model: string;
+  toolModel?: string;
+  toolOptions?: Record<string, unknown>;
+}) {
+  const context: ToolChatContext = {
+    source: 'tool',
+    toolSurface: surface,
+    toolMode: mode,
+    toolModel: toolModel || model,
+    toolOptions: toolOptions || {},
+  };
+
+  if (chatId) {
+    const chat = await findChatById(chatId);
+
+    if (!chat) {
+      throw new Error('chat not found');
+    }
+
+    if (chat.userId !== userId) {
+      throw new Error('no permission to access this chat');
+    }
+
+    const metadata = mergeToolMetadata({
+      currentMetadata: chat.metadata,
+      context,
+      model,
+    });
+
+    return await updateChat(chat.id, {
+      metadata: JSON.stringify(metadata),
+      updatedAt: new Date(),
+    });
+  }
+
+  return await createChat({
+    id: generateId().toLowerCase(),
+    userId,
+    status: ChatStatus.CREATED,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    model,
+    provider: 'apimart',
+    title: `${surface === 'image' ? 'Image' : 'Video'} Generator`,
+    parts: '[]',
+    metadata: JSON.stringify(
+      mergeToolMetadata({
+        currentMetadata: null,
+        context,
+        model,
+      })
+    ),
+    content: null,
+  });
 }
 
 export async function startToolChatSession({
@@ -289,6 +344,7 @@ export async function startToolChatSession({
   model,
   toolModel,
   toolOptions,
+  appendPrompt = true,
 }: {
   chatId?: string;
   userId: string;
@@ -298,6 +354,7 @@ export async function startToolChatSession({
   model: string;
   toolModel?: string;
   toolOptions?: Record<string, unknown>;
+  appendPrompt?: boolean;
 }) {
   const trimmedPrompt = prompt.trim();
   if (!trimmedPrompt) {
@@ -336,7 +393,7 @@ export async function startToolChatSession({
     model,
     toolModel: normalizedToolModel,
     toolOptions: normalizedToolOptions,
-    appendPrompt: true,
+    appendPrompt,
   });
 
   await updateAITaskById(task.id, {

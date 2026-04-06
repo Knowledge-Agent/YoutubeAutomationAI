@@ -162,8 +162,6 @@ function getFamilyGlyph(key: string) {
   switch (key) {
     case 'veo':
       return 'G';
-    case 'sora':
-      return 'S';
     case 'wan':
       return 'W';
     case 'kling':
@@ -182,8 +180,6 @@ function getFamilyGlyphClassName(key: string, active: boolean) {
     switch (key) {
       case 'veo':
         return 'text-[#7dd8ff]';
-      case 'sora':
-        return 'text-[var(--brand-signal)]';
       case 'wan':
         return 'text-[#f2d28a]';
       case 'kling':

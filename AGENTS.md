@@ -43,3 +43,8 @@ Do not commit secrets from `.env`; update `.env.example` when introducing new va
 Do not change the repository's SEO structure unless the task explicitly requires a structural SEO migration. Keep routes, sitemap behavior, robots handling, canonical strategy, and content organization stable; update copy, metadata, and article content without breaking the existing SEO framework.
 
 All code, file placement, and directory changes must follow the current project conventions. Reuse existing folders such as `src/app/`, `src/shared/`, `src/themes/default/`, `content/`, and `public/` instead of creating parallel structures. When adding new modules, match the established naming, import order, and layering patterns already used in the repository.
+
+## OpenSpec Workflow
+For meaningful feature work or cross-cutting changes, prefer creating an OpenSpec change before implementation. Keep active proposals in `openspec/changes/<change-name>/` and long-lived capability specs in `openspec/specs/`.
+
+Use `openspec/project.md` as the shared source for repository context, stack conventions, and delivery constraints when drafting or refining proposals. Any OpenSpec change must still follow the SEO, routing, and directory conventions in this file.
